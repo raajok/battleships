@@ -1,0 +1,37 @@
+Battleship:
+
+Pitää sisällään pelilautaoliot (board1, board2) ja pitää kirjaa vuorossa olevasta pelaajasta (playerTurn).
+
+Metodit:
+newGame(playerName1, playerName2, boardSize, shipcounts[])
+- luo uudet Gameboard-oliot alkuvalikossa valittujen arvojen perusteella
+shoot(opponentBoard, mouseXY)
+- palauttaa illegalCoordException, jos koordinaattiin on jo ammuttu (Gameboard-olion isShootable() metodi). Virhe käsitellään mouseClickEventissä siten, että ilmoitetaan jollain tavalla virheellisestä paikasta ampua
+- kutsuu Gameboardin metodeita isHitSuccessful ja setHit
+isGameOver()
+- tarkistaa pelin voittajan ja näyttää lopetus-skenen
+
+
+Gameboard:
+
+Muuttujat:
+Pelaajan nimi (playerName)
+lautamatriisi (board), jonka koordinaatteihin merkataan 0: ei laivaa, ei osumaa, 1: laiva, ei osumaa, -1: ei laivaa, osuma, -2: laiva, osuma
+Ruutujen määrä, joissa laiva (nShipSquares)
+Osumien määrä (nSuccessfulHits)
+
+Metodit:
+GameBoard(playerName, boardSize, shipCounts[])
+- konstruktori
+GetNearestCoordinate(mouseXY)
+- palauttaa kursoria lähimpänä olevan ruudun koordinaatit
+createShip(shipType)
+- luo uuden laivan, ottaa parametrina laivan tyypin
+setShip(ship, XY)
+- asettaa annetun laivan alkaen koordinaateista XY
+isShootable(XY)
+- palauttaa true, jos paikkaan voi ampua, false jos siihen on jo ammuttu (-2 tai -1)
+isHitSuccessful(XY)
+- tarkistaa, onko ammutussa kohdassa laivaa
+setHit(XY)
+- asettaa annettuihin koordinaatteihin arvon -2
