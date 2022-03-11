@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 abstract class Ship {
 	private final int size;
 	private int orientation; // 0 = right, 1 = down, 2 = left, 3 = up
+	private XY location;
 	private final Image shipImage;
 	
 	public Ship(int size, String imageSrc) throws FileNotFoundException {
@@ -32,6 +33,14 @@ abstract class Ship {
 
 	public Image getShipImage() {
 		return shipImage;
+	}
+	
+	public XY getLocation() {
+		return location;
+	}
+	
+	public void setLocation(XY location) {
+		this.location = location;
 	}
 
 }

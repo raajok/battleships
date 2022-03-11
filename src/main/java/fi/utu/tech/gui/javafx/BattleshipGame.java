@@ -1,60 +1,53 @@
 package fi.utu.tech.gui.javafx;
 
-class XY {
-	private final int x;
-	private final int y;
-	
-	public XY(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-	
-	public int getX() {
-		return x;
-	}
-	
-	public int getY() {
-		return y;
-	}
-}
-
 class Gameboard {
-	// THIS STUMP IS TO BE REMOVED AFTER A PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
+	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
+	private int nHitsRemaining;
 
 	public Gameboard(String playerName, int boardSize, int[] shipCounts) {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public XY getNearestCoordinate(XY mouseXY) {
-		// STUMP
+		// STUB
 		return null;
 	}
 	
 	public Ship createShip(ShipType shipType) {
-		// STUMP
+		// STUB
 		return null;
 	}
 	
 	public void setShip(Ship ship, int x, int y) {
-		// STUMP
+		// STUB
 	}
 	
 	public Boolean isShootable(int x, int y) {
-		// STUMP
+		// STUB
 		return null;
 	}
 	
 	public Boolean isHitSuccessful(int x, int y) {
-		// STUMP
+		// STUB
 		return null;
 	}
 	
 	public void setHit(XY coord) {
-		// STUMP
+		// STUB
 	}
 	
 	public void reset() {
-		// STUMP
+		// STUB
+	}
+	
+	public int getnHitsRemaining() {
+		// STUB
+		return nHitsRemaining;
+	}
+	
+	public void setnHitsRemaining(int nHitsRemaining) {
+		// STUB
+		this.nHitsRemaining = nHitsRemaining;
 	}
 	
 }
@@ -72,13 +65,15 @@ public class BattleshipGame {
 		 this.playerTurn = player1; // Player 1 will start the game
 	}
 	
-	public void shoot(XY mouseXY) {
-		int opponent = getOpponent(this.playerTurn);
-		Gameboard opponentBoard = boards[opponent];
-		XY coord = opponentBoard.getNearestCoordinate(mouseXY);
+	public void shoot(XY coord) {
+		Gameboard opponentBoard = boards[getOpponent()];
 		if (opponentBoard.isShootable(coord.getX(), coord.getY())) {
 			opponentBoard.setHit(coord);
-			// After a successful shooting, switch turns.
+			// Is game over?
+			if (opponentBoard.getnHitsRemaining() == 0) {
+				// TODO Switch to "Start Menu"-scene and announce the winner.
+			}
+			// If game continues, switch turns.
 			switchTurn();
 		} else {
 			System.err.println("Error: This location is not shootable.");
@@ -86,7 +81,7 @@ public class BattleshipGame {
 	}
 	
 	public Boolean isGameOver() {
-		// TODO
+		// deprecated
 		return null;
 	}
 	
@@ -100,6 +95,10 @@ public class BattleshipGame {
 	
 	private int getOpponent(int player) {
 		return player % 2 + 1; 
+	}
+	
+	public void setShip(Ship ship, XY coord) {
+		Gameboard board = boards[this.playerTurn];
 	}
 
 }
