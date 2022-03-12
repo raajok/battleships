@@ -1,27 +1,21 @@
 package fi.utu.tech.gui.javafx;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import javafx.scene.image.Image;
-
 abstract class Ship {
 	private final int size;
-	private int orientation; // 0 = right, 1 = down, 2 = left, 3 = up
+	private Orientation orientation; // 0 = right, 1 = down, 2 = left, 3 = up
 	private XY location;
-	private final Image shipImage;
 	
-	public Ship(int size, String imageSrc) throws FileNotFoundException {
+	public Ship(int size, XY location, Orientation orientation) {
 		this.size = size;
-		this.orientation = 0;
-		this.shipImage = new Image(new FileInputStream(imageSrc));
+		this.orientation = orientation;
+		this.location = location;
 	}
 	
-	public int getOrientation() {
+	public Orientation getOrientation() {
 		return orientation;
 	}
 	
-	public void setOrientation(int orientation) {
+	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
 	
@@ -30,10 +24,6 @@ abstract class Ship {
 	}
 	
 	abstract ShipType getType();
-
-	public Image getShipImage() {
-		return shipImage;
-	}
 	
 	public XY getLocation() {
 		return location;

@@ -1,15 +1,22 @@
 package fi.utu.tech.gui.javafx;
 
+import java.util.List;
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
+
 class Gameboard {
 	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
 	private int nHitsRemaining;
+	private List<Ship> ships;
+	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
 
 	public Gameboard(String playerName, int boardSize, int[] shipCounts) {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public XY getNearestCoordinate(XY mouseXY) {
-		// STUB
+		// Deprecated
 		return null;
 	}
 	
@@ -18,16 +25,16 @@ class Gameboard {
 		return null;
 	}
 	
-	public void setShip(Ship ship, int x, int y) {
+	public void setShip(Ship ship, XY coord) {
 		// STUB
 	}
 	
-	public Boolean isShootable(int x, int y) {
+	public Boolean isShootable(XY coord) {
 		// STUB
 		return null;
 	}
 	
-	public Boolean isHitSuccessful(int x, int y) {
+	public Boolean isHitSuccessful(XY coord) {
 		// STUB
 		return null;
 	}
@@ -50,33 +57,61 @@ class Gameboard {
 		this.nHitsRemaining = nHitsRemaining;
 	}
 	
+	public boolean addShip(Ship ship) {
+		// STUB
+		return true;
+	}
+	
+	public boolean moveShip(Ship ship, XY toLocation) {
+		// STUB
+		return true;
+	}
+	
+	public SimpleBooleanProperty readyProperty() {
+		// STUB
+		return this.ready;
+	}
+	
 }
 
-public class BattleshipGame {
-	private final int player1 = 1;
-	private final int player2 = 2;
+public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
-	private int playerTurn;
+	private Player playerInTurn;
+	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
+	private int[] shipCounts = new int[ShipType.values().length];
 	
 	public void newGame(String playerName1, String playerName2, int boardSize, int[] shipCounts) {
 		// Initialize a new game
-		 this.boards[0] = new Gameboard(playerName1, boardSize, shipCounts);
-		 this.boards[1] = new Gameboard(playerName2, boardSize, shipCounts);
-		 this.playerTurn = player1; // Player 1 will start the game
+		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerName1, boardSize, shipCounts);
+		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerName2, boardSize, shipCounts);
+		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
+		 this.shipCounts = shipCounts;
+		 
+		 // Create bindings for when boards are ready
+		 if (this.ready.isBound()) this.ready.unbind(); // Remove old bindings
+		 this.ready.bind(
+				 Bindings.when(
+						boards[Player.PLAYER1.ordinal()].readyProperty()
+						.and(
+				 		boards[Player.PLAYER2.ordinal()].readyProperty()))
+				 		.then(true)
+				 		.otherwise(false));
 	}
 	
 	public void shoot(XY coord) {
-		Gameboard opponentBoard = boards[getOpponent()];
-		if (opponentBoard.isShootable(coord.getX(), coord.getY())) {
+		Gameboard opponentBoard = boards[getOpponent().ordinal()];
+		if (opponentBoard.isShootable(coord)) {
 			opponentBoard.setHit(coord);
 			// Is game over?
 			if (opponentBoard.getnHitsRemaining() == 0) {
-				// TODO Switch to "Start Menu"-scene and announce the winner.
+				// TODO
+				// player "playerInTurn" has won.
+				// Switch to "Start Menu"-scene and announce the winner.
 			}
 			// If game continues, switch turns.
 			switchTurn();
 		} else {
-			System.err.println("Error: This location is not shootable.");
+			System.err.println("Exception: This location is not shootable.");
 		}
 	}
 	
@@ -86,19 +121,31 @@ public class BattleshipGame {
 	}
 	
 	private void switchTurn() {
-		this.playerTurn = getOpponent(this.playerTurn);
+		this.playerInTurn = getOpponent(this.playerInTurn);
 	}
 	
-	private int getOpponent() {
-		return getOpponent(this.playerTurn); 
+	private Player getOpponent() {
+		return getOpponent(this.playerInTurn); 
 	}
 	
-	private int getOpponent(int player) {
-		return player % 2 + 1; 
+	private Player getOpponent(Player player) {
+		return player.next(); 
 	}
 	
-	public void setShip(Ship ship, XY coord) {
-		Gameboard board = boards[this.playerTurn];
+	public boolean addShip(Ship ship) {
+		return addShip(ship, this.playerInTurn);
+	}
+	
+	public boolean addShip(Ship ship, Player player) {
+		return boards[player.ordinal()].addShip(ship);
+	}
+	
+	public Ship createShip(ShipType shipType, XY location, Orientation orientation) {
+		return shipType.instantiate(location, orientation);
+	}
+	
+	public SimpleBooleanProperty readyProperty() {
+		return this.ready;
 	}
 
 }
