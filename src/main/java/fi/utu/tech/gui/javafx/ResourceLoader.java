@@ -22,7 +22,6 @@ public class ResourceLoader<N extends Parent, C> {
             FXMLLoader loader = new FXMLLoader(resourceRootClass.getResource(contentPath));
             root_ = loader.load();
             controller_ = loader.getController();
-            System.out.println("DEBUG: " + contentPath + " loaded.");
         } catch (Exception e) {
             e.printStackTrace();
             Dialogs.warning(
