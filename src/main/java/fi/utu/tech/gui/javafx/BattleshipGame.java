@@ -4,6 +4,7 @@ import java.util.List;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 class Gameboard {
 	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
@@ -77,19 +78,40 @@ class Gameboard {
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
 	private Player playerInTurn;
-	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
-	private int[] shipCounts = new int[ShipType.values().length];
+	private SimpleBooleanProperty gameReady = new SimpleBooleanProperty(false);
+	private SimpleBooleanProperty settingsReady = new SimpleBooleanProperty(false);
+	private SimpleIntegerProperty[] shipCountProperties = {new SimpleIntegerProperty(0),
+	                                              new SimpleIntegerProperty(0),
+	                                              new SimpleIntegerProperty(0),
+	                                              new SimpleIntegerProperty(0),
+	                                              new SimpleIntegerProperty(0)};
+	private SimpleIntegerProperty boardSizeProperty = new SimpleIntegerProperty(10);
+	private SimpleIntegerProperty shipSums = new SimpleIntegerProperty(0);
+	
+	public BattleshipGame() {
+		shipSums.bind(shipCountProperties[ShipType.CARRIER.ordinal()].multiply(5)
+				.add(shipCountProperties[ShipType.BATTLESHIP.ordinal()].multiply(4)
+				.add(shipCountProperties[ShipType.CRUISER.ordinal()].multiply(3)
+				.add(shipCountProperties[ShipType.SUBMARINE.ordinal()].multiply(3)
+				.add(shipCountProperties[ShipType.DESTROYER.ordinal()].multiply(2)
+						)))));
+		settingsReady.bind(
+			 Bindings.when(
+					boardSizeProperty.multiply(boardSizeProperty).greaterThanOrEqualTo(shipSums.multiply(2)))
+			 		.then(true)
+			 		.otherwise(false));
+	}
 	
 	public void newGame(String playerName1, String playerName2, int boardSize, int[] shipCounts) {
 		// Initialize a new game
 		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerName1, boardSize, shipCounts);
 		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerName2, boardSize, shipCounts);
 		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
-		 this.shipCounts = shipCounts;
+		 //this.shipCounts = shipCounts;
 		 
 		 // Create bindings for when boards are ready
-		 if (this.ready.isBound()) this.ready.unbind(); // Remove old bindings
-		 this.ready.bind(
+		 if (this.gameReady.isBound()) this.gameReady.unbind(); // Remove old bindings
+		 this.gameReady.bind(
 				 Bindings.when(
 						boards[Player.PLAYER1.ordinal()].readyProperty()
 						.and(
@@ -144,8 +166,19 @@ public class BattleshipGame {
 		return shipType.instantiate(location, orientation);
 	}
 	
-	public SimpleBooleanProperty readyProperty() {
-		return this.ready;
+	public SimpleBooleanProperty gameReadyProperty() {
+		return this.gameReady;
+	}
+	
+	public SimpleBooleanProperty settingsReadyProperty() {
+		return this.settingsReady;
+	}
+	
+	public SimpleIntegerProperty[] getShipCountProperties() {
+		return shipCountProperties;
 	}
 
+	public SimpleIntegerProperty getBoardSizeProperty() {
+		return boardSizeProperty;
+	}
 }

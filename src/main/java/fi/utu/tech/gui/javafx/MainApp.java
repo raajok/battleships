@@ -12,7 +12,7 @@ public class MainApp extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) {    	
         ResourceLoader<Parent, AlkuvalikkoController> loader = new ResourceLoader<>("startMenuScene.fxml");
 
         Scene scene = new Scene(loader.root);
