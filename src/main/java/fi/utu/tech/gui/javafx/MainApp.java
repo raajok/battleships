@@ -15,6 +15,7 @@ public class MainApp extends Application {
     public void start(Stage stage) {
         ResourceLoader<Parent, StartMenuController> loader = new ResourceLoader<>("startMenuScene.fxml");
 
+
         Scene scene = new Scene(loader.root);
         scene.getStylesheets().add(createStyle());
 
