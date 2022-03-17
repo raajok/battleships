@@ -3,6 +3,7 @@ package fi.utu.tech.gui.javafx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 class Gameboard {
 	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
@@ -74,14 +75,16 @@ class Gameboard {
 
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
+	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty("Pelaaja 1"),
+														  new SimpleStringProperty("Pelaaja 2")};
 	private Player playerInTurn;
 	private SimpleBooleanProperty gameReady = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty settingsReady = new SimpleBooleanProperty(false);
 	private SimpleIntegerProperty[] shipCountProperties = {new SimpleIntegerProperty(0),
-	                                              new SimpleIntegerProperty(0),
-	                                              new SimpleIntegerProperty(0),
-	                                              new SimpleIntegerProperty(0),
-	                                              new SimpleIntegerProperty(0)};
+	                                              		   new SimpleIntegerProperty(0),
+	                                              		   new SimpleIntegerProperty(0),
+	                                              		   new SimpleIntegerProperty(0),
+	                                              		   new SimpleIntegerProperty(0)};
 	private SimpleIntegerProperty boardSizeProperty = new SimpleIntegerProperty(10);
 	private SimpleIntegerProperty shipSums = new SimpleIntegerProperty(0);
 	
@@ -101,8 +104,12 @@ public class BattleshipGame {
 	
 	public void newGame(String playerName1, String playerName2) {
 		// Initialize a new game
-		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerName1, boardSizeProperty.get(), shipCountProperties);
-		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerName2, boardSizeProperty.get(), shipCountProperties);
+		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER1.ordinal()].toString(),
+				 											   boardSizeProperty.get(),
+				 											   shipCountProperties);
+		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER2.ordinal()].toString(),
+															   boardSizeProperty.get(),
+															   shipCountProperties);
 		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
 		 //this.shipCounts = shipCounts;
 		 
@@ -177,5 +184,9 @@ public class BattleshipGame {
 
 	public SimpleIntegerProperty boardSizeProperty() {
 		return boardSizeProperty;
+	}
+	
+	public SimpleStringProperty[] getPlayerNamesProperty() {
+		return playerNamesProperty;
 	}
 }
