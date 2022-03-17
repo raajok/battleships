@@ -1,7 +1,5 @@
 package fi.utu.tech.gui.javafx;
 
-import java.util.List;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -9,10 +7,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 class Gameboard {
 	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
 	private int nHitsRemaining;
-	private List<Ship> ships;
 	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
 
-	public Gameboard(String playerName, int boardSize, int[] shipCounts) {
+	public Gameboard(String playerName, int boardSize, SimpleIntegerProperty[] shipCounts) {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -102,10 +99,10 @@ public class BattleshipGame {
 			 		.otherwise(false));
 	}
 	
-	public void newGame(String playerName1, String playerName2, int boardSize, int[] shipCounts) {
+	public void newGame(String playerName1, String playerName2) {
 		// Initialize a new game
-		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerName1, boardSize, shipCounts);
-		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerName2, boardSize, shipCounts);
+		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerName1, boardSizeProperty.get(), shipCountProperties);
+		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerName2, boardSizeProperty.get(), shipCountProperties);
 		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
 		 //this.shipCounts = shipCounts;
 		 
@@ -174,11 +171,11 @@ public class BattleshipGame {
 		return this.settingsReady;
 	}
 	
-	public SimpleIntegerProperty[] getShipCountProperties() {
+	public SimpleIntegerProperty[] shipCountProperties() {
 		return shipCountProperties;
 	}
 
-	public SimpleIntegerProperty getBoardSizeProperty() {
+	public SimpleIntegerProperty boardSizeProperty() {
 		return boardSizeProperty;
 	}
 }

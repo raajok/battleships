@@ -23,8 +23,23 @@ public class StartMenuController {
 		submarineSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 4));
 		destroyerSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 5));
 		
+		// Binding for the slider label to the slider value property
 		sliderLabel.textProperty().bind(Bindings.createStringBinding(() -> 
 			String.format("%1$s x %1$s", Math.round(slider.getValue())), slider.valueProperty()));
+		
+		// Bindings for ship counts to spinner value properties
+		game.shipCountProperties()[ShipType.CARRIER.ordinal()].bind(carrierSpinner.valueProperty());
+		game.shipCountProperties()[ShipType.BATTLESHIP.ordinal()].bind(battleshipSpinner.valueProperty());
+		game.shipCountProperties()[ShipType.CRUISER.ordinal()].bind(cruiserSpinner.valueProperty());
+		game.shipCountProperties()[ShipType.SUBMARINE.ordinal()].bind(submarineSpinner.valueProperty());
+		game.shipCountProperties()[ShipType.DESTROYER.ordinal()].bind(destroyerSpinner.valueProperty());
+		
+		// Binding for the board size to the slider value property
+		game.boardSizeProperty().bind(
+				Bindings.createIntegerBinding(() -> (int) Math.round(slider.getValue()), slider.valueProperty()));
+		
+		// Binding for start button availability to settings ready property
+		startButton.disableProperty().bind(game.settingsReadyProperty().not());
 	}
 	
 	@FXML
@@ -64,7 +79,7 @@ public class StartMenuController {
     public void startGame() {
     	// TODO: check if ratio of board and ships is ok before allowing start button to be pressed
     	
-    	game.newGame(player1.getText(), player2.getText(), (int) Math.round(slider.getValue()), getBattleships());
+    	game.newGame(player1.getText(), player2.getText());
     }
     
     public int[] getBattleships() {
