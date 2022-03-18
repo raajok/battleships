@@ -102,16 +102,32 @@ public class BattleshipGame {
 			 		.otherwise(false));
 	}
 	
-	public void newGame(String playerName1, String playerName2) {
-		// Initialize a new game
+	public void newGame() {
+		/**
+		 * The newGame function is used to start a new game.
+		 * This function creates a new Gameboard object for each player with a given name and ship counts.
+		 * 
+		 * The boards[].readyProperty indicates a boolean state when a board is ready to start a new game.
+		 * Both boards ready properties are bound to gameReady property.
+		 * Likewise, the gameReady property indicates a boolean state when the game is ready to start,
+		 * but it is true only when both boards are ready to start.
+		 * Before binding happens, the gameReady property unbinds itself from the old bindings (if any).
+		 * This way we can have only one listener on the game readiness state instead of two listeners for each board separately.
+		 *
+		 * Finally it sets our current playerInTurn variable as Player 1, who is a starting player.
+		 * 
+		 * @return Nothing.
+		 * 
+		 * @doc-author j-code
+		 **/
+		
+		 // Create and initialize the boards
 		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER1.ordinal()].toString(),
 				 											   boardSizeProperty.get(),
 				 											   shipCountProperties);
 		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER2.ordinal()].toString(),
 															   boardSizeProperty.get(),
 															   shipCountProperties);
-		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
-		 //this.shipCounts = shipCounts;
 		 
 		 // Create bindings for when boards are ready
 		 if (this.gameReady.isBound()) this.gameReady.unbind(); // Remove old bindings
@@ -122,6 +138,9 @@ public class BattleshipGame {
 				 		boards[Player.PLAYER2.ordinal()].readyProperty()))
 				 		.then(true)
 				 		.otherwise(false));
+		 
+		 // Player 1 will start the game
+		 this.playerInTurn = Player.PLAYER1;
 	}
 	
 	public void shoot(XY coord) {
