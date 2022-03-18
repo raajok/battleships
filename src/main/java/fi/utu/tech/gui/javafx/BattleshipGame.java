@@ -9,9 +9,17 @@ class Gameboard {
 	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
 	private int nHitsRemaining;
 	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
+	private int[][] board;
 
 	public Gameboard(String playerName, int boardSize, SimpleIntegerProperty[] shipCounts) {
 		// TODO Auto-generated constructor stub
+		this.board = new int[boardSize][boardSize];
+		
+		for (int x = 0; x < boardSize; x++) {
+			for (int y = 0; y < boardSize; y++) {
+				board[x][y] = 0;
+			}
+		}
 	}
 	
 	public XY getNearestCoordinate(XY mouseXY) {
@@ -30,16 +38,28 @@ class Gameboard {
 	
 	public Boolean isShootable(XY coord) {
 		// STUB
-		return null;
+		return board[coord.getX()][coord.getY()] >= 0? true: false;
 	}
 	
 	public Boolean isHitSuccessful(XY coord) {
 		// STUB
-		return null;
+		return board[coord.getX()][coord.getY()] == 1? true: false;
 	}
 	
 	public void setHit(XY coord) {
 		// STUB
+		if (isShootable(coord)) {
+			if (isHitSuccessful(coord)) {
+				// Target is hit
+				board[coord.getX()][coord.getY()] = -2;
+			} else {
+				// A miss
+				board[coord.getX()][coord.getY()] = -1;
+			}
+		} else {
+			// target not shootable
+		}
+		
 	}
 	
 	public void reset() {
@@ -69,6 +89,11 @@ class Gameboard {
 	public SimpleBooleanProperty readyProperty() {
 		// STUB
 		return this.ready;
+	}
+
+	public int[][] getBoard() {
+		// TODO Auto-generated method stub
+		return board;
 	}
 	
 }
@@ -207,5 +232,13 @@ public class BattleshipGame {
 	
 	public SimpleStringProperty[] getPlayerNamesProperty() {
 		return playerNamesProperty;
+	}
+	
+	public Gameboard getBoard() {
+		return boards[playerInTurn.ordinal()];
+	}
+	
+	public Gameboard getOpponentBoard() {
+		return boards[getOpponent().ordinal()];
 	}
 }
