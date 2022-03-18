@@ -1,0 +1,14 @@
+Yleistä:
+Halutaanko lopeta peli -nappi jokaiseen skeneen erikseen vai lopetetaanko peli vain sulkemalla sovellus? Menisikö lopeta peli -alkuvalikkoon vai sammuttaisiko se sovelluksen?
+
+Alkuvalikko:
+Peliruudukon ja alusten määrien täyttölaatikot ovat ei-kirjoitettavassa tilassa aluksi ja aloita peli -nappi on disabled. Kun pelaajien nimet on kirjoitettu, peliruudukon koko muuttuu kirjoitettavaksi. Vastaavasti peliruudukon koon kirjoitettua aluksen määrät voidaan kirjoittaa. Kun alusten määrä on merkitty, aloita peli -nappi tulee aktiiviseksi, jos alukset mahtuvat peliruudukkoon. Muulloin tulee jokin ilmoitus tai jotain?
+
+Alusten asetus:
+Alussa voisi tulla jokin alert. Esimerkiksi "Pelaaja x, aseta laivat ruudukkoon."
+
+Varsinainen peliruutu:
+Ei varmaan tarvita mitään muuta kuin pelajaan vuoro ja peliruudukko. Pelin tilanne selviää peliruudukosta.
+
+Väliruutu / peli loppu:
+Tarvitaanko ollenkaan vai toteutetaanko jollain alertilla.
