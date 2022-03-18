@@ -6,14 +6,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
-
+	private static BattleshipGame game = new BattleshipGame();
+	public static BattleshipGame getGame() { return MainApp.game; };
+	
     protected String createStyle() {
         return ResourceLoader.stylesheet("styles.css");
     }
 
     @Override
     public void start(Stage stage) {
-        ResourceLoader<Parent, StartMenuController> loader = new ResourceLoader<>("startMenuScene.fxml");
+        ResourceLoader<Parent, gameSceneController> loader = new ResourceLoader<>("gameScene.fxml");
 
 
         Scene scene = new Scene(loader.root);

@@ -1,5 +1,8 @@
 package fi.utu.tech.gui.javafx;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -48,18 +51,13 @@ class Gameboard {
 	
 	public void setHit(XY coord) {
 		// STUB
-		if (isShootable(coord)) {
-			if (isHitSuccessful(coord)) {
-				// Target is hit
-				board[coord.getX()][coord.getY()] = -2;
-			} else {
-				// A miss
-				board[coord.getX()][coord.getY()] = -1;
-			}
+		if (isHitSuccessful(coord)) {
+			// Target is hit
+			board[coord.getX()][coord.getY()] = -2;
 		} else {
-			// target not shootable
+			// A miss
+			board[coord.getX()][coord.getY()] = -1;
 		}
-		
 	}
 	
 	public void reset() {
@@ -76,8 +74,25 @@ class Gameboard {
 		this.nHitsRemaining = nHitsRemaining;
 	}
 	
+	private Deque<XY> getShipCoords(Ship ship) {
+		Deque<XY> coords = new ArrayDeque<XY>();
+		int x = ship.getLocation().getX();
+		int y = ship.getLocation().getY();
+		
+		switch (ship.getOrientation()) {
+			case  RIGHT: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x+i,y)); } break;
+			case  DOWN: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x,y+i)); } break;
+			case  LEFT: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x-i,y)); } break;
+			case  UP: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x,y-i)); } break;
+		};
+		return coords;
+	}
+	
 	public boolean addShip(Ship ship) {
 		// STUB
+		for (XY coord: getShipCoords(ship)) {
+			this.board[coord.getX()][coord.getY()] = 1;			
+		};
 		return true;
 	}
 	
@@ -94,6 +109,21 @@ class Gameboard {
 	public int[][] getBoard() {
 		// TODO Auto-generated method stub
 		return board;
+	}
+	
+	public String toString() {
+
+		// ONLY FOR TESTING. REMOVE THIS
+		StringBuilder sb = new StringBuilder();		
+		sb.append("  0123456789\n");
+		for (int y = 0; y < this.board.length; y++) {
+			sb.append(y + " ");
+			for (int x = 0; x < this.board.length; x++) {
+				sb.append(this.board[x][y]);
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 	
 }
@@ -168,8 +198,41 @@ public class BattleshipGame {
 		 this.playerInTurn = Player.PLAYER1;
 	}
 	
-	public void shoot(XY coord) {
+	public void newGameTest(String name1, String name2, int bSize) {
+		// ONLY FOR TESTING. REMOVE THIS
+		
+		// Create and initialize the boards
+		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(name1,bSize,shipCountProperties);
+		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(name2,bSize,shipCountProperties);
+		
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(2,2), Orientation.RIGHT));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(8,8), Orientation.LEFT));
+				 
+		// Player 1 will start the game
+		this.playerInTurn = Player.PLAYER1;
+	}
+	
+	public int shootTest(XY coord) {
+		// ONLY FOR TESTING. REMOVE THIS
 		Gameboard opponentBoard = boards[getOpponent().ordinal()];
+		int valueAtLocation = opponentBoard.getBoard()[coord.getX()][coord.getY()];
+		if (opponentBoard.isShootable(coord)) {
+			opponentBoard.setHit(coord);
+			// Is game over?
+			if (opponentBoard.getnHitsRemaining() == 0) {
+				// TODO
+				// player "playerInTurn" has won.
+				// Switch to "Start Menu"-scene and announce the winner.
+			}
+			// If game continues, switch turns.
+			//switchTurn();
+		}
+		return valueAtLocation;
+	}
+	
+	public int shoot(XY coord) {
+		Gameboard opponentBoard = boards[getOpponent().ordinal()];
+		int valueAtLocation = opponentBoard.getBoard()[coord.getX()][coord.getY()];
 		if (opponentBoard.isShootable(coord)) {
 			opponentBoard.setHit(coord);
 			// Is game over?
@@ -180,9 +243,8 @@ public class BattleshipGame {
 			}
 			// If game continues, switch turns.
 			switchTurn();
-		} else {
-			System.err.println("Exception: This location is not shootable.");
 		}
+		return valueAtLocation;
 	}
 	
 	public Boolean isGameOver() {

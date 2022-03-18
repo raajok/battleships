@@ -79,7 +79,7 @@ public class StartMenuController {
     public void startGame() {
     	// TODO: check if ratio of board and ships is ok before allowing start button to be pressed
     	
-    	game.newGame(player1.getText(), player2.getText());
+    	game.newGame();
     }
     
     public int[] getBattleships() {
