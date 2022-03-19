@@ -25,8 +25,26 @@ public class gameSceneController {
 	
 	@FXML
 	private void initialize() {
+		
 		game.newGameTest("name1", "name2", gameboardSize);
-		initGraphics();
+
+		// Render a grid
+		for(int i = 0; i <= gameboardSize; i++) {
+			Line verticaLine = new Line();
+			verticaLine.startXProperty().bind(gameboardPane.widthProperty().divide(gameboardSize).multiply(i));
+			verticaLine.endXProperty().bind(gameboardPane.widthProperty().divide(gameboardSize).multiply(i));
+			verticaLine.endYProperty().bind(gameboardPane.heightProperty());
+			Line horizontalLine = new Line();
+			horizontalLine.startYProperty().bind(gameboardPane.heightProperty().divide(gameboardSize).multiply(i));
+			horizontalLine.endYProperty().bind(gameboardPane.heightProperty().divide(gameboardSize).multiply(i));
+			horizontalLine.endXProperty().bind(gameboardPane.widthProperty());
+			gridlines.getChildren().add(verticaLine);
+			gridlines.getChildren().add(horizontalLine);
+		}
+		
+		elements.getChildren().add(gridlines);
+		elements.getChildren().add(shots);
+		gameboardPane.getChildren().add(elements);
 	}
 	
 	@FXML
@@ -60,26 +78,5 @@ public class gameSceneController {
 	@FXML
     public void handleEndGameButtonClick(ActionEvent event) {		
 	};
-	
-	private void initGraphics() {
-		
-		// Render a grid
-		for(int i = 0; i <= gameboardSize; i++) {
-			Line verticaLine = new Line();
-			verticaLine.startXProperty().bind(gameboardPane.widthProperty().divide(gameboardSize).multiply(i));
-			verticaLine.endXProperty().bind(gameboardPane.widthProperty().divide(gameboardSize).multiply(i));
-			verticaLine.endYProperty().bind(gameboardPane.heightProperty());
-			Line horizontalLine = new Line();
-			horizontalLine.startYProperty().bind(gameboardPane.heightProperty().divide(gameboardSize).multiply(i));
-			horizontalLine.endYProperty().bind(gameboardPane.heightProperty().divide(gameboardSize).multiply(i));
-			horizontalLine.endXProperty().bind(gameboardPane.widthProperty());
-			gridlines.getChildren().add(verticaLine);
-			gridlines.getChildren().add(horizontalLine);
-		}
-		
-		elements.getChildren().add(gridlines);
-		elements.getChildren().add(shots);
-		gameboardPane.getChildren().add(elements);
-	}
 
 }
