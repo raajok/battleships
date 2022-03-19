@@ -135,6 +135,7 @@ public class BattleshipGame {
 	private Player playerInTurn = Player.PLAYER1;
 	private SimpleStringProperty playerInTurnNameProperty = new SimpleStringProperty(
 															playerNamesProperty[Player.PLAYER1.ordinal()].getValue());
+	private SimpleIntegerProperty playerInTurnValueProperty = new SimpleIntegerProperty(Player.PLAYER1.ordinal());
 	private SimpleBooleanProperty gameReady = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty settingsReady = new SimpleBooleanProperty(false);
 	private SimpleIntegerProperty[] shipCountProperties = {new SimpleIntegerProperty(0),
@@ -258,6 +259,7 @@ public class BattleshipGame {
 		playerInTurn = getOpponent(playerInTurn);
 		playerInTurnNameProperty.setValue(
 				playerNamesProperty[playerInTurn.ordinal()].getValue());
+		playerInTurnValueProperty.set(playerInTurn.ordinal());
 	}
 	
 	private Player getOpponent() {
@@ -310,5 +312,9 @@ public class BattleshipGame {
 	
 	public SimpleStringProperty playerInTurnNameProperty() {
 		return playerInTurnNameProperty;
+	}
+		
+	public SimpleIntegerProperty playerInTurnValueProperty() {
+		return playerInTurnValueProperty;
 	}
 }
