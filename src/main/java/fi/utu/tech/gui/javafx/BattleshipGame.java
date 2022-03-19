@@ -262,11 +262,11 @@ public class BattleshipGame {
 		playerInTurnValueProperty.set(playerInTurn.ordinal());
 	}
 	
-	private Player getOpponent() {
+	public Player getOpponent() {
 		return getOpponent(this.playerInTurn); 
 	}
 	
-	private Player getOpponent(Player player) {
+	public Player getOpponent(Player player) {
 		return player.next(); 
 	}
 	
