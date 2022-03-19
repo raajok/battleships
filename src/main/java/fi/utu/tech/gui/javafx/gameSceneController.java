@@ -1,5 +1,6 @@
 package fi.utu.tech.gui.javafx;
 
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -9,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
@@ -24,7 +26,14 @@ public class gameSceneController {
 	private Pane gameboardPane;
 	
 	@FXML
+	private Text playerInfoText;
+	
+	@FXML
 	private void initialize() {
+		playerInfoText.textProperty().bind(Bindings.createStringBinding(() -> 
+											String.format("Pelaajan '%s' vuoro ampua",
+													game.playerInTurnNameProperty().get()), 
+											game.playerInTurnNameProperty()));
 		
 		game.newGameTest("name1", "name2", gameboardSize);
 

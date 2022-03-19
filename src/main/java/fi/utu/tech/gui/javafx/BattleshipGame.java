@@ -132,7 +132,9 @@ public class BattleshipGame {
 	private Gameboard[] boards = new Gameboard[2];
 	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty("Pelaaja 1"),
 														  new SimpleStringProperty("Pelaaja 2")};
-	private Player playerInTurn;
+	private Player playerInTurn = Player.PLAYER1;
+	private SimpleStringProperty playerInTurnNameProperty = new SimpleStringProperty(
+															playerNamesProperty[Player.PLAYER1.ordinal()].getValue());
 	private SimpleBooleanProperty gameReady = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty settingsReady = new SimpleBooleanProperty(false);
 	private SimpleIntegerProperty[] shipCountProperties = {new SimpleIntegerProperty(0),
@@ -225,7 +227,7 @@ public class BattleshipGame {
 				// Switch to "Start Menu"-scene and announce the winner.
 			}
 			// If game continues, switch turns.
-			//switchTurn();
+			switchTurn();
 		}
 		return valueAtLocation;
 	}
@@ -253,7 +255,9 @@ public class BattleshipGame {
 	}
 	
 	private void switchTurn() {
-		this.playerInTurn = getOpponent(this.playerInTurn);
+		playerInTurn = getOpponent(playerInTurn);
+		playerInTurnNameProperty.setValue(
+				playerNamesProperty[playerInTurn.ordinal()].getValue());
 	}
 	
 	private Player getOpponent() {
@@ -302,5 +306,9 @@ public class BattleshipGame {
 	
 	public Gameboard getOpponentBoard() {
 		return boards[getOpponent().ordinal()];
+	}
+	
+	public SimpleStringProperty playerInTurnNameProperty() {
+		return playerInTurnNameProperty;
 	}
 }

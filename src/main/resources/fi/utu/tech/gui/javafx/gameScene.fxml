@@ -14,7 +14,7 @@
    <top>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pelaajan (x) vuoro ampua">
+            <Text fx:id="playerInfoText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pelaajan (x) vuoro ampua">
                <font>
                   <Font size="24.0" />
                </font>
