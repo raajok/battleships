@@ -49,11 +49,11 @@ public class gameSceneController {
 		splashImageView = new ImageView();
 		splashAnimation = new Sprite(splashImageView,
 										new Image(ResourceLoader.image("water_splash.png"), 400,160,false,false),
-										8, // Columns
-										6, // Rows
+										5, // Columns
+										2, // Rows
 										80, // Frame width
 										80, // Frame height
-										60, // FPS
+										40, // FPS
 										1); // Repeats
 	}
 	
