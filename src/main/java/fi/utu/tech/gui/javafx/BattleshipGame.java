@@ -241,4 +241,8 @@ public class BattleshipGame {
 	public Gameboard getOpponentBoard() {
 		return boards[getOpponent().ordinal()];
 	}
+	
+	public Player getPlayerInTurn() {
+		return playerInTurn;
+	}
 }
