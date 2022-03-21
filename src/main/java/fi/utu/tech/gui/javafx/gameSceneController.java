@@ -107,6 +107,18 @@ public class gameSceneController {
 		//changePlayerAlert.showAndWait();
 	}
 	
+	/**
+	 * The handleGameboardClick function is called when the user clicks on a square of the gameboard.
+	 * It converts the mouse coordinates to board target coordinates, shoots to that target, and updates 
+	 * the GUI accordingly.
+	 * 
+	 * A thread object is created that is used to wait for a certain amount of time.
+	 * Finally, a dialog window is displayed to inform players to switch turns.
+	 * 
+	 * @param event Used to Get the coordinates of the mouse click.
+	 * 
+	 * @doc-author j-code
+	 */
 	@FXML
 	public void handleGameboardClick(MouseEvent event) {
 		
