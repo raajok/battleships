@@ -12,8 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.StartMenuController">
    <bottom>
       <FlowPane alignment="CENTER" minHeight="-Infinity" prefHeight="55.0" prefWidth="600.0" prefWrapLength="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -50,12 +49,12 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
                         </Label>
-                        <TextField promptText="Pelaaja 1">
+                        <TextField fx:id="player1" promptText="Pelaaja 1">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
                         </TextField>
-                        <TextField layoutX="359.0" layoutY="15.0" promptText="Pelaaja 2">
+                        <TextField fx:id="player2" layoutX="359.0" layoutY="15.0" promptText="Pelaaja 2">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
@@ -72,12 +71,12 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
                         </Label>
-                        <Slider blockIncrement="1.0" majorTickUnit="1.0" max="15.0" min="5.0" minorTickCount="1" snapToTicks="true" value="10.0">
+                        <Slider fx:id="slider" blockIncrement="1.0" majorTickUnit="1.0" max="15.0" min="5.0" minorTickCount="0" snapToTicks="true" value="10.0">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
                         </Slider>
-                        <Label text="10x10">
+                        <Label fx:id="sliderLabel" text="10x10">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
@@ -104,7 +103,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Spinner prefWidth="55.0">
+                              <Spinner fx:id="carrierSpinner" prefWidth="55.0">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
@@ -121,7 +120,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Spinner prefWidth="55.0">
+                              <Spinner fx:id="battleshipSpinner" prefWidth="55.0">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
@@ -135,7 +134,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Spinner prefWidth="55.0">
+                              <Spinner fx:id="cruiserSpinner" prefWidth="55.0">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
@@ -149,7 +148,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Spinner prefWidth="55.0">
+                              <Spinner fx:id="submarineSpinner" prefWidth="55.0">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
@@ -163,7 +162,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Spinner prefWidth="55.0">
+                              <Spinner fx:id="destroyerSpinner" prefWidth="55.0">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
