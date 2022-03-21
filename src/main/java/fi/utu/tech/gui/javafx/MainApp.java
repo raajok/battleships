@@ -32,7 +32,7 @@ public class MainApp extends Application {
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
         	Scene setShipsScene = new Scene(setShipsLoader.root);
         	setShipsScene.getStylesheets().add(createStyle());
-        	
+        	setShipsLoader.controller.drawBoard();
         	stage.setScene(setShipsScene);
         });
 

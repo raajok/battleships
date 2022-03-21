@@ -50,59 +50,41 @@ public class setShipsSceneController {
 	@FXML
 	private ImageView submarine;
 	
-	private BattleshipGame game;
+	private BattleshipGame game = MainApp.getGame();
 	private int gameboardSize;
 	
 	@FXML
 	public void initialize() {
-		this.game = MainApp.getGame();
-		this.gameboardSize = game.boardSizeProperty().get();
+		Image battleshipImage = new Image(getClass().getResource("Battleship_placeholder.png").toExternalForm());
+		battleship.setImage(battleshipImage);
 		
-		for(int i = 0; i < gameboardSize + 1; i++) {
-			System.out.println(boardPane.getMaxWidth());
-			Line verticaLine = new Line();
-			verticaLine.startXProperty().bind(boardPane.widthProperty().divide(this.gameboardSize).multiply(i));
-			verticaLine.endXProperty().bind(boardPane.widthProperty().divide(this.gameboardSize).multiply(i));
-			verticaLine.endYProperty().bind(boardPane.heightProperty());
-			Line horizontalLine = new Line();
-			horizontalLine.startYProperty().bind(boardPane.heightProperty().divide(this.gameboardSize).multiply(i));
-			horizontalLine.endYProperty().bind(boardPane.heightProperty().divide(this.gameboardSize).multiply(i));
-			horizontalLine.endXProperty().bind(boardPane.widthProperty());
-			boardPane.getChildren().add(verticaLine);
-			boardPane.getChildren().add(horizontalLine);
-			
-			Image battleshipImage = new Image(getClass().getResource("Battleship_placeholder.png").toExternalForm());
-			battleship.setImage(battleshipImage);
-			
-			Image carrierImage = new Image(getClass().getResource("Carrier_placeholder.png").toExternalForm());
-			carrier.setImage(carrierImage);
-			
-			Image cruiserImage = new Image(getClass().getResource("Cruiser_placeholder.png").toExternalForm());
-			cruiser.setImage(cruiserImage);
-			
-			Image destroyerImage = new Image(getClass().getResource("Destroyer_placeholder.png").toExternalForm());
-			destroyer.setImage(destroyerImage);
-			
-			Image submarineImage = new Image(getClass().getResource("Submarine_placeholder.png").toExternalForm());
-			submarine.setImage(submarineImage);
-			
-			
-		}
+		Image carrierImage = new Image(getClass().getResource("Carrier_placeholder.png").toExternalForm());
+		carrier.setImage(carrierImage);
+		
+		Image cruiserImage = new Image(getClass().getResource("Cruiser_placeholder.png").toExternalForm());
+		cruiser.setImage(cruiserImage);
+		
+		Image destroyerImage = new Image(getClass().getResource("Destroyer_placeholder.png").toExternalForm());
+		destroyer.setImage(destroyerImage);
+		
+		Image submarineImage = new Image(getClass().getResource("Submarine_placeholder.png").toExternalForm());
+		submarine.setImage(submarineImage);
 	}
 	
 	@FXML
 	void resetShips() {
 		// koko ruudun koko
-		System.out.println("outerpane width: " + outerPane.getWidth()); 
-		System.out.println("outerpane height: " + outerPane.getHeight());
-		System.out.println("topbox height: " + topBox.getHeight());
-		System.out.println("topbox height: " + topBox.getWidth());
-		System.out.println("bottombox height: " + bottomBox.getHeight());
-		System.out.println("bottombox height: " + bottomBox.getWidth());
+		//System.out.println("outerpane width: " + outerPane.getWidth()); 
+		//System.out.println("outerpane height: " + outerPane.getHeight());
+		//System.out.println("topbox height: " + topBox.getHeight());
+		//System.out.println("topbox height: " + topBox.getWidth());
+		//System.out.println("bottombox height: " + bottomBox.getHeight());
+		//System.out.println("bottombox height: " + bottomBox.getWidth());
 		//peliruudukon panen koko
-		System.out.println("width:" + boardPane.getWidth());
-		System.out.println("height:" + boardPane.getHeight());
+		//System.out.println("width:" + boardPane.getWidth());
+		//System.out.println("height:" + boardPane.getHeight());
 		//top h
+		System.out.println(gameboardSize);
 	};
 	
 	@FXML
@@ -129,5 +111,22 @@ public class setShipsSceneController {
 			
 		}		
 	};
+	
+	public void drawBoard() {
+		gameboardSize = game.boardSizeProperty().get();
+		for(int i = 0; i < gameboardSize + 1; i++) {
+			System.out.println(boardPane.getMaxWidth());
+			Line verticaLine = new Line();
+			verticaLine.startXProperty().bind(boardPane.widthProperty().divide(this.gameboardSize).multiply(i));
+			verticaLine.endXProperty().bind(boardPane.widthProperty().divide(this.gameboardSize).multiply(i));
+			verticaLine.endYProperty().bind(boardPane.heightProperty());
+			Line horizontalLine = new Line();
+			horizontalLine.startYProperty().bind(boardPane.heightProperty().divide(this.gameboardSize).multiply(i));
+			horizontalLine.endYProperty().bind(boardPane.heightProperty().divide(this.gameboardSize).multiply(i));
+			horizontalLine.endXProperty().bind(boardPane.widthProperty());
+			boardPane.getChildren().add(verticaLine);
+			boardPane.getChildren().add(horizontalLine);								
+		}
+	}
 
 }
