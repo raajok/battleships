@@ -27,6 +27,10 @@ public class MainApp extends Application {
     	// Loaders for every scene
         ResourceLoader<Parent, StartMenuController> startMenuLoader = new ResourceLoader<>("startMenuScene.fxml");
         ResourceLoader<Parent, setShipsSceneController> setShipsLoader = new ResourceLoader<>("setShipsScene.fxml");
+        ResourceLoader<Parent, gameOverSceneController> gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
+        
+        Scene startMenuScene = new Scene(startMenuLoader.root);
+        startMenuScene.getStylesheets().add(createStyle());
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
@@ -35,10 +39,11 @@ public class MainApp extends Application {
         	setShipsLoader.controller.drawBoard();
         	stage.setScene(setShipsScene);
         });
-
-        // The first scene that is shown
-        Scene startMenuScene = new Scene(startMenuLoader.root);
-        startMenuScene.getStylesheets().add(createStyle());
+        
+        // Eventhandler for changing scene from gameOver to StartMenu
+        gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
+        	stage.setScene(startMenuScene);
+        });
 
         stage.setTitle("Laivanupotus");
         stage.setScene(startMenuScene);
