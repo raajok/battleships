@@ -250,6 +250,10 @@ public class BattleshipGame {
 		return valueAtLocation;
 	}
 	
+	public Boolean isShootable(XY coord) {
+		return boards[getOpponent().ordinal()].isShootable(coord);
+	}
+	
 	public Boolean isGameOver() {
 		// deprecated
 		return null;

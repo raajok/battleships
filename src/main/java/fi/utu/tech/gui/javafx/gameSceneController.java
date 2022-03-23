@@ -8,10 +8,14 @@ import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -46,13 +50,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
 	private Group[] elements = {new Group(), new Group()};
-	private Group[] hoveringSquare = {new Group(), new Group()};
-	private Group[] background = {new Group(), new Group()};
+	private Group[] foreground = {new Group(), new Group()};
 	private Group[] shots = {new Group(), new Group()};
 	private int gameboardSize = 10;
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
@@ -68,9 +73,17 @@ public class gameSceneController {
 	private Sprite splashAnimation2;
 	private GridPane[] grids = {new GridPane(), new GridPane()};
 	private SimpleDoubleProperty squareSize = new SimpleDoubleProperty(60.0);
-	private Map<Integer, XY> squaresMapping = new HashMap<Integer, XY>();
+	private Map<Integer, XY> squareCoords1 = new HashMap<Integer, XY>();
+	private Map<Integer, XY> squareCoords2 = new HashMap<Integer, XY>();
+	private Rectangle hoveringSquare1;
+	private Rectangle hoveringSquare2;
+	private Color transparentRed;
+	private Color transparentGreen;
 	
-	public gameSceneController() {		
+	public gameSceneController() {
+		Double alpha = .45; // 50% transparent
+		transparentRed = new Color(1, 0, 00, alpha);
+		transparentGreen = new Color(0, .8, 00, alpha);
 		// Panel1 animations
 		explosionImageView1 = new ImageView();
 		explosionAnimation1 = new Sprite(explosionImageView1,
@@ -110,16 +123,6 @@ public class gameSceneController {
 										80, // Frame height
 										40, // FPS
 										1); // Repeats
-		// Background image
-		Image img = new Image(ResourceLoader.image("sea_texture.jpg"));
-		BackgroundImage bgndImg = new BackgroundImage(img,
-				BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-		Background bg1 = new Background(bgndImg);
-		grids[0].setBackground(bg1);
-		grids[1].setBackground(new Background(bgndImg));
 	}
 	
 	@FXML
@@ -173,6 +176,12 @@ public class gameSceneController {
 				.subtract(gameboardSize*5)
 				).divide(gameboardSize));
 		
+		// Create a hovering transparent red square as a default color
+		hoveringSquare1 = createTransparentSquare(transparentRed);
+		hoveringSquare2 = createTransparentSquare(transparentRed);
+		foreground[0].getChildren().add(hoveringSquare1);
+		foreground[1].getChildren().add(hoveringSquare2);
+		
 		// Create a test game
 		game.newGameTest("name1", "name2", gameboardSize);
 		
@@ -180,34 +189,62 @@ public class gameSceneController {
 		changePlayerAlert.setTitle("Toisen pelaajan vuoro.");
 		changePlayerAlert.setHeaderText("Pelaajan vaihto.");
 		changePlayerAlert.contentTextProperty().bind(turnInfoText.textProperty());
-
 		
 		// Render the grids
-		renderGrid(grids[0], gridStack1);
-		renderGrid(grids[1], gridStack2);
+		renderGrid(grids[0], gridStack1, squareCoords1);
+		renderGrid(grids[1], gridStack2, squareCoords2);
 		
-		shots[game.playerInTurnValueProperty().get()].setVisible(false);
-		shots[game.getOpponent().ordinal()].setVisible(true);
+		//shots[game.playerInTurnValueProperty().get()].visibleProperty().bind;
+		//shots[game.getOpponent().ordinal()].setVisible(true);
 		
 		// Panel1 elements
 		elements[0].getChildren().addAll(grids[0],
 										 shots[1],
 										 explosionImageView1,
-										 splashImageView1);
+										 splashImageView1,
+										 foreground[0]);
 		gridStack1.getChildren().add(elements[0]);
 		
 		// Panel2 elements
 		elements[1].getChildren().addAll(grids[1],
 										 shots[0],
 										 explosionImageView2,
-										 splashImageView2);
+										 splashImageView2,
+										 foreground[1]);
 		gridStack2.getChildren().add(elements[1]);
 		
+		scene.setOnMouseMoved((event) -> {
+			Bounds grid1Bounds = grids[0].localToScene(grids[0].getBoundsInLocal());
+			Bounds grid2Bounds = grids[1].localToScene(grids[1].getBoundsInLocal());
+
+			if (grid1Bounds.contains(event.getX(), event.getY())) {
+				hoveringSquare2.setVisible(false);				
+				return;
+			} else if (grid2Bounds.contains(event.getX(), event.getY())) {
+				hoveringSquare1.setVisible(false);	 
+				return;
+			} else {
+				hoveringSquare1.setVisible(false);
+				hoveringSquare2.setVisible(false);
+			}
+		});
+	}
+	
+	private Rectangle createTransparentSquare(Color color) {
+		Rectangle square = new Rectangle(squareSize.get(), squareSize.get());
+		square.setFill(color);
+		square.widthProperty().bind(squareSize);
+		square.heightProperty().bind(squareSize);
+		square.setMouseTransparent(true);
+		square.setVisible(false); // By default the square is not visible
+		return square;
 	}
 	
 	
-	private void renderGrid(GridPane grid, StackPane pane) {
+	private void renderGrid(GridPane grid, StackPane pane, Map<Integer, XY> squareCoords) {
         grid.setAlignment(Pos.CENTER);
+        grid.setStyle("-fx-background-image: url(\"" + ResourceLoader.image("sea_texture.jpg") + "\")");
+        grid.getStyleClass().add("styled-grid");
         pane.translateYProperty().bind(pane.getScene()
         								.heightProperty()
         								.subtract(headerBox.heightProperty())
@@ -220,12 +257,108 @@ public class gameSceneController {
 			square.widthProperty().bind(squareSize);													 
 			square.heightProperty().bind(squareSize);
 			square.setFill(Color.TRANSPARENT);
-			squaresMapping.put(square.hashCode(), new XY((i) % gameboardSize, Math.floorDiv(i, gameboardSize)));
+			squareCoords.put(square.hashCode(), new XY((i) % gameboardSize, Math.floorDiv(i, gameboardSize)));
 			GridPane.setHgrow(square, Priority.ALWAYS);
 			GridPane.setVgrow(square, Priority.ALWAYS);
 			
 			square.setOnMouseClicked((event) -> {
-				System.out.println(squaresMapping.get(event.getSource().hashCode()));
+				
+				Rectangle target = (Rectangle) event.getSource();
+				XY coord = squareCoords.get(target.hashCode());
+				//grids[0].getCellBounds(0, 0)
+				//System.out.println(squareBounds.getMinX());
+				int playerNum = game.playerInTurnValueProperty().get();
+				if ((squareCoords1.containsKey(target.hashCode()) && playerNum == 0) || 
+						(squareCoords2.containsKey(target.hashCode()) && playerNum == 1)) {
+					// Return. Player has clicked on his own grid
+					return;
+				}
+				
+				if (game.isShootable(coord)) {
+					// This coordinate is shootable.
+					
+					// Shoot
+					int result = game.shootTest(coord);
+					int boardNumber = game.getOpponent().ordinal();
+					
+					Bounds squareBounds = grids[boardNumber].getCellBounds(coord.getX(), coord.getY());
+					if (result == 0) {
+						// Missed
+						Circle circle = new Circle(0,0,10);
+						circle.translateXProperty().bind(squareSize.add(0.25).multiply(coord.getX()));
+						circle.translateYProperty().bind(squareSize.add(0.25).multiply(coord.getY()));
+						circle.scaleXProperty().bind(squareSize.divide(30));
+						circle.scaleYProperty().bind(squareSize.divide(30));
+						circle.centerXProperty().bind(squareSize.divide(2));
+						circle.centerYProperty().bind(squareSize.divide(2));
+						shots[boardNumber].getChildren().add(circle);
+						/*
+						if (boardNumber == 1) {
+							splashImageView1.setTranslateX(squareBounds.getMinX());
+							splashImageView1.setTranslateY(squareBounds.getMinY());
+							splashAnimation1.start();								
+						} else if (boardNumber == 0) {
+							splashImageView2.setTranslateX(squareBounds.getMinX());
+							splashImageView2.setTranslateY(squareBounds.getMinY());
+							splashAnimation2.start();
+						}
+						*/
+					} else if (result == 1) {
+						// Hit on target
+						//explosionImageView.setTranslateX(gameboardPane.getWidth() / gameboardSize * targetCoord.getX());
+						//explosionImageView.setTranslateY(gameboardPane.getHeight() / gameboardSize * targetCoord.getY());
+						//explosionAnimation.start();
+						Circle circle = new Circle(0,0,10);
+						circle.setFill(Color.RED);
+						circle.translateXProperty().bind(squareSize.add(0.25).multiply(coord.getX()));
+						circle.translateYProperty().bind(squareSize.add(0.25).multiply(coord.getY()));
+						circle.scaleXProperty().bind(squareSize.divide(30));
+						circle.scaleYProperty().bind(squareSize.divide(30));
+						circle.centerXProperty().bind(squareSize.divide(2));
+						circle.centerYProperty().bind(squareSize.divide(2));
+						shots[boardNumber].getChildren().add(circle);	
+					}
+
+					// Hide hovering squares
+					hoveringSquare1.setVisible(false);
+					hoveringSquare2.setVisible(false);
+				} else {
+					// This coordinate is NOT shootable
+					System.out.println(coord + " is NOT shootable.");
+				}
+			});
+			
+			square.setOnMouseMoved((event) -> {
+				int targetHash = event.getTarget().hashCode();
+				if (game.playerInTurnValueProperty().get() == 1 && squareCoords1.containsKey(targetHash)) {
+					// On grid 1
+
+					Rectangle target = (Rectangle) event.getTarget();
+					XY coord = squareCoords1.get(targetHash);		
+					if (game.isShootable(coord)) {
+						hoveringSquare1.setFill(transparentGreen);
+					} else {
+						hoveringSquare1.setFill(transparentRed);						
+					}
+
+					Bounds squareBounds = grids[0].getCellBounds(coord.getX(), coord.getY());
+					hoveringSquare1.setTranslateX(squareBounds.getMinX());
+					hoveringSquare1.setTranslateY(squareBounds.getMinY());
+					hoveringSquare1.setVisible(true);
+				} else if (game.playerInTurnValueProperty().get() == 0 && squareCoords2.containsKey(targetHash)) {
+					// On grid 2
+					XY coord = squareCoords2.get(targetHash);		
+					Rectangle target = (Rectangle) event.getTarget();
+					if (game.isShootable(coord)) {
+						hoveringSquare2.setFill(transparentGreen);
+					} else {
+						hoveringSquare2.setFill(transparentRed);						
+					}
+					Bounds squareBounds = grids[1].getCellBounds(coord.getX(), coord.getY());
+					hoveringSquare2.setTranslateX(squareBounds.getMinX());
+					hoveringSquare2.setTranslateY(squareBounds.getMinY());
+					hoveringSquare2.setVisible(true);				
+				}
 			});
 			grid.add(square, (i) % gameboardSize, Math.floorDiv(i, gameboardSize),1,1);
 		}
