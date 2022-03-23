@@ -1,6 +1,7 @@
 package fi.utu.tech.gui.javafx;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,7 +19,7 @@ public class Sprite extends AnimationTimer {
     private int repeatCounter;
     private int currentFrame = 0;
     private long lastFrame = 0;
-
+    private SimpleBooleanProperty isPlaying = new SimpleBooleanProperty(false);
     
     public Sprite(ImageView imageView, Image image, int columns, int rows, int frameWidth,
     		int frameHeight, float framesPerSecond, int repeat) {
@@ -38,6 +39,7 @@ public class Sprite extends AnimationTimer {
     
     @Override
     public void start() {
+    	isPlaying.set(true);
         lastFrame = System.nanoTime();
         imageView.setVisible(true);
     	super.start();
@@ -47,8 +49,9 @@ public class Sprite extends AnimationTimer {
     public void handle(long now) {
     	if (repeatCounter == 0) {
             this.repeatCounter = repeat;
-    		this.stop();
             imageView.setVisible(false);
+            this.isPlaying.set(false);
+    		this.stop();
     		return;
     	}
     	
@@ -82,4 +85,8 @@ public class Sprite extends AnimationTimer {
     	frameWidth *= frameWidth;
     	frameHeight *= frameHeight;
     }
+    
+    public SimpleBooleanProperty isPlayingProperty() {
+		return isPlaying;
+	}
 }
