@@ -20,7 +20,13 @@ public class MainApp extends Application {
 
         Scene scene = new Scene(loader.root);
         scene.getStylesheets().add(createStyle());
+        loader.controller.init(scene);
 
+		// Minimum stage size
+        stage.setMinWidth(600);
+        stage.setMinHeight(300);
+        stage.setWidth(800);
+        stage.setHeight(450);
         stage.setTitle("Laivanupotus");
         stage.setScene(scene);
         stage.show();
