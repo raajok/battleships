@@ -32,8 +32,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
-import java.util.Queue;
-
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
 	private Group[] elements = {new Group(), new Group()};
