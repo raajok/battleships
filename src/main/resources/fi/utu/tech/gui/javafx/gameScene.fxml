@@ -23,7 +23,7 @@
                <children>
                   <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="20.0" AnchorPane.leftAnchor="0.0">
                      <children>
-                        <Button fx:id="switchTurn1Btn" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#handleSwitchTurn1BtnClick" text="Vuoron vaihto" />
+                        <Button fx:id="switchTurn1Btn" alignment="BASELINE_LEFT" disable="true" mnemonicParsing="false" onAction="#handleSwitchTurn1BtnClick" text="Vuoron vaihto" />
                         <Label fx:id="player1NameText" alignment="BOTTOM_CENTER" text="Pelaaja 1">
                            <HBox.margin>
                               <Insets />
@@ -34,7 +34,7 @@
                   <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="20.0" AnchorPane.rightAnchor="0.0">
                      <children>
                         <Label fx:id="player2NameText" alignment="BOTTOM_CENTER" text="Pelaaja 2" />
-                        <Button fx:id="switchTurn2Btn" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#handleSwitchTurn2BtnClick" text="Vuoron vaihto" />
+                        <Button fx:id="switchTurn2Btn" alignment="BASELINE_LEFT" disable="true" mnemonicParsing="false" onAction="#handleSwitchTurn2BtnClick" text="Vuoron vaihto" />
                      </children>
                   </HBox>
                </children>

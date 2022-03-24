@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -79,6 +80,7 @@ public class gameSceneController {
 	private Rectangle hoveringSquare2;
 	private Color transparentRed;
 	private Color transparentGreen;
+	private SimpleBooleanProperty turnIsOver = new SimpleBooleanProperty(false);
 	
 	public gameSceneController() {
 		Double alpha = .45; // 50% transparent
@@ -164,17 +166,31 @@ public class gameSceneController {
 	}
 	
 	public void init(Scene scene) {
-		// Binding for "player in turn -info"
-		turnInfoText.textProperty().bind(Bindings.createStringBinding(() -> 
-											String.format("Pelaajan '%s' vuoro ampua.",
-													game.playerInTurnNameProperty().get()), 
-											game.playerInTurnNameProperty()));
-
+		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
+		
+		// Binding of squareSize to scene size
 		squareSize.bind(Bindings.min(scene.widthProperty().divide(2).subtract(gameboardSize*5),
 				scene.heightProperty()
 				.subtract(headerBox.heightProperty())
 				.subtract(gameboardSize*5)
 				).divide(gameboardSize));
+		
+		// Bindings for Turn Switching buttons
+		turnIsOver.addListener((obj, oldVal, newVal) -> {
+			if (newVal == true) {
+				if (game.playerInTurnValueProperty().get() == 0) {
+					switchTurn1Btn.setDisable(true);
+					switchTurn2Btn.setDisable(false);
+				} else if (game.playerInTurnValueProperty().get() == 1) {
+					switchTurn1Btn.setDisable(false);
+					switchTurn2Btn.setDisable(true);
+				}
+			} else {
+				System.out.println("works");
+				switchTurn1Btn.setDisable(true);
+				switchTurn2Btn.setDisable(true);
+			}
+		});
 		
 		// Create a hovering transparent red square as a default color
 		hoveringSquare1 = createTransparentSquare(transparentRed);
@@ -186,16 +202,14 @@ public class gameSceneController {
 		game.newGameTest("name1", "name2", gameboardSize);
 		
 		// Pop Up Dialog Window for player change
-		changePlayerAlert.setTitle("Toisen pelaajan vuoro.");
-		changePlayerAlert.setHeaderText("Pelaajan vaihto.");
-		changePlayerAlert.contentTextProperty().bind(turnInfoText.textProperty());
+		changePlayerAlert.setTitle("Vuoron vaihto.");
+		changePlayerAlert.headerTextProperty().bind(Bindings.createStringBinding(() ->
+				String.format("Kutsu pelaaja %s paikalle.", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
+		changePlayerAlert.setContentText("Anna vuoro toiselle pelaajalle.");;
 		
 		// Render the grids
 		renderGrid(grids[0], gridStack1, squareCoords1);
 		renderGrid(grids[1], gridStack2, squareCoords2);
-		
-		//shots[game.playerInTurnValueProperty().get()].visibleProperty().bind;
-		//shots[game.getOpponent().ordinal()].setVisible(true);
 		
 		// Panel1 elements
 		elements[0].getChildren().addAll(grids[0],
@@ -262,6 +276,11 @@ public class gameSceneController {
 			GridPane.setVgrow(square, Priority.ALWAYS);
 			
 			square.setOnMouseClicked((event) -> {
+				/*
+				 * This function is called when the user clicks on a square of the gameboard.
+				 * It converts the mouse coordinates to board target coordinates, shoots to that target if possible, and updates 
+				 * the GUI accordingly.
+				 */
 				
 				Rectangle target = (Rectangle) event.getSource();
 				XY coord = squareCoords.get(target.hashCode());
@@ -284,6 +303,7 @@ public class gameSceneController {
 					Bounds squareBounds = grids[boardNumber].getCellBounds(coord.getX(), coord.getY());
 					if (result == 0) {
 						// Missed
+						turnInfoText.setText("Ammuit ohi. Anna vuoro toiselle.");
 						Circle circle = new Circle(0,0,10);
 						circle.translateXProperty().bind(squareSize.add(0.25).multiply(coord.getX()));
 						circle.translateYProperty().bind(squareSize.add(0.25).multiply(coord.getY()));
@@ -305,6 +325,7 @@ public class gameSceneController {
 						*/
 					} else if (result == 1) {
 						// Hit on target
+						turnInfoText.setText("Osuit! Anna vuoro toiselle.");
 						//explosionImageView.setTranslateX(gameboardPane.getWidth() / gameboardSize * targetCoord.getX());
 						//explosionImageView.setTranslateY(gameboardPane.getHeight() / gameboardSize * targetCoord.getY());
 						//explosionAnimation.start();
@@ -319,6 +340,8 @@ public class gameSceneController {
 						shots[boardNumber].getChildren().add(circle);	
 					}
 
+					turnIsOver.set(true);
+					
 					// Hide hovering squares
 					hoveringSquare1.setVisible(false);
 					hoveringSquare2.setVisible(false);
@@ -329,9 +352,12 @@ public class gameSceneController {
 			});
 			
 			square.setOnMouseMoved((event) -> {
+				// Show a hovering square if the mouse is placed over a grid
+				
+				if (turnIsOver.get()) { return; }; // When turn is over, do not display hovering squares
 				int targetHash = event.getTarget().hashCode();
 				if (game.playerInTurnValueProperty().get() == 1 && squareCoords1.containsKey(targetHash)) {
-					// On grid 1
+					// If on grid 1
 
 					Rectangle target = (Rectangle) event.getTarget();
 					XY coord = squareCoords1.get(targetHash);		
@@ -346,7 +372,7 @@ public class gameSceneController {
 					hoveringSquare1.setTranslateY(squareBounds.getMinY());
 					hoveringSquare1.setVisible(true);
 				} else if (game.playerInTurnValueProperty().get() == 0 && squareCoords2.containsKey(targetHash)) {
-					// On grid 2
+					// If on grid 2
 					XY coord = squareCoords2.get(targetHash);		
 					Rectangle target = (Rectangle) event.getTarget();
 					if (game.isShootable(coord)) {
@@ -365,27 +391,30 @@ public class gameSceneController {
 		grid.setGridLinesVisible(true);
 	}
 	
-	/**
-	 * The handleGameboardClick function is called when the user clicks on a square of the gameboard.
-	 * It converts the mouse coordinates to board target coordinates, shoots to that target, and updates 
-	 * the GUI accordingly.
-	 * 
-	 * A thread object is created that is used to wait for a certain amount of time.
-	 * Finally, a dialog window is displayed to inform players to switch turns.
-	 * 
-	 * @param event Used to Get the coordinates of the mouse click.
-	 * 
-	 * @doc-author j-code
-	 */
-	
 	@FXML
 	public void handleSwitchTurn1BtnClick(ActionEvent event) {
-		
+		turnIsOver.set(false);
+		gridStack1.setVisible(false);
+		gridStack2.setVisible(false);
+		turnInfoText.setText("Vuoron vaihto.");
+		changePlayerAlert.showAndWait();
+		turnInfoText.setText(String.format("Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
+		//shots[game.playerInTurnNameProperty().get()].setVisible(true);
+		//shots[game.playerInTurnNameProperty().get()].setVisible(false);
+		gridStack1.setVisible(true);
+		gridStack2.setVisible(true);
 	}
 	
 	@FXML
 	public void handleSwitchTurn2BtnClick(ActionEvent event) {
-		
+		turnIsOver.set(false);
+		gridStack1.setVisible(false);
+		gridStack2.setVisible(false);
+		turnInfoText.setText("Vuoron vaihto.");
+		changePlayerAlert.showAndWait();
+		turnInfoText.setText(String.format("Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
+		gridStack1.setVisible(true);
+		gridStack2.setVisible(true);
 	}
 
 }
