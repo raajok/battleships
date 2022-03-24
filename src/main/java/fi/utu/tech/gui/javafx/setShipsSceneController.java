@@ -88,14 +88,14 @@ public class setShipsSceneController {
 	private ImageView currentlyMoved = null;
 	private List<ImageView> addedShips = new ArrayList<>();;
 	private double rotation = 0.0;
-	private SimpleIntegerProperty battleshipAmountProperty = new SimpleIntegerProperty(game.shipCountProperties()[1].get());
-	private SimpleIntegerProperty carrierAmountProperty = new SimpleIntegerProperty(game.shipCountProperties()[0].get());
-	private SimpleIntegerProperty cruiserAmountProperty = new SimpleIntegerProperty(game.shipCountProperties()[2].get());
-	private SimpleIntegerProperty destroyerAmountProperty = new SimpleIntegerProperty(game.shipCountProperties()[4].get());
-	private SimpleIntegerProperty submarineAmountProperty = new SimpleIntegerProperty(game.shipCountProperties()[3].get());
+	private SimpleIntegerProperty battleshipAmountProperty = new SimpleIntegerProperty();
+	private SimpleIntegerProperty carrierAmountProperty = new SimpleIntegerProperty();
+	private SimpleIntegerProperty cruiserAmountProperty = new SimpleIntegerProperty(); 
+	private SimpleIntegerProperty destroyerAmountProperty = new SimpleIntegerProperty();
+	private SimpleIntegerProperty submarineAmountProperty = new SimpleIntegerProperty(); 
 
 	@FXML
-	public void initialize() {
+	public void initialize() {	
 		
 		this.battleshipImage = new Image(getClass().getResource("Battleship_placeholder.png").toExternalForm());
 		battleship.setImage(this.battleshipImage);
@@ -260,7 +260,7 @@ public class setShipsSceneController {
 
 	// Draw gameboard
 	public void drawBoard() {
-		gameboardSize = game.boardSizeProperty().get();
+		gameboardSize = this.game.boardSizeProperty().get();
 		for (int i = 0; i < gameboardSize + 1; i++) {
 
 			// Vertical lines
@@ -279,6 +279,12 @@ public class setShipsSceneController {
 			boardPane.getChildren().add(horizontalLine);
 			
 		}
+		this.battleshipAmountProperty.set(this.game.shipCountProperties()[1].get());
+		this.carrierAmountProperty.set(this.game.shipCountProperties()[0].get());
+		this.cruiserAmountProperty.set(this.game.shipCountProperties()[2].get());
+		this.destroyerAmountProperty.set(this.game.shipCountProperties()[4].get());
+		this.submarineAmountProperty.set(this.game.shipCountProperties()[3].get());
+		
 	}
 
 	// Calculate direction of ships rotation

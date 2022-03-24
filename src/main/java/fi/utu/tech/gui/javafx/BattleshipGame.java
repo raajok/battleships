@@ -155,7 +155,8 @@ public class BattleshipGame {
 						)))));
 		settingsReady.bind(
 			 Bindings.when(
-					boardSizeProperty.multiply(boardSizeProperty).greaterThanOrEqualTo(shipSums.multiply(2)))
+					boardSizeProperty.multiply(boardSizeProperty).greaterThanOrEqualTo(shipSums.multiply(2))
+					.and(shipSums.greaterThan(0)))
 			 		.then(true)
 			 		.otherwise(false));
 	}
