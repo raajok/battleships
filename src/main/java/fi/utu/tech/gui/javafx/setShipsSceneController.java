@@ -166,7 +166,6 @@ public class setShipsSceneController {
 	void printCoords(MouseEvent e) {
 		int rectangleX = (int) Math.floor(e.getX() / boardPane.getWidth() * this.gameboardSize);
 		int rectangleY = (int) Math.floor(e.getY() / boardPane.getHeight() * this.gameboardSize);
-		playerText.setText("x:" + e.getX() + " y:" + e.getY() + " ruutu: (" + rectangleX + " : " + rectangleY + ")");
 	}
 
 	@FXML
@@ -215,7 +214,6 @@ public class setShipsSceneController {
 		this.currentlyMoved.setLayoutY(e.getSceneY() - offsetY);
 		int rectangleX = (int) Math.floor((e.getSceneX() - 7) / boardPane.getWidth() * this.gameboardSize);
 		int rectangleY = (int) Math.floor((e.getSceneY() - 100) / boardPane.getHeight() * this.gameboardSize);
-		playerText.setText(" ruutu: (" + rectangleX + " : " + rectangleY + ")");
 	}
 	
 	
@@ -285,6 +283,8 @@ public class setShipsSceneController {
 		this.destroyerAmountProperty.set(this.game.shipCountProperties()[4].get());
 		this.submarineAmountProperty.set(this.game.shipCountProperties()[3].get());
 		
+		playerText.setText("Pelaajan " + this.game.getPlayerNamesProperty()[this.game.getPlayerInTurn().ordinal()].getValue() 
+				+ " vuoro asettaa laivat");
 	}
 
 	// Calculate direction of ships rotation
