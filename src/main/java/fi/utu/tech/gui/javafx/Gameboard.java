@@ -80,19 +80,19 @@ public class Gameboard {
 			case RIGHT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()+i][coord.getY()] = 1;
-				}
+				} break;
 			case LEFT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()-i][coord.getY()] = 1;
-				}
+				} break;
 			case UP:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()][coord.getY()-i] = 1;
-				}
+				} break;
 			case DOWN:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()][coord.getY()+i] = 1;
-				}
+				} break;
 			}
 		}
 		
