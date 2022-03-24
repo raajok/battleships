@@ -97,22 +97,25 @@ public class BattleshipGame {
 		 this.playerInTurn = Player.PLAYER1;
 	}
 	
-	public void newGameTest(String name1, String name2, int bSize) {
+	public void newGameTest(int bSize, int[]shipCounts) {
 		// ONLY FOR TESTING. REMOVE THIS
-		
-		int[]shipCounts = {shipCountProperties[0].get(),
-				shipCountProperties[1].get(),
-				shipCountProperties[2].get(),
-				shipCountProperties[3].get(),
-				shipCountProperties[4].get()				
-		};
 		
 		// Create and initialize the boards
 		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(bSize,shipCounts);
 		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(bSize,shipCounts);
 		
-		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(2,2), Orientation.RIGHT));
-		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(8,8), Orientation.LEFT));
+		// Set some test ships
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.CARRIER.instantiate(new XY(0,0), Orientation.DOWN));
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(1,0), Orientation.DOWN));
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(2,0), Orientation.DOWN));
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,0), Orientation.DOWN));
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.DESTROYER.instantiate(new XY(4,0), Orientation.DOWN));
+		
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CARRIER.instantiate(new XY(0,0), Orientation.DOWN));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(1,0), Orientation.DOWN));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(2,0), Orientation.DOWN));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,0), Orientation.DOWN));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.DESTROYER.instantiate(new XY(4,0), Orientation.DOWN));
 				 
 		// Player 1 will start the game
 		this.playerInTurn = Player.PLAYER1;
@@ -230,8 +233,6 @@ public class BattleshipGame {
 	}
 	
 	public Collection getShips(Player player) {
-		// TODO
-		//return boards[player.ordinal()].getShips();
-		return null;
+		return boards[player.ordinal()].getShips();
 	}
 }

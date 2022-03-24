@@ -1,6 +1,8 @@
 package fi.utu.tech.gui.javafx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -15,6 +17,7 @@ public class Gameboard {
 		// 2: empty, hit
 		private int[][] fieldStatus;
 		private int HitsRemaining;
+		private Collection<Ship> ships = new ArrayList<Ship>();
 		
 		private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
 
@@ -177,11 +180,16 @@ public class Gameboard {
 		}
 
 		public boolean addShip(Ship ship) {
-			return false;
+			ships.add(ship);
+			return true;
 		}
 		
 		public int[][] getBoard() {
 			return this.fieldStatus;
+		}
+
+		public Collection getShips() {
+			return ships;
 		}
 		
 }

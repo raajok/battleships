@@ -30,6 +30,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
+
 import java.util.Queue;
 
 public class gameSceneController {
@@ -144,6 +146,10 @@ public class gameSceneController {
 	}
 	
 	public void init(Scene scene) {
+		// Create a test game			REMOVE THIS
+		game.newGameTest(gameboardSize, new int[] {1,1,1,1,1});
+
+		// Turn information text binding
 		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
 		
 		// Binding of squareSize to scene size
@@ -179,8 +185,6 @@ public class gameSceneController {
 		foreground[0].getChildren().add(hoveringSquare1);
 		foreground[1].getChildren().add(hoveringSquare2);
 		
-		// Create a test game
-		game.newGameTest("name1", "name2", gameboardSize);
 		
 		// Pop Up Dialog Window for player change
 		changePlayerAlert.setTitle("Vuoron vaihto.");
@@ -194,6 +198,7 @@ public class gameSceneController {
 		
 		// Panel1 elements
 		elements[0].getChildren().addAll(grids[0],
+										 ships[0],
 										 shots[1],
 										 explosionImageView1,
 										 splashImageView1,
@@ -202,6 +207,7 @@ public class gameSceneController {
 		
 		// Panel2 elements
 		elements[1].getChildren().addAll(grids[1],
+				 						 ships[1],
 										 shots[0],
 										 explosionImageView2,
 										 splashImageView2,
@@ -225,11 +231,25 @@ public class gameSceneController {
 		});
 	}
 	
-	// Helper method for loading ship images
+	// Method for loading ship images
 	private Collection<ImageView> loadShipImages(Collection<Ship> ships) {
 		Collection<ImageView> shipImages = new ArrayDeque<ImageView>();
 		for (Ship ship: ships) {
-			ImageView shipImage = new ImageView(new Image(getImagePath(ship.getType())));
+			Image img = new Image(getImagePath(ship.getType()));
+			ImageView shipImage = new ImageView(img);
+			
+			Rotate rotate = new Rotate(ship.getOrientation().getDegrees());
+			rotate.pivotXProperty().bind(squareSize.divide(2));
+			rotate.pivotYProperty().bind(squareSize.divide(2));
+			shipImage.getTransforms().add(rotate);
+			shipImage.setPreserveRatio(true);
+			shipImage.fitWidthProperty().bind(squareSize);
+			shipImage.translateXProperty().bind(squareSize.add(0.25)
+					.multiply(ship.getLocation().getX()));
+			shipImage.translateYProperty().bind(squareSize.add(0.25)
+					.multiply(ship.getLocation().getY())
+					);
+			shipImage.setMouseTransparent(true);
 			shipImages.add(shipImage);
 		}
 		return shipImages;
@@ -238,11 +258,11 @@ public class gameSceneController {
 	// Helper method for getting image paths
 	private String getImagePath(ShipType shipType) {
 		switch (shipType) {
-			case CARRIER: return ResourceLoader.image("/Carrier/ShipCarrierHull.png");
-			case BATTLESHIP: return ResourceLoader.image("/Battleship/ShipBattleshipHull.png");
-			case CRUISER: return ResourceLoader.image("/Cruiser/ShipCruiserHull.png");
-			case SUBMARINE: return ResourceLoader.image("/Submarine/ShipSubmarineHull.png");
-			case DESTROYER: return ResourceLoader.image("/Destroyer/ShipDestroyerHull.png");
+			case CARRIER: return ResourceLoader.image("ShipCarrierHull.png");
+			case BATTLESHIP: return ResourceLoader.image("ShipBattleshipHull.png");
+			case CRUISER: return ResourceLoader.image("ShipCruiserHull.png");
+			case SUBMARINE: return ResourceLoader.image("ShipSubmarineHull.png");
+			case DESTROYER: return ResourceLoader.image("ShipDestroyerHull.png");
 			default: return null;
 		}
 	}
