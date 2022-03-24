@@ -5,98 +5,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-class Gameboard {
-	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
-	private int nHitsRemaining;
-	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
-	private int[][] board;
 
-	public Gameboard(String playerName, int boardSize, SimpleIntegerProperty[] shipCounts) {
-		// TODO Auto-generated constructor stub
-		this.board = new int[boardSize][boardSize];
-		
-		for (int x = 0; x < boardSize; x++) {
-			for (int y = 0; y < boardSize; y++) {
-				board[x][y] = 0;
-			}
-		}
-	}
-	
-	public XY getNearestCoordinate(XY mouseXY) {
-		// Deprecated
-		return null;
-	}
-	
-	public Ship createShip(ShipType shipType) {
-		// STUB
-		return null;
-	}
-	
-	public void setShip(Ship ship, XY coord) {
-		// STUB
-	}
-	
-	public Boolean isShootable(XY coord) {
-		// STUB
-		return board[coord.getX()][coord.getY()] >= 0? true: false;
-	}
-	
-	public Boolean isHitSuccessful(XY coord) {
-		// STUB
-		return board[coord.getX()][coord.getY()] == 1? true: false;
-	}
-	
-	public void setHit(XY coord) {
-		// STUB
-		if (isShootable(coord)) {
-			if (isHitSuccessful(coord)) {
-				// Target is hit
-				board[coord.getX()][coord.getY()] = -2;
-			} else {
-				// A miss
-				board[coord.getX()][coord.getY()] = -1;
-			}
-		} else {
-			// target not shootable
-		}
-		
-	}
-	
-	public void reset() {
-		// STUB
-	}
-	
-	public int getnHitsRemaining() {
-		// STUB
-		return nHitsRemaining;
-	}
-	
-	public void setnHitsRemaining(int nHitsRemaining) {
-		// STUB
-		this.nHitsRemaining = nHitsRemaining;
-	}
-	
-	public boolean addShip(Ship ship) {
-		// STUB
-		return true;
-	}
-	
-	public boolean moveShip(Ship ship, XY toLocation) {
-		// STUB
-		return true;
-	}
-	
-	public SimpleBooleanProperty readyProperty() {
-		// STUB
-		return this.ready;
-	}
 
-	public int[][] getBoard() {
-		// TODO Auto-generated method stub
-		return board;
-	}
-	
-}
+
 
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
@@ -148,12 +59,25 @@ public class BattleshipGame {
 		 **/
 		
 		 // Create and initialize the boards
-		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER1.ordinal()].toString(),
-				 											   boardSizeProperty.get(),
-				 											   shipCountProperties);
-		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER2.ordinal()].toString(),
-															   boardSizeProperty.get(),
-															   shipCountProperties);
+
+		
+		
+		int[]shipCounts = {shipCountProperties[0].get(),
+						shipCountProperties[1].get(),
+						shipCountProperties[2].get(),
+						shipCountProperties[3].get(),
+						shipCountProperties[4].get()				
+		};
+	
+		// Create and initialize the boards
+		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(
+                                                           boardSizeProperty.get(),
+                                                           shipCounts);
+		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(
+                                                          boardSizeProperty.get(),
+                                                          shipCounts);
+		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
+		 //this.shipCounts = shipCounts;
 		 
 		 // Create bindings for when boards are ready
 		 if (this.gameReady.isBound()) this.gameReady.unbind(); // Remove old bindings
