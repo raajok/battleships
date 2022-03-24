@@ -399,8 +399,8 @@ public class gameSceneController {
 		turnInfoText.setText("Vuoron vaihto.");
 		changePlayerAlert.showAndWait();
 		turnInfoText.setText(String.format("Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
-		//shots[game.playerInTurnNameProperty().get()].setVisible(true);
-		//shots[game.playerInTurnNameProperty().get()].setVisible(false);
+		shots[game.playerInTurnValueProperty().get()].setVisible(true);
+		shots[game.getOpponent().ordinal()].setVisible(false);
 		gridStack1.setVisible(true);
 		gridStack2.setVisible(true);
 	}
@@ -413,6 +413,8 @@ public class gameSceneController {
 		turnInfoText.setText("Vuoron vaihto.");
 		changePlayerAlert.showAndWait();
 		turnInfoText.setText(String.format("Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
+		shots[game.playerInTurnValueProperty().get()].setVisible(true);
+		shots[game.getOpponent().ordinal()].setVisible(false);
 		gridStack1.setVisible(true);
 		gridStack2.setVisible(true);
 	}
