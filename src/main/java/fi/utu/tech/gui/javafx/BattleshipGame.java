@@ -1,6 +1,8 @@
 package fi.utu.tech.gui.javafx;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 
 import javafx.beans.binding.Bindings;
@@ -225,5 +227,11 @@ public class BattleshipGame {
 		
 	public SimpleIntegerProperty playerInTurnValueProperty() {
 		return playerInTurnValueProperty;
+	}
+	
+	public Collection getShips(Player player) {
+		// TODO
+		//return boards[player.ordinal()].getShips();
+		return null;
 	}
 }

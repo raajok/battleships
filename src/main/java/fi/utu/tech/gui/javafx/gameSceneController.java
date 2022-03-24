@@ -1,69 +1,45 @@
 package fi.utu.tech.gui.javafx;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanExpression;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
-import javafx.stage.Stage;
+import java.util.Queue;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
 	private Group[] elements = {new Group(), new Group()};
 	private Group[] foreground = {new Group(), new Group()};
 	private Group[] shots = {new Group(), new Group()};
+	private Group[] ships = {new Group(), new Group()};
 	private int gameboardSize = 10;
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
-	private ImageView seaImageView1;
-	private ImageView seaImageView2;
 	private ImageView explosionImageView1;
 	private ImageView splashImageView1;
 	private ImageView explosionImageView2;
@@ -82,10 +58,50 @@ public class gameSceneController {
 	private Color transparentGreen;
 	private SimpleBooleanProperty turnIsOver = new SimpleBooleanProperty(false);
 	
+	@FXML
+	private Text turnInfoText;
+
+	@FXML
+	private Label player1NameText;
+	
+	@FXML
+	private Label player2NameText;
+	
+	@FXML
+	private Button switchTurn1Btn;
+	
+	@FXML
+	private Button switchTurn2Btn;
+	
+	@FXML
+	private VBox headerBox;
+	
+	@FXML
+	private VBox gameboardVBox1;
+	
+	@FXML
+	private VBox gameboardVBox2;
+	
+	@FXML
+	private AnchorPane playerInfoPane;
+	
+	@FXML
+	private StackPane gridStack1;
+	
+	@FXML
+	private StackPane gridStack2;
+	
+	@FXML
+	private void initialize() {
+		
+	}
+	
 	public gameSceneController() {
-		Double alpha = .45; // 50% transparent
+		// Colors for hovering squares
+		Double alpha = .45; // 45% transparent
 		transparentRed = new Color(1, 0, 00, alpha);
 		transparentGreen = new Color(0, .8, 00, alpha);
+		
 		// Panel1 animations
 		explosionImageView1 = new ImageView();
 		explosionAnimation1 = new Sprite(explosionImageView1,
@@ -127,44 +143,6 @@ public class gameSceneController {
 										1); // Repeats
 	}
 	
-	@FXML
-	private Text turnInfoText;
-
-	@FXML
-	private Label player1NameText;
-	
-	@FXML
-	private Label player2NameText;
-	
-	@FXML
-	private Button switchTurn1Btn;
-	
-	@FXML
-	private Button switchTurn2Btn;
-	
-	@FXML
-	private VBox headerBox;
-	
-	@FXML
-	private VBox gameboardVBox1;
-	
-	@FXML
-	private VBox gameboardVBox2;
-	
-	@FXML
-	private AnchorPane playerInfoPane;
-	
-	@FXML
-	private StackPane gridStack1;
-	
-	@FXML
-	private StackPane gridStack2;
-	
-	@FXML
-	private void initialize() {
-		
-	}
-	
 	public void init(Scene scene) {
 		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
 		
@@ -190,6 +168,10 @@ public class gameSceneController {
 				switchTurn2Btn.setDisable(true);
 			}
 		});
+		
+		// Load ship images and add them to appropriate group
+		ships[0].getChildren().addAll(loadShipImages(game.getShips(Player.PLAYER1)));
+		ships[1].getChildren().addAll(loadShipImages(game.getShips(Player.PLAYER2)));
 		
 		// Create a hovering transparent red square as a default color
 		hoveringSquare1 = createTransparentSquare(transparentRed);
@@ -243,6 +225,28 @@ public class gameSceneController {
 		});
 	}
 	
+	// Helper method for loading ship images
+	private Collection<ImageView> loadShipImages(Collection<Ship> ships) {
+		Collection<ImageView> shipImages = new ArrayDeque<ImageView>();
+		for (Ship ship: ships) {
+			ImageView shipImage = new ImageView(new Image(getImagePath(ship.getType())));
+			shipImages.add(shipImage);
+		}
+		return shipImages;
+	}
+	
+	// Helper method for getting image paths
+	private String getImagePath(ShipType shipType) {
+		switch (shipType) {
+			case CARRIER: return ResourceLoader.image("/Carrier/ShipCarrierHull.png");
+			case BATTLESHIP: return ResourceLoader.image("/Battleship/ShipBattleshipHull.png");
+			case CRUISER: return ResourceLoader.image("/Cruiser/ShipCruiserHull.png");
+			case SUBMARINE: return ResourceLoader.image("/Submarine/ShipSubmarineHull.png");
+			case DESTROYER: return ResourceLoader.image("/Destroyer/ShipDestroyerHull.png");
+			default: return null;
+		}
+	}
+	
 	private Rectangle createTransparentSquare(Color color) {
 		Rectangle square = new Rectangle(squareSize.get(), squareSize.get());
 		square.setFill(color);
@@ -291,6 +295,10 @@ public class gameSceneController {
 					// Return. Player has clicked on his own grid
 					return;
 				}
+				
+
+				// If player's turn is over do not allow a change to shoot
+				if (turnIsOver.get()) { return; }
 				
 				if (game.isShootable(coord)) {
 					// This coordinate is shootable.
@@ -357,15 +365,12 @@ public class gameSceneController {
 				int targetHash = event.getTarget().hashCode();
 				if (game.playerInTurnValueProperty().get() == 1 && squareCoords1.containsKey(targetHash)) {
 					// If on grid 1
-
-					Rectangle target = (Rectangle) event.getTarget();
 					XY coord = squareCoords1.get(targetHash);		
 					if (game.isShootable(coord)) {
 						hoveringSquare1.setFill(transparentGreen);
 					} else {
 						hoveringSquare1.setFill(transparentRed);						
 					}
-
 					Bounds squareBounds = grids[0].getCellBounds(coord.getX(), coord.getY());
 					hoveringSquare1.setTranslateX(squareBounds.getMinX());
 					hoveringSquare1.setTranslateY(squareBounds.getMinY());
@@ -373,7 +378,6 @@ public class gameSceneController {
 				} else if (game.playerInTurnValueProperty().get() == 0 && squareCoords2.containsKey(targetHash)) {
 					// If on grid 2
 					XY coord = squareCoords2.get(targetHash);		
-					Rectangle target = (Rectangle) event.getTarget();
 					if (game.isShootable(coord)) {
 						hoveringSquare2.setFill(transparentGreen);
 					} else {
@@ -389,33 +393,32 @@ public class gameSceneController {
 		}
 		grid.setGridLinesVisible(true);
 	}
-	
-	@FXML
-	public void handleSwitchTurn1BtnClick(ActionEvent event) {
+
+	private void handleSwitchTurnBtnClick() {
+		// Request the player to give the turn to another player.
 		turnIsOver.set(false);
 		gridStack1.setVisible(false);
 		gridStack2.setVisible(false);
 		turnInfoText.setText("Vuoron vaihto.");
 		changePlayerAlert.showAndWait();
+		
+		// The turn has been given
 		turnInfoText.setText(String.format("Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
 		shots[game.playerInTurnValueProperty().get()].setVisible(true);
 		shots[game.getOpponent().ordinal()].setVisible(false);
 		gridStack1.setVisible(true);
 		gridStack2.setVisible(true);
+	}
+	
+	@FXML
+	public void handleSwitchTurn1BtnClick(ActionEvent event) {
+		handleSwitchTurnBtnClick();
 	}
 	
 	@FXML
 	public void handleSwitchTurn2BtnClick(ActionEvent event) {
-		turnIsOver.set(false);
-		gridStack1.setVisible(false);
-		gridStack2.setVisible(false);
-		turnInfoText.setText("Vuoron vaihto.");
-		changePlayerAlert.showAndWait();
-		turnInfoText.setText(String.format("Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
-		shots[game.playerInTurnValueProperty().get()].setVisible(true);
-		shots[game.getOpponent().ordinal()].setVisible(false);
-		gridStack1.setVisible(true);
-		gridStack2.setVisible(true);
+		handleSwitchTurnBtnClick();
 	}
+	
 
 }
