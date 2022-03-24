@@ -1,24 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.gameScene">
-   <center>
-      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-   </center>
-   <top>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
+<VBox alignment="TOP_CENTER" minHeight="400.0" minWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.gameSceneController">
+   <children>
+      <VBox fx:id="headerBox" alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Pelaajan (x) vuoro ampua">
+            <Text fx:id="turnInfoText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pelaajan (x) vuoro ampua">
                <font>
                   <Font size="24.0" />
                </font>
             </Text>
-            <Button fx:id="endGameButton" mnemonicParsing="false" onAction="#endGame" text="Lopeta peli" />
+            <AnchorPane fx:id="playerInfoPane">
+               <children>
+                  <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="20.0" AnchorPane.leftAnchor="0.0">
+                     <children>
+                        <Button fx:id="switchTurn1Btn" alignment="BASELINE_LEFT" disable="true" mnemonicParsing="false" onAction="#handleSwitchTurn1BtnClick" text="Vuoron vaihto" />
+                        <Label fx:id="player1NameText" alignment="BOTTOM_CENTER" text="Pelaaja 1">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="20.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Label fx:id="player2NameText" alignment="BOTTOM_CENTER" text="Pelaaja 2" />
+                        <Button fx:id="switchTurn2Btn" alignment="BASELINE_LEFT" disable="true" mnemonicParsing="false" onAction="#handleSwitchTurn2BtnClick" text="Vuoron vaihto" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <HBox alignment="TOP_CENTER">
+         <children>
+            <VBox fx:id="gameboardVBox1" alignment="CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane fx:id="gridStack1" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox fx:id="gameboardVBox1" alignment="CENTER" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane fx:id="gridStack2" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
          </children>
       </HBox>
-   </top>
-</BorderPane>
+   </children>
+</VBox>

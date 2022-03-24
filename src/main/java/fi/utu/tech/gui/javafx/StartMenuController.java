@@ -91,6 +91,12 @@ public class StartMenuController {
     	Platform.exit();
     }
     
+    public void startGame() {
+    	// TODO: check if ratio of board and ships is ok before allowing start button to be pressed
+    	
+    	game.newGame();
+    }
+    
     public Button getStartButton() {
     	return startButton;
     }

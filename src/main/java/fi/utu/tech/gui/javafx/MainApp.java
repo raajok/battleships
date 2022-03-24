@@ -11,7 +11,6 @@ import javafx.stage.Stage;
  * passes information from a scene to another.
  */
 public class MainApp extends Application {
-
 	private static BattleshipGame game = new BattleshipGame();
     public static BattleshipGame getGame() { return MainApp.game; };
 	
@@ -22,8 +21,6 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
-    	game = new BattleshipGame();
-    	
     	// Loaders for every scene
         ResourceLoader<Parent, StartMenuController> startMenuLoader = new ResourceLoader<>("startMenuScene.fxml");
         ResourceLoader<Parent, setShipsSceneController> setShipsLoader = new ResourceLoader<>("setShipsScene.fxml");
@@ -57,7 +54,16 @@ public class MainApp extends Application {
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
         	stage.setScene(startMenuScene);
         });
+        ResourceLoader<Parent, gameSceneController> loader = new ResourceLoader<>("gameScene.fxml");
 
+
+        Scene scene = new Scene(loader.root);
+        scene.getStylesheets().add(createStyle());
+        loader.controller.init(scene);
+
+		// Minimum stage size
+        stage.setMinWidth(600);
+        stage.setMinHeight(300);
         stage.setTitle("Laivanupotus");
         stage.setScene(startMenuScene);
         stage.show();
