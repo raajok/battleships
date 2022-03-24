@@ -1,6 +1,9 @@
 package fi.utu.tech.gui.javafx;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.beans.binding.Bindings;
@@ -27,12 +30,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import java.util.Queue;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
 	private Group[] elements = {new Group(), new Group()};
 	private Group[] foreground = {new Group(), new Group()};
 	private Group[] shots = {new Group(), new Group()};
+	private Group[] ships = {new Group(), new Group()};
 	private int gameboardSize = 10;
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
 	private ImageView explosionImageView1;
@@ -52,6 +57,44 @@ public class gameSceneController {
 	private Color transparentRed;
 	private Color transparentGreen;
 	private SimpleBooleanProperty turnIsOver = new SimpleBooleanProperty(false);
+	
+	@FXML
+	private Text turnInfoText;
+
+	@FXML
+	private Label player1NameText;
+	
+	@FXML
+	private Label player2NameText;
+	
+	@FXML
+	private Button switchTurn1Btn;
+	
+	@FXML
+	private Button switchTurn2Btn;
+	
+	@FXML
+	private VBox headerBox;
+	
+	@FXML
+	private VBox gameboardVBox1;
+	
+	@FXML
+	private VBox gameboardVBox2;
+	
+	@FXML
+	private AnchorPane playerInfoPane;
+	
+	@FXML
+	private StackPane gridStack1;
+	
+	@FXML
+	private StackPane gridStack2;
+	
+	@FXML
+	private void initialize() {
+		
+	}
 	
 	public gameSceneController() {
 		// Colors for hovering squares
@@ -100,44 +143,6 @@ public class gameSceneController {
 										1); // Repeats
 	}
 	
-	@FXML
-	private Text turnInfoText;
-
-	@FXML
-	private Label player1NameText;
-	
-	@FXML
-	private Label player2NameText;
-	
-	@FXML
-	private Button switchTurn1Btn;
-	
-	@FXML
-	private Button switchTurn2Btn;
-	
-	@FXML
-	private VBox headerBox;
-	
-	@FXML
-	private VBox gameboardVBox1;
-	
-	@FXML
-	private VBox gameboardVBox2;
-	
-	@FXML
-	private AnchorPane playerInfoPane;
-	
-	@FXML
-	private StackPane gridStack1;
-	
-	@FXML
-	private StackPane gridStack2;
-	
-	@FXML
-	private void initialize() {
-		
-	}
-	
 	public void init(Scene scene) {
 		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.",game.playerInTurnNameProperty().get()));
 		
@@ -163,6 +168,10 @@ public class gameSceneController {
 				switchTurn2Btn.setDisable(true);
 			}
 		});
+		
+		// Load ship images and add them to appropriate group
+		ships[0].getChildren().addAll(loadShipImages(game.getShips(Player.PLAYER1)));
+		ships[1].getChildren().addAll(loadShipImages(game.getShips(Player.PLAYER2)));
 		
 		// Create a hovering transparent red square as a default color
 		hoveringSquare1 = createTransparentSquare(transparentRed);
@@ -214,6 +223,28 @@ public class gameSceneController {
 				hoveringSquare2.setVisible(false);
 			}
 		});
+	}
+	
+	// Helper method for loading ship images
+	private Collection<ImageView> loadShipImages(Collection<Ship> ships) {
+		Collection<ImageView> shipImages = new ArrayDeque<ImageView>();
+		for (Ship ship: ships) {
+			ImageView shipImage = new ImageView(new Image(getImagePath(ship.getType())));
+			shipImages.add(shipImage);
+		}
+		return shipImages;
+	}
+	
+	// Helper method for getting image paths
+	private String getImagePath(ShipType shipType) {
+		switch (shipType) {
+			case CARRIER: return ResourceLoader.image("/Carrier/ShipCarrierHull.png");
+			case BATTLESHIP: return ResourceLoader.image("/Battleship/ShipBattleshipHull.png");
+			case CRUISER: return ResourceLoader.image("/Cruiser/ShipCruiserHull.png");
+			case SUBMARINE: return ResourceLoader.image("/Submarine/ShipSubmarineHull.png");
+			case DESTROYER: return ResourceLoader.image("/Destroyer/ShipDestroyerHull.png");
+			default: return null;
+		}
 	}
 	
 	private Rectangle createTransparentSquare(Color color) {

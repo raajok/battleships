@@ -1,6 +1,8 @@
 package fi.utu.tech.gui.javafx;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 
 import javafx.beans.binding.Bindings;
@@ -13,6 +15,7 @@ class Gameboard {
 	private int nHitsRemaining;
 	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
 	private int[][] board;
+	private Collection ships = new ArrayList<Ship>();
 
 	public Gameboard(String playerName, int boardSize, SimpleIntegerProperty[] shipCounts) {
 		// TODO Auto-generated constructor stub
@@ -124,6 +127,11 @@ class Gameboard {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	public Collection getShips() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
@@ -320,5 +328,9 @@ public class BattleshipGame {
 		
 	public SimpleIntegerProperty playerInTurnValueProperty() {
 		return playerInTurnValueProperty;
+	}
+	
+	public Collection getShips(Player player) {
+		return boards[player.ordinal()].getShips();
 	}
 }
