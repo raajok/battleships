@@ -87,11 +87,11 @@ public class Gameboard {
 				}
 			case UP:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()][coord.getY()+i] = 1;
+					fieldStatus[coord.getX()][coord.getY()-i] = 1;
 				}
 			case DOWN:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()][coord.getY()-i] = 1;
+					fieldStatus[coord.getX()][coord.getY()+i] = 1;
 				}
 			}
 		}
@@ -180,6 +180,9 @@ public class Gameboard {
 		}
 
 		public boolean addShip(Ship ship) {
+			// TODO Check if it is possible to add a ship to this location.
+			// Return true if successful, false if not.
+			setShip(ship, ship.getLocation());
 			ships.add(ship);
 			return true;
 		}
@@ -192,5 +195,17 @@ public class Gameboard {
 			return ships;
 		}
 		
+		public String toString() {
+			StringBuilder sb = new StringBuilder();		
+			sb.append("  0123456789\n");
+			for (int y = 0; y < this.fieldStatus.length; y++) {
+				sb.append(y + " ");
+				for (int x = 0; x < this.fieldStatus.length; x++) {
+					sb.append(this.fieldStatus[x][y]);
+				}
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
 }
 
