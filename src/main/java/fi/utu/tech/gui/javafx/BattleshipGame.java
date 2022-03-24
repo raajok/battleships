@@ -8,126 +8,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-class Gameboard {
-	// THIS STUB IS TO BE REMOVED AFTER THE PROPER GAMEBOARD CLASS HAS BEEN IMPLEMENTED
-	private int nHitsRemaining;
-	private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
-	private int[][] board;
-
-	public Gameboard(String playerName, int boardSize, SimpleIntegerProperty[] shipCounts) {
-		// TODO Auto-generated constructor stub
-		this.board = new int[boardSize][boardSize];
-		
-		for (int x = 0; x < boardSize; x++) {
-			for (int y = 0; y < boardSize; y++) {
-				board[x][y] = 0;
-			}
-		}
-	}
-	
-	public XY getNearestCoordinate(XY mouseXY) {
-		// Deprecated
-		return null;
-	}
-	
-	public Ship createShip(ShipType shipType) {
-		// STUB
-		return null;
-	}
-	
-	public void setShip(Ship ship, XY coord) {
-		// STUB
-	}
-	
-	public Boolean isShootable(XY coord) {
-		// STUB
-		return board[coord.getX()][coord.getY()] >= 0? true: false;
-	}
-	
-	public Boolean isHitSuccessful(XY coord) {
-		// STUB
-		return board[coord.getX()][coord.getY()] == 1? true: false;
-	}
-	
-	public void setHit(XY coord) {
-		// STUB
-		if (isHitSuccessful(coord)) {
-			// Target is hit
-			board[coord.getX()][coord.getY()] = -2;
-		} else {
-			// A miss
-			board[coord.getX()][coord.getY()] = -1;
-		}
-	}
-	
-	public void reset() {
-		// STUB
-	}
-	
-	public int getnHitsRemaining() {
-		// STUB
-		return nHitsRemaining;
-	}
-	
-	public void setnHitsRemaining(int nHitsRemaining) {
-		// STUB
-		this.nHitsRemaining = nHitsRemaining;
-	}
-	
-	private Deque<XY> getShipCoords(Ship ship) {
-		Deque<XY> coords = new ArrayDeque<XY>();
-		int x = ship.getLocation().getX();
-		int y = ship.getLocation().getY();
-		
-		switch (ship.getOrientation()) {
-			case  RIGHT: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x+i,y)); } break;
-			case  DOWN: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x,y+i)); } break;
-			case  LEFT: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x-i,y)); } break;
-			case  UP: for (int i = 0; i < ship.getSize(); i++) {	coords.push(new XY(x,y-i)); } break;
-		};
-		return coords;
-	}
-	
-	public boolean addShip(Ship ship) {
-		// STUB
-		for (XY coord: getShipCoords(ship)) {
-			this.board[coord.getX()][coord.getY()] = 1;			
-		};
-		return true;
-	}
-	
-	public boolean moveShip(Ship ship, XY toLocation) {
-		// STUB
-		return true;
-	}
-	
-	public SimpleBooleanProperty readyProperty() {
-		// STUB
-		return this.ready;
-	}
-
-	public int[][] getBoard() {
-		// TODO Auto-generated method stub
-		return board;
-	}
-	
-	public String toString() {
-
-		// ONLY FOR TESTING. REMOVE THIS
-		StringBuilder sb = new StringBuilder();		
-		sb.append("  0123456789\n");
-		for (int y = 0; y < this.board.length; y++) {
-			sb.append(y + " ");
-			for (int x = 0; x < this.board.length; x++) {
-				sb.append(this.board[x][y]);
-			}
-			sb.append("\n");
-		}
-		return sb.toString();
-	}
-	
-}
-
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
 	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty("Pelaaja 1"),
@@ -181,12 +61,25 @@ public class BattleshipGame {
 		 **/
 		
 		 // Create and initialize the boards
-		 this.boards[Player.PLAYER1.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER1.ordinal()].toString(),
-				 											   boardSizeProperty.get(),
-				 											   shipCountProperties);
-		 this.boards[Player.PLAYER2.ordinal()] = new Gameboard(playerNamesProperty[Player.PLAYER2.ordinal()].toString(),
-															   boardSizeProperty.get(),
-															   shipCountProperties);
+
+		
+		
+		int[]shipCounts = {shipCountProperties[0].get(),
+						shipCountProperties[1].get(),
+						shipCountProperties[2].get(),
+						shipCountProperties[3].get(),
+						shipCountProperties[4].get()				
+		};
+	
+		// Create and initialize the boards
+		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(
+                                                           boardSizeProperty.get(),
+                                                           shipCounts);
+		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(
+                                                          boardSizeProperty.get(),
+                                                          shipCounts);
+		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
+		 //this.shipCounts = shipCounts;
 		 
 		 // Create bindings for when boards are ready
 		 if (this.gameReady.isBound()) this.gameReady.unbind(); // Remove old bindings
@@ -205,9 +98,16 @@ public class BattleshipGame {
 	public void newGameTest(String name1, String name2, int bSize) {
 		// ONLY FOR TESTING. REMOVE THIS
 		
+		int[]shipCounts = {shipCountProperties[0].get(),
+				shipCountProperties[1].get(),
+				shipCountProperties[2].get(),
+				shipCountProperties[3].get(),
+				shipCountProperties[4].get()				
+		};
+		
 		// Create and initialize the boards
-		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(name1,bSize,shipCountProperties);
-		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(name2,bSize,shipCountProperties);
+		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(bSize,shipCounts);
+		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(bSize,shipCounts);
 		
 		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(2,2), Orientation.RIGHT));
 		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(8,8), Orientation.LEFT));
