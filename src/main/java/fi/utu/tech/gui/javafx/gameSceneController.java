@@ -186,7 +186,6 @@ public class gameSceneController {
 					switchTurn2Btn.setDisable(true);
 				}
 			} else {
-				System.out.println("works");
 				switchTurn1Btn.setDisable(true);
 				switchTurn2Btn.setDisable(true);
 			}
