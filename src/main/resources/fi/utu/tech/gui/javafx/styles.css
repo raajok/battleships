@@ -1,3 +1,14 @@
+.root {
+	-fx-background-color: lightsteelblue;
+}
+
 .button {
     -fx-font-weight: bold;
+    -fx-font-size: 18;
+    -fx-background-color: rgb(235, 235, 235);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.button:hover {
+	-fx-background-color: white;
 }

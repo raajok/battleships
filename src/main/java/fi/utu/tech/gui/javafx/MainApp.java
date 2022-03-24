@@ -27,18 +27,31 @@ public class MainApp extends Application {
     	// Loaders for every scene
         ResourceLoader<Parent, StartMenuController> startMenuLoader = new ResourceLoader<>("startMenuScene.fxml");
         ResourceLoader<Parent, setShipsSceneController> setShipsLoader = new ResourceLoader<>("setShipsScene.fxml");
+        // ResourceLoader<Parent, gameSceneController> gameLoader = new ResourceLoader<>("gameScene.fxml");
         ResourceLoader<Parent, gameOverSceneController> gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
         
+        // Scenes
         Scene startMenuScene = new Scene(startMenuLoader.root);
+        Scene setShipsScene = new Scene(setShipsLoader.root);
+        // Scene gameScene = new Scene(gameLoader.root);
+        Scene gameOverScene = new Scene(gameOverLoader.root);
         startMenuScene.getStylesheets().add(createStyle());
+        setShipsScene.getStylesheets().add(createStyle());
+        // gameScene.getStylesheets().add(createStyle());
+        gameOverScene.getStylesheets().add(createStyle());
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
-        	Scene setShipsScene = new Scene(setShipsLoader.root);
-        	setShipsScene.getStylesheets().add(createStyle());
         	setShipsLoader.controller.drawBoard();
         	stage.setScene(setShipsScene);
         });
+        
+        // Eventhandler for changing scene from SetShips to Game
+        /*
+        setShipsLoader.controller.getEndPlacementButton().setOnAction(e -> {
+        	stage.setScene(gameScene);
+        }); 
+        */
         
         // Eventhandler for changing scene from gameOver to StartMenu
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
