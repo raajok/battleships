@@ -1,6 +1,8 @@
 package fi.utu.tech.gui.javafx;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -15,6 +17,7 @@ public class Gameboard {
 		// 2: empty, hit
 		private int[][] fieldStatus;
 		private int HitsRemaining;
+		private Collection<Ship> ships = new ArrayList<Ship>();
 		
 		private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
 
@@ -77,19 +80,19 @@ public class Gameboard {
 			case RIGHT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()+i][coord.getY()] = 1;
-				}
+				} break;
 			case LEFT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()-i][coord.getY()] = 1;
-				}
+				} break;
 			case UP:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()][coord.getY()+i] = 1;
-				}
+					fieldStatus[coord.getX()][coord.getY()-i] = 1;
+				} break;
 			case DOWN:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()][coord.getY()-i] = 1;
-				}
+					fieldStatus[coord.getX()][coord.getY()+i] = 1;
+				} break;
 			}
 		}
 		
@@ -177,12 +180,32 @@ public class Gameboard {
 		}
 
 		public boolean addShip(Ship ship) {
-			return false;
+			// TODO Check if it is possible to add a ship to this location.
+			// Return true if successful, false if not.
+			setShip(ship, ship.getLocation());
+			ships.add(ship);
+			return true;
 		}
 		
 		public int[][] getBoard() {
 			return this.fieldStatus;
 		}
+
+		public Collection getShips() {
+			return ships;
+		}
 		
+		public String toString() {
+			StringBuilder sb = new StringBuilder();		
+			sb.append("  0123456789\n");
+			for (int y = 0; y < this.fieldStatus.length; y++) {
+				sb.append(y + " ");
+				for (int x = 0; x < this.fieldStatus.length; x++) {
+					sb.append(this.fieldStatus[x][y]);
+				}
+				sb.append("\n");
+			}
+			return sb.toString();
+		}
 }
 
