@@ -221,12 +221,53 @@ public class setShipsSceneController {
 	void dragFinished(MouseEvent e) {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			if (this.currentlyMoved != null) {
+				String shipImageUrl = this.currentlyMoved.getImage().getUrl().toLowerCase();
 				int xCoordinate = (int) Math.floor((e.getSceneX() - 7) / boardPane.getWidth() * this.gameboardSize);
 				int yCoordinate = (int) Math.floor((e.getSceneY() - 100) / boardPane.getHeight() * this.gameboardSize);
-				//System.out.println("ship rotation direction: " + getShipsRotationDirection());
+				// System.out.println("ship rotation direction: " + getShipsRotationDirection());
+				
+				// get the Orientation of the ship
+				Orientation orientation = null;
+				switch (getShipsRotationDirection()) {
+				case 0:
+					orientation = Orientation.RIGHT;
+					break;
+				case 1:
+					orientation = Orientation.DOWN;
+					break;
+				case 2: 
+					orientation = Orientation.LEFT;
+					break;
+				case 3:
+					orientation = Orientation.UP;
+					break;
+				}
+				
+				// get the ShipType
+				ShipType shipType = null;
+				if (shipImageUrl.contains("battleship")) {
+					shipType = ShipType.BATTLESHIP;
+				} else if (shipImageUrl.contains("carrier")) {
+					shipType = ShipType.CARRIER;
+				} else if (shipImageUrl.contains("cruiser")) {
+					shipType = ShipType.CRUISER;
+				} else if (shipImageUrl.contains("destroyer")) {
+					shipType = ShipType.DESTROYER;
+				} else if (shipImageUrl.contains("submarine")) {
+					shipType = ShipType.SUBMARINE;
+				}
+				System.out.println(orientation);
+				// create XY from coordinates
+				XY coords = new XY(xCoordinate, yCoordinate);
+				// create ship
+				Ship ship = this.game.createShip(shipType, coords, orientation);
+				// add the ship to gameboard
+				this.game.addShip(ship);
+				
+				// Set everything back to default
 				this.rotation = 0.0;
 				this.addedShips.add(currentlyMoved);
-				changeShipAmount(this.currentlyMoved.getImage().getUrl().toLowerCase(), true);
+				changeShipAmount(shipImageUrl, true);
 				this.currentlyMoved = null;
 			}
 		}

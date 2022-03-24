@@ -39,12 +39,12 @@ public class MainApp extends Application {
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
+        	MainApp.game.newGame();
         	setShipsLoader.controller.drawBoard();
         	stage.setScene(setShipsScene);
         });
         
         // Eventhandler for changing scene from SetShips to Game
-        
         setShipsLoader.controller.getEndPlacementButton().setOnAction(e -> {
         	stage.setScene(gameScene);
         }); 
@@ -56,13 +56,13 @@ public class MainApp extends Application {
         });
         
         // Initialize controllers
-        gameLoader.controller.init(gameScene);
+        // gameLoader.controller.init(gameScene);
 
 		// Minimum stage size
         stage.setMinWidth(600);
         stage.setMinHeight(300);
         stage.setTitle("Laivanupotus");
-        stage.setScene(gameScene);
+        stage.setScene(startMenuScene);
         stage.show();
     }
 }
