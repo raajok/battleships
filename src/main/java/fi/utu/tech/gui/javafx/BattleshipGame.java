@@ -103,12 +103,12 @@ public class BattleshipGame {
 		
 		// Set some test ships
 		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.CARRIER.instantiate(new XY(4,4), Orientation.LEFT));
-		//this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(3,1), Orientation.DOWN));
-		//this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,3), Orientation.LEFT));
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(1,8), Orientation.RIGHT));
+		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,3), Orientation.LEFT));
 		
-		//this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(2,3), Orientation.DOWN));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(2,3), Orientation.DOWN));
 		//this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,3), Orientation.LEFT));
-		//this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.DESTROYER.instantiate(new XY(6,6), Orientation.RIGHT));
+		this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.DESTROYER.instantiate(new XY(6,6), Orientation.RIGHT));
 				 
 		// Player 1 will start the game
 		this.playerInTurn = Player.PLAYER1;
@@ -229,5 +229,9 @@ public class BattleshipGame {
 	
 	public Collection getShips(Player player) {
 		return boards[player.ordinal()].getShips();
+	}
+	
+	public Ship getShipFrom(Player player, XY coord) {
+		return boards[player.ordinal()].getShipFrom(coord);
 	}
 }

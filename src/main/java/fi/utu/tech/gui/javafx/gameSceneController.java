@@ -230,17 +230,13 @@ public class gameSceneController {
 				hoveringSquare2.setVisible(false);
 			}
 		});
-		System.out.println("Player1:");
-		System.out.println(game.getBoard());
-		System.out.println("Player2:");
-		System.out.println(game.getOpponentBoard());
 	}
 	
 	// Method for loading ship images
 	private Collection<ImageView> loadShipImages(Collection<Ship> ships) {
 		Collection<ImageView> shipImages = new ArrayDeque<ImageView>();
 		for (Ship ship: ships) {
-			Image img = new Image(getImagePath(ship.getType()));
+			Image img = new Image(getShipImagePath(ship.getType()));
 			ImageView shipImage = new ImageView(img);
 			
 			Rotate rotate = new Rotate(ship.getOrientation().getDegrees());
@@ -260,8 +256,8 @@ public class gameSceneController {
 		return shipImages;
 	}
 	
-	// Helper method for getting image paths
-	private String getImagePath(ShipType shipType) {
+	// Helper method for getting ship image paths
+	private String getShipImagePath(ShipType shipType) {
 		switch (shipType) {
 			case CARRIER: return ResourceLoader.image("ShipCarrierHull.png");
 			case BATTLESHIP: return ResourceLoader.image("ShipBattleshipHull.png");
@@ -354,7 +350,17 @@ public class gameSceneController {
 						*/
 					} else if (result == 1) {
 						// Hit on target
-						turnInfoText.setText("Osuit! Pelaaja saa jatkaa.");
+						Ship ship = game.getShipFrom(game.getOpponent(), coord);
+						if (ship != null) {
+							// Query for if ship has sunk
+							if (ship.hasSunk()) {
+								turnInfoText.setText(String.format("Vastustajan %s upposi", ship.getType()));								
+							} else {
+								turnInfoText.setText("Osuit! Pelaaja saa jatkaa.");
+							}
+						} else {
+							System.out.println("NullPointerException: Ship is null");
+						}
 						//explosionImageView.setTranslateX(gameboardPane.getWidth() / gameboardSize * targetCoord.getX());
 						//explosionImageView.setTranslateY(gameboardPane.getHeight() / gameboardSize * targetCoord.getY());
 						//explosionAnimation.start();

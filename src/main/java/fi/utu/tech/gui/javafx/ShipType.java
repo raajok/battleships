@@ -1,36 +1,46 @@
 package fi.utu.tech.gui.javafx;
 
 public enum ShipType {
-	CARRIER {
+	CARRIER("lentotukialus") {
 		@Override
 		public Ship instantiate(XY location, Orientation orientation) {
 			return new Carrier(location, orientation);
 		}		
 	},
-	BATTLESHIP {
+	BATTLESHIP("taistelulaiva") {
 		@Override
 		public Ship instantiate(XY location, Orientation orientation) {
 			return new Battleship(location, orientation);
 		}		
 	},
-	CRUISER {
+	CRUISER("risteilijä") {
 		@Override
 		public Ship instantiate(XY location, Orientation orientation) {
 			return new Cruiser(location, orientation);
 		}		
 	},
-	SUBMARINE {
+	SUBMARINE("sukellusvene") {
 		@Override
 		public Ship instantiate(XY location, Orientation orientation) {
 			return new Submarine(location, orientation);
 		}		
 	},
-	DESTROYER {
+	DESTROYER("hävittäjä") {
 		@Override
 		public Ship instantiate(XY location, Orientation orientation) {
 			return new Destroyer(location, orientation);
 		}		
 	};
 	
+	private String name;
+	
 	public abstract Ship instantiate(XY location, Orientation orientation);
+	private ShipType(final String str) {
+		this.name = str;
+	}
+
+	@Override
+	public String toString() {
+		return this.name;
+	}
 }

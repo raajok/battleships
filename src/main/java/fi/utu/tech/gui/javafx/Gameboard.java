@@ -3,6 +3,8 @@ package fi.utu.tech.gui.javafx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -18,6 +20,7 @@ public class Gameboard {
 		private int[][] fieldStatus;
 		private int HitsRemaining;
 		private Collection<Ship> ships = new ArrayList<Ship>();
+		private Map<XY, Ship> shipsMapping = new HashMap<XY, Ship>();
 		
 		private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
 
@@ -80,18 +83,22 @@ public class Gameboard {
 			case RIGHT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()+i][coord.getY()] = 1;
+					shipsMapping.put(new XY(coord.getX()+i,coord.getY()), ship);
 				} break;
 			case LEFT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()-i][coord.getY()] = 1;
+					shipsMapping.put(new XY(coord.getX()-i,coord.getY()), ship);
 				} break;
 			case UP:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()][coord.getY()-i] = 1;
+					shipsMapping.put(new XY(coord.getX(),coord.getY()-i), ship);
 				} break;
 			case DOWN:
 				for (int i = 0; i<ship.getSize(); i++) {
 					fieldStatus[coord.getX()][coord.getY()+i] = 1;
+					shipsMapping.put(new XY(coord.getX(),coord.getY()+i), ship);
 				} break;
 			}
 		}
@@ -114,6 +121,8 @@ public class Gameboard {
 		public void setHit(XY coord) {
 			// sets the field status to hit (-1 or 2) and reduces the nHitsRemaining if the hit was successful
 			if (isHitSuccessful(coord)) {
+				Ship ship = getShipFrom(coord);
+				if (ship != null) { ship.hit(); }
 				fieldStatus[coord.getX()][coord.getY()] = -1;
 				HitsRemaining--;
 			}
@@ -206,6 +215,10 @@ public class Gameboard {
 				sb.append("\n");
 			}
 			return sb.toString();
+		}
+		
+		public Ship getShipFrom(XY coord) {
+			return shipsMapping.getOrDefault(coord, null);
 		}
 }
 
