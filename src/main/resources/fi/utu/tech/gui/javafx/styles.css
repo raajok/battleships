@@ -9,13 +9,12 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
 }
 
-<<<<<<< HEAD
 .button:hover {
 	-fx-background-color: white;
-=======
+}
+
 .styled-grid {
   -fx-background-color: blue;
   -fx-background-size: stretch;
   -fx-background-position:left top;
->>>>>>> gamescene
 }

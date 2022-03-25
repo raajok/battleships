@@ -364,6 +364,7 @@ public class gameSceneController {
 						//explosionImageView.setTranslateX(gameboardPane.getWidth() / gameboardSize * targetCoord.getX());
 						//explosionImageView.setTranslateY(gameboardPane.getHeight() / gameboardSize * targetCoord.getY());
 						//explosionAnimation.start();
+						
 						Circle circle = new Circle(0,0,10);
 						circle.setFill(Color.RED);
 						circle.translateXProperty().bind(squareSize.add(0.25).multiply(coord.getX()));
@@ -372,7 +373,21 @@ public class gameSceneController {
 						circle.scaleYProperty().bind(squareSize.divide(30));
 						circle.centerXProperty().bind(squareSize.divide(2));
 						circle.centerYProperty().bind(squareSize.divide(2));
-						shots[game.getPlayerInTurn().ordinal()].getChildren().add(circle);	
+						shots[game.getPlayerInTurn().ordinal()].getChildren().add(circle);
+						
+						/*
+						Cross cross = new Cross(squareSize.doubleValue(), squareSize.doubleValue(), Color.RED);
+						
+						cross.translateXProperty().bind(squareSize.add(0.25).multiply(coord.getX()));
+						cross.translateYProperty().bind(squareSize.add(0.25).multiply(coord.getY()));
+						
+						cross.scaleXProperty().bind(squareSize.divide(30));
+						cross.scaleYProperty().bind(squareSize.divide(30));
+						//cross.centerXProperty().bind(squareSize.divide(2));
+						//cross.centerYProperty().bind(squareSize.divide(2));
+						
+						shots[game.getPlayerInTurn().ordinal()].getChildren().add(cross);
+						*/
 					}
 
 					// If not hit, then switch turns
