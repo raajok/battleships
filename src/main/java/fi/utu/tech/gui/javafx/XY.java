@@ -5,8 +5,12 @@ public class XY {
 	private final int y;
 	
 	public XY(int x, int y) {
-		if (x < 0 || x >= 15) { throw new IllegalArgumentException("Variable x is out of bounds (from 0 to 14) with value: " + x); }
-		if (y < 0 || y >= 15) { throw new IllegalArgumentException("Variable y is out of bounds (from 0 to 14) with value: " + y); }
+		// Clip values if not between 0 and 14
+		x = Math.max(x, 0);
+		x = Math.min(x, 14);
+		y = Math.max(y, 0);
+		y = Math.min(y, 14);
+			
 		this.x = x;
 		this.y = y;
 	}
@@ -31,7 +35,7 @@ public class XY {
             return false;
         }
 
-        // muunnetaan olio Kirja-olioksi
+        // cast Object to XY type
         XY comparableXY = (XY) comparable;
 
         // if types and values are same, they are equal

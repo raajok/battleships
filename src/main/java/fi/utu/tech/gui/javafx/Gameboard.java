@@ -200,7 +200,7 @@ public class Gameboard {
 			return this.fieldStatus;
 		}
 
-		public Collection getShips() {
+		public Collection<Ship> getShips() {
 			return ships;
 		}
 		

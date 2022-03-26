@@ -57,6 +57,11 @@ public class MainApp extends Application {
         
         // Initialize controllers
         gameLoader.controller.init(gameScene);
+        
+        // Add method to execute when game ends
+        game.setOnGameEndAction(() -> {
+    		stage.setScene(gameOverScene);
+    	});
 
 		// Minimum stage size
         stage.setMinWidth(600);

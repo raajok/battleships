@@ -10,12 +10,12 @@ public class Cross extends Group {
 	
 	public Cross(Double width, Double height, Paint color) {
 		// Line 1 from top left to bottom right
-		line1 = new Line(0,0,width,height);
+		line1 = new Line(1,1,width-1,height-1);
 		line1.setStrokeWidth(2);
 		line1.setStroke(color);
 		
 		// Line 2 from bottom left to Top right
-		line2 = new Line(0,height,width,0);
+		line2 = new Line(1,height-1,width-1,1);
 		line2.setStrokeWidth(2);
 		line2.setStroke(color);
 		
