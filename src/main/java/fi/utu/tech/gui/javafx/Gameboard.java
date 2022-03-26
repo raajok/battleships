@@ -220,5 +220,32 @@ public class Gameboard {
 		public Ship getShipFrom(XY coord) {
 			return shipsMapping.getOrDefault(coord, null);
 		}
+
+		public void removeShip(Ship ship) {
+			XY coord = ship.getLocation();
+			switch(ship.getOrientation()) {
+			case RIGHT:
+				for (int i = 0; i<ship.getSize(); i++) {
+					fieldStatus[coord.getX()+i][coord.getY()] = 0;
+					shipsMapping.remove(new XY(coord.getX()+i,coord.getY()));
+				} break;
+			case LEFT:
+				for (int i = 0; i<ship.getSize(); i++) {
+					fieldStatus[coord.getX()-i][coord.getY()] = 0;
+					shipsMapping.remove(new XY(coord.getX()-i,coord.getY()));
+				} break;
+			case UP:
+				for (int i = 0; i<ship.getSize(); i++) {
+					fieldStatus[coord.getX()][coord.getY()-i] = 0;
+					shipsMapping.remove(new XY(coord.getX(),coord.getY()-i));
+				} break;
+			case DOWN:
+				for (int i = 0; i<ship.getSize(); i++) {
+					fieldStatus[coord.getX()][coord.getY()+i] = 0;
+					shipsMapping.remove(new XY(coord.getX(),coord.getY()+i));
+				} break;
+			}
+			ships.remove(ship);
+		}
 }
 

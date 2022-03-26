@@ -210,4 +210,22 @@ public class BattleshipGame {
 	public void setOnGameEndAction(Runnable onGameEndAction) {
 		this.onGameEndAction = onGameEndAction;
 	}
+	
+	public void removeShip(Ship ship) {
+		removeShip(ship, playerInTurn);
+	}
+	
+	public void removeShip(Ship ship, Player player) {
+		boards[player.ordinal()].removeShip(ship);
+	}
+	
+	public void removeShips(Collection<Ship> ships) {
+		removeShips(ships, playerInTurn);
+	}
+	
+	public void removeShips(Collection<Ship> ships, Player player) {
+		for (Ship ship: ships) {
+			removeShip(ship, player);
+		}
+	}
 }
