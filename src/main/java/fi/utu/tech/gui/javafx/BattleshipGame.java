@@ -228,4 +228,12 @@ public class BattleshipGame {
 			removeShip(ship, player);
 		}
 	}
+	
+	public void removeAllShips(Player player) {
+		removeShips(boards[player.ordinal()].getShips());
+	}
+	
+	public void removeAllShips() {
+		removeShips(boards[playerInTurn.ordinal()].getShips());
+	}
 }
