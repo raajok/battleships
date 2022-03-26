@@ -24,6 +24,10 @@ public class BattleshipGame {
 	                                              		   new SimpleIntegerProperty(0)};
 	private SimpleIntegerProperty boardSizeProperty = new SimpleIntegerProperty(10);
 	private SimpleIntegerProperty shipSums = new SimpleIntegerProperty(0);
+	private SimpleBooleanProperty turnIsOver = new SimpleBooleanProperty(false);
+	private SimpleBooleanProperty requestTurnChange = new SimpleBooleanProperty(false);
+	private SimpleBooleanProperty awaiting = new SimpleBooleanProperty(false);
+	private Runnable onGameEndAction;
 	
 	public BattleshipGame() {
 		shipSums.bind(shipCountProperties[ShipType.CARRIER.ordinal()].multiply(5)
@@ -59,10 +63,7 @@ public class BattleshipGame {
 		 * @doc-author j-code
 		 **/
 		
-		 // Create and initialize the boards
-
-		
-		
+		// Create and initialize the boards
 		int[]shipCounts = {shipCountProperties[0].get(),
 						shipCountProperties[1].get(),
 						shipCountProperties[2].get(),
@@ -94,59 +95,24 @@ public class BattleshipGame {
 		 this.playerInTurn = Player.PLAYER1;
 	}
 	
-	public void newGameTest(int bSize, int[]shipCounts) {
-		// ONLY FOR TESTING. REMOVE THIS
-		
-		// Create and initialize the boards
-		this.boards[Player.PLAYER1.ordinal()] = new Gameboard(bSize,shipCounts);
-		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(bSize,shipCounts);
-		
-		// Set some test ships
-		this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.CARRIER.instantiate(new XY(4,4), Orientation.LEFT));
-		//this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.BATTLESHIP.instantiate(new XY(3,1), Orientation.DOWN));
-		//this.boards[Player.PLAYER1.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,3), Orientation.LEFT));
-		
-		//this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.CRUISER.instantiate(new XY(2,3), Orientation.DOWN));
-		//this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.SUBMARINE.instantiate(new XY(3,3), Orientation.LEFT));
-		//this.boards[Player.PLAYER2.ordinal()].addShip(ShipType.DESTROYER.instantiate(new XY(6,6), Orientation.RIGHT));
-				 
-		// Player 1 will start the game
-		this.playerInTurn = Player.PLAYER1;
-	}
-	
-	public int shootTest(XY coord) {
-		// ONLY FOR TESTING. REMOVE THIS
-		Gameboard opponentBoard = boards[getOpponent().ordinal()];
-		int valueAtLocation = opponentBoard.getBoard()[coord.getX()][coord.getY()];
-		if (opponentBoard.isShootable(coord)) {
-			opponentBoard.setHit(coord);
-			// Is game over?
-			if (opponentBoard.getnHitsRemaining() == 0) {
-				// TODO
-				// player "playerInTurn" has won.
-				// Switch to "Start Menu"-scene and announce the winner.
-			}
-			// If game continues and no hit, switch turns.
-			// Otherwise allow to shoot again.
-			if (valueAtLocation != 1) { switchTurn(); }
-		}
-		return valueAtLocation;
-	}
-	
 	public int shoot(XY coord) {
 		Gameboard opponentBoard = boards[getOpponent().ordinal()];
 		int valueAtLocation = opponentBoard.getBoard()[coord.getX()][coord.getY()];
 		if (opponentBoard.isShootable(coord)) {
 			opponentBoard.setHit(coord);
 			// Is game over?
-			if (opponentBoard.getnHitsRemaining() == 0) {
+			if (opponentBoard.getnHitsRemaining() <= 0) {
 				// TODO
 				// player "playerInTurn" has won.
 				// Switch to "Start Menu"-scene and announce the winner.
+				onGameEndAction.run();
 			}
 			// If game continues and no hit, switch turns.
 			// Otherwise allow to shoot again.
-			if (valueAtLocation != 1) { switchTurn(); }
+			if (valueAtLocation != 1) {
+				requestTurnChange.set(true);
+				switchTurn();
+			}
 		}
 		return valueAtLocation;
 	}
@@ -154,16 +120,10 @@ public class BattleshipGame {
 	public Boolean isShootable(XY coord) {
 		return boards[getOpponent().ordinal()].isShootable(coord);
 	}
-
-	public Boolean isGameOver() {
-		// deprecated
-		return null;
-	}
 	
 	private void switchTurn() {
 		playerInTurn = getOpponent(playerInTurn);
-		playerInTurnNameProperty.setValue(
-				playerNamesProperty[playerInTurn.ordinal()].getValue());
+		playerInTurnNameProperty.setValue(playerNamesProperty[playerInTurn.ordinal()].getValue());
 		playerInTurnValueProperty.set(playerInTurn.ordinal());
 	}
 	
@@ -227,7 +187,27 @@ public class BattleshipGame {
 		return playerInTurnValueProperty;
 	}
 	
-	public Collection getShips(Player player) {
+	public Collection<Ship> getShips(Player player) {
 		return boards[player.ordinal()].getShips();
+	}
+	
+	public Ship getShipFrom(Player player, XY coord) {
+		return boards[player.ordinal()].getShipFrom(coord);
+	}
+	
+	public SimpleBooleanProperty turnIsOverProperty() {
+		return turnIsOver;
+	}
+	
+	public SimpleBooleanProperty awaitingProperty() {
+		return awaiting;
+	}
+	
+	public SimpleBooleanProperty requestTurnChangeProperty() {
+		return requestTurnChange;
+	}
+	
+	public void setOnGameEndAction(Runnable onGameEndAction) {
+		this.onGameEndAction = onGameEndAction;
 	}
 }

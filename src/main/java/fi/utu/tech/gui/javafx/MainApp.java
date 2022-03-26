@@ -46,17 +46,20 @@ public class MainApp extends Application {
         
         // Eventhandler for changing scene from SetShips to Game
         setShipsLoader.controller.getEndPlacementButton().setOnAction(e -> {
+        	// Initialize the game scene controller
+            gameLoader.controller.init(gameScene);
         	stage.setScene(gameScene);
         }); 
-        
         
         // Eventhandler for changing scene from gameOver to StartMenu
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
         	stage.setScene(startMenuScene);
         });
         
-        // Initialize controllers
-        // gameLoader.controller.init(gameScene);
+        // Add a method to execute when game ends
+        game.setOnGameEndAction(() -> {
+    		stage.setScene(gameOverScene);
+    	});
 
 		// Minimum stage size
         stage.setMinWidth(600);
