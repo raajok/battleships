@@ -5,6 +5,7 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,6 +14,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -85,6 +91,7 @@ public class setShipsSceneController {
 	private Image cruiserImage;
 	private Image destroyerImage;
 	private Image submarineImage;
+	private Image backgroundImage;
 	private ImageView currentlyMoved = null;
 	private List<ImageView> addedShips = new ArrayList<>();;
 	private double rotation = 0.0;
@@ -92,25 +99,28 @@ public class setShipsSceneController {
 	private SimpleIntegerProperty carrierAmountProperty = new SimpleIntegerProperty();
 	private SimpleIntegerProperty cruiserAmountProperty = new SimpleIntegerProperty(); 
 	private SimpleIntegerProperty destroyerAmountProperty = new SimpleIntegerProperty();
-	private SimpleIntegerProperty submarineAmountProperty = new SimpleIntegerProperty(); 
+	private SimpleIntegerProperty submarineAmountProperty = new SimpleIntegerProperty();
 
 	@FXML
-	public void initialize() {	
+	public void initialize() {
 		
-		this.battleshipImage = new Image(getClass().getResource("Battleship_placeholder.png").toExternalForm());
+		this.battleshipImage = new Image(getClass().getResource("ShipBattleshipHull2.png").toExternalForm());
 		battleship.setImage(this.battleshipImage);
 
-		this.carrierImage = new Image(getClass().getResource("Carrier_placeholder.png").toExternalForm());
+		this.carrierImage = new Image(getClass().getResource("ShipCarrierHull2.png").toExternalForm());
 		carrier.setImage(carrierImage);
-
-		this.cruiserImage = new Image(getClass().getResource("Cruiser_placeholder.png").toExternalForm());
+		
+		this.cruiserImage = new Image(getClass().getResource("ShipCruiserHull2.png").toExternalForm());
 		cruiser.setImage(cruiserImage);
 
-		this.destroyerImage = new Image(getClass().getResource("Destroyer_placeholder.png").toExternalForm());
+		this.destroyerImage = new Image(getClass().getResource("ShipDestroyerHull2.png").toExternalForm());
 		destroyer.setImage(destroyerImage);
 
-		this.submarineImage = new Image(getClass().getResource("Submarine_placeholder.png").toExternalForm());
+		this.submarineImage = new Image(getClass().getResource("ShipSubmarineHull2.png").toExternalForm());
 		submarine.setImage(submarineImage);
+		
+		this.backgroundImage = new Image(getClass().getResource("sea_texture.jpg").toExternalForm());
+		boardPane.setBackground(new Background(new BackgroundImage(this.backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 		
 		StringConverter<Number> NumberConverter = new NumberStringConverter();
 		Bindings.bindBidirectional(battleshipText.textProperty(), this.battleshipAmountProperty, NumberConverter);
