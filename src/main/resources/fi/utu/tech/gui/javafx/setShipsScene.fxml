@@ -24,7 +24,7 @@
       </HBox>
    </top>
    <center>
-      <Pane fx:id="boardPane" onMouseMoved="#printCoords" prefHeight="800.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="boardPane" prefHeight="800.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
    </center>
    <right>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
