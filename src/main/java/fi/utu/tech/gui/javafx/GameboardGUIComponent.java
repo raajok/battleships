@@ -22,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 
@@ -217,11 +218,22 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	private void addHitMarkTo(XY coord) {
-		Cross cross = new Cross(tileSize.get(), tileSize.get(), Color.RED);
-		cross.setTranslateX(tileSize.multiply(coord.getX()).get());
-		cross.setTranslateY(tileSize.multiply(coord.getY()).get());
+		// Line 1 from top left to bottom right
+		Line line1 = new Line(2,2,tileSize.get()-2,tileSize.get()-2);
+		line1.setStrokeWidth(2);
+		line1.setStroke(Color.RED);
+		line1.setTranslateX(tileSize.multiply(coord.getX()).get());
+		line1.setTranslateY(tileSize.multiply(coord.getY()).get());
 		
-		shotsGroup.getChildren().add(cross);
+		// Line 2 from bottom left to top right
+		Line line2 = new Line(2,tileSize.get()-2,tileSize.get()-2,2);
+		line2.setStrokeWidth(2);
+		line2.setStroke(Color.RED);
+		line2.setTranslateX(tileSize.multiply(coord.getX()).get());
+		line2.setTranslateY(tileSize.multiply(coord.getY()).get());
+		
+		// Add lines
+		shotsGroup.getChildren().addAll(line1, line2);
 	}
 	
 	public StringProperty infoTextProperty() {
@@ -235,18 +247,18 @@ public class GameboardGUIComponent extends Pane {
 		@Override
 		public void handle(MouseEvent event) {
 			onMouseOver.set(true);
-			int x = (int) Math.round(event.getX() / tileSize.get() - .5);
-			int y = (int) Math.round(event.getY() / tileSize.get() - .5);
+			// Calculate the coordinates
+			int x = (int) (event.getX() / tileSize.get());
+			int y = (int) (event.getY() / tileSize.get());
 			XY coord = new XY(x,y);
 			
 			if (game.isShootable(coord)) {
 				hoveringSquare.setFill(transparentGreen);
 			} else {
-				hoveringSquare.setFill(transparentRed);						
+				hoveringSquare.setFill(transparentRed);
 			}
-			
-			hoveringSquare.setTranslateX(x * tileSize.get());
-			hoveringSquare.setTranslateY(y * tileSize.get());
+			hoveringSquare.setTranslateX(coord.getX() * tileSize.get());
+			hoveringSquare.setTranslateY(coord.getY() * tileSize.get());
 		};
 	};
 	
@@ -257,8 +269,8 @@ public class GameboardGUIComponent extends Pane {
 			// If this is enemy board, then shoot.
 			if (isMyTurn.not().and(game.requestTurnChangeProperty().not()).get()) {
 				// Calculate the coordinates
-				int x = (int) Math.round(event.getX() / tileSize.get() - .5);
-				int y = (int) Math.round(event.getY() / tileSize.get() - .5);
+				int x = (int) (event.getX() / tileSize.get());
+				int y = (int) (event.getY() / tileSize.get());
 				XY coord = new XY(x,y);
 				
 				if (game.isShootable(coord)) {

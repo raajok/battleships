@@ -1,8 +1,10 @@
 package fi.utu.tech.gui.javafx;
 
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /*
@@ -42,6 +44,11 @@ public class MainApp extends Application {
         	MainApp.game.newGame();
         	setShipsLoader.controller.drawBoard();
         	stage.setScene(setShipsScene);
+        	
+        	// Set stage in the center of the screen
+        	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
         });
         
         // Eventhandler for changing scene from SetShips to Game
@@ -49,6 +56,11 @@ public class MainApp extends Application {
         	// Initialize the game scene controller
             gameLoader.controller.init(gameScene);
         	stage.setScene(gameScene);
+        	
+        	// Set stage in the center of the screen
+        	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
         }); 
         
         // Eventhandler for changing scene from gameOver to StartMenu

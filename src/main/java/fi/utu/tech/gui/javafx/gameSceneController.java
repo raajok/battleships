@@ -26,6 +26,7 @@ import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -206,26 +207,18 @@ public class gameSceneController {
 		switchTurn1Btn.setOnAction(handleSwitchTurnBtnClick);
 		switchTurn2Btn.setOnAction(handleSwitchTurnBtnClick);
 		
+		// Handler for when mouse moves over scene
+		scene.setOnMouseMoved(handleMouseMoveOnScene);
+
 		// Pop Up Dialog Window for player change
 		changePlayerAlert.setTitle("Vuoron vaihto.");
 		changePlayerAlert.headerTextProperty().bind(Bindings.createStringBinding(() ->
 				String.format("Kutsu pelaaja %s paikalle.", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
 		changePlayerAlert.setContentText("Anna vuoro toiselle pelaajalle.");
 		changePlayerAlert.setOnCloseRequest(handleTurnSwitchDialogAction);
+		//changePlayerAlert.showAndWait();
 		
-		scene.setOnMouseMoved((event) -> {
-			Bounds grid1Bounds = gameboardGUI1.localToScene(gameboardGUI1.getBoundsInLocal());
-			Bounds grid2Bounds = gameboardGUI2.localToScene(gameboardGUI2.getBoundsInLocal());
-
-			if (grid1Bounds.contains(event.getX(), event.getY())) {
-				gameboardGUI2.setOnMouseOverValue(false);
-			} else if (grid2Bounds.contains(event.getX(), event.getY())) {
-				gameboardGUI1.setOnMouseOverValue(false);
-			} else {
-				gameboardGUI1.setOnMouseOverValue(false);
-				gameboardGUI2.setOnMouseOverValue(false);
-			}
-		});
+		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.", game.playerInTurnNameProperty().get()));
 	}
 
 	private EventHandler<ActionEvent> handleSwitchTurnBtnClick = new EventHandler<ActionEvent>() {
@@ -256,4 +249,21 @@ public class gameSceneController {
 		}
 	};
 
+	private EventHandler<MouseEvent> handleMouseMoveOnScene = new EventHandler<MouseEvent>() {
+		
+		@Override
+		public void handle(MouseEvent event) {
+			Bounds grid1Bounds = gameboardGUI1.localToScene(gameboardGUI1.getBoundsInLocal());
+			Bounds grid2Bounds = gameboardGUI2.localToScene(gameboardGUI2.getBoundsInLocal());
+	
+			if (grid1Bounds.contains(event.getX(), event.getY())) {
+				gameboardGUI2.setOnMouseOverValue(false);
+			} else if (grid2Bounds.contains(event.getX(), event.getY())) {
+				gameboardGUI1.setOnMouseOverValue(false);
+			} else {
+				gameboardGUI1.setOnMouseOverValue(false);
+				gameboardGUI2.setOnMouseOverValue(false);
+			}
+		}
+	};
 }
