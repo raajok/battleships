@@ -5,6 +5,8 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
@@ -128,6 +130,8 @@ public class setShipsSceneController {
 		Bindings.bindBidirectional(cruiserText.textProperty(), this.cruiserAmountProperty, NumberConverter);
 		Bindings.bindBidirectional(destroyerText.textProperty(), this.destroyerAmountProperty, NumberConverter);
 		Bindings.bindBidirectional(submarineText.textProperty(), this.submarineAmountProperty, NumberConverter);
+		this.endPlacementButton.setDisable(true);
+		
 	}
 
 	@FXML
@@ -276,6 +280,7 @@ public class setShipsSceneController {
 				this.rotation = 0.0;
 				this.addedShips.add(currentlyMoved);
 				changeShipAmount(shipImageUrl, true);
+				this.areAllShipsPlaced();
 				this.currentlyMoved = null;
 			}
 		}
@@ -341,6 +346,7 @@ public class setShipsSceneController {
 		return (int) rotation / 90;
 	}
 	
+	// Change the amount of ships
 	private void changeShipAmount(String shipType, boolean remove) {
 		if (remove) {
 			if (shipType.contains("battleship")) {
@@ -366,6 +372,21 @@ public class setShipsSceneController {
 			} else if (shipType.contains("submarine")) {
 				this.submarineAmountProperty.set(this.submarineAmountProperty.get() + 1);
 			}
+			
+		}
+	}
+	
+	// Check if all ships are placed and disable or undisable endPlacementButton based on the result
+	private void areAllShipsPlaced() {
+		
+		if(this.battleshipAmountProperty.get() == 0 
+				&& this.carrierAmountProperty.get() == 0
+				&& this.cruiserAmountProperty.get() == 0
+				&& this.destroyerAmountProperty.get() == 0
+				&& this.submarineAmountProperty.get() == 0){
+			this.endPlacementButton.setDisable(false);
+		} else {
+			this.endPlacementButton.setDisable(true);
 		}
 	}
 
