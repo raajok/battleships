@@ -170,12 +170,7 @@ public class setShipsSceneController {
 			outerPane.getChildren().remove(ship);
 		}
 		this.addedShips.clear();
-	}
-
-	@FXML
-	void printCoords(MouseEvent e) {
-		int rectangleX = (int) Math.floor(e.getX() / boardPane.getWidth() * this.gameboardSize);
-		int rectangleY = (int) Math.floor(e.getY() / boardPane.getHeight() * this.gameboardSize);
+		this.game.removeAllShips();
 	}
 
 	@FXML
@@ -222,8 +217,6 @@ public class setShipsSceneController {
 		double offsetY = boardPane.getWidth() / this.gameboardSize / 2;
 		this.currentlyMoved.setLayoutX(e.getSceneX() - offsetX);
 		this.currentlyMoved.setLayoutY(e.getSceneY() - offsetY);
-		int rectangleX = (int) Math.floor((e.getSceneX() - 7) / boardPane.getWidth() * this.gameboardSize);
-		int rectangleY = (int) Math.floor((e.getSceneY() - 100) / boardPane.getHeight() * this.gameboardSize);
 	}
 	
 	
@@ -232,9 +225,14 @@ public class setShipsSceneController {
 		if (e.getButton() == MouseButton.PRIMARY) {
 			if (this.currentlyMoved != null) {
 				String shipImageUrl = this.currentlyMoved.getImage().getUrl().toLowerCase();
-				int xCoordinate = (int) Math.floor((e.getSceneX() - 7) / boardPane.getWidth() * this.gameboardSize);
+				int xCoordinate = (int) Math.floor(e.getSceneX() / boardPane.getWidth() * this.gameboardSize);
 				int yCoordinate = (int) Math.floor((e.getSceneY() - 100) / boardPane.getHeight() * this.gameboardSize);
-				// System.out.println("ship rotation direction: " + getShipsRotationDirection());
+				System.out.println(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
+				System.out.println(yCoordinate * (boardPane.getHeight() / this.gameboardSize) + 100);
+				
+				// Lock ship in the placed coordinate
+				this.currentlyMoved.setLayoutX(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
+				this.currentlyMoved.setLayoutY(yCoordinate * (boardPane.getHeight() / this.gameboardSize) + 100);
 				
 				// get the Orientation of the ship
 				Orientation orientation = null;
