@@ -40,7 +40,7 @@ import javafx.scene.transform.Rotate;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
-	private int gameboardSize = 10;
+	private int gameboardSize;
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
 	private ImageView explosionImageView1;
 	private ImageView splashImageView1;
@@ -151,6 +151,10 @@ public class gameSceneController {
 		
 		// Note: the game.newGame() method has to be called before this is executed. It should be called before leaving the setShipsScene.
 
+		// Get the board size from the game object
+		gameboardSize = this.game.boardSizeProperty().get();
+		
+		// Create window binding
 		final int windowPadding = 50;
 		final int prefWindowSize = 600 + windowPadding;
 		NumberBinding scaleBinding = Bindings.min(scene.widthProperty().divide(2).divide(prefWindowSize),

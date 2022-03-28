@@ -208,7 +208,7 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	private void addMissedMarkTo(XY coord) {
-		Circle circle = new Circle(0,0,20);
+		Circle circle = new Circle(0, 0, tileSize.get() / 3);
 		circle.setTranslateX(tileSize.multiply(coord.getX()).get());
 		circle.setTranslateY(tileSize.multiply(coord.getY()).get());
 		circle.setCenterX(tileSize.divide(2).get());
