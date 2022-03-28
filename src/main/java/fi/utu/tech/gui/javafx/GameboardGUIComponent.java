@@ -218,17 +218,20 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	private void addHitMarkTo(XY coord) {
+		double lineWidth = tileSize.get() / 30;
+		Color color = Color.RED.deriveColor(1, 1, .75, 1);
+
 		// Line 1 from top left to bottom right
-		Line line1 = new Line(2,2,tileSize.get()-2,tileSize.get()-2);
-		line1.setStrokeWidth(2);
-		line1.setStroke(Color.RED);
+		Line line1 = new Line(lineWidth,lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth);
+		line1.setStrokeWidth(lineWidth);
+		line1.setStroke(color);
 		line1.setTranslateX(tileSize.multiply(coord.getX()).get());
 		line1.setTranslateY(tileSize.multiply(coord.getY()).get());
 		
 		// Line 2 from bottom left to top right
-		Line line2 = new Line(2,tileSize.get()-2,tileSize.get()-2,2);
-		line2.setStrokeWidth(2);
-		line2.setStroke(Color.RED);
+		Line line2 = new Line(lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth,lineWidth);
+		line2.setStrokeWidth(lineWidth);
+		line2.setStroke(color);
 		line2.setTranslateX(tileSize.multiply(coord.getX()).get());
 		line2.setTranslateY(tileSize.multiply(coord.getY()).get());
 		
