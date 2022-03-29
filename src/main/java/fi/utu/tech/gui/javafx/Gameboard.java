@@ -1,6 +1,7 @@
 package fi.utu.tech.gui.javafx;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Deque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class Gameboard {
 		// 2: empty, hit
 		private int[][] fieldStatus;
 		private int HitsRemaining;
-		private Collection<Ship> ships = new ArrayList<Ship>();
+		private Deque<Ship> ships = new LinkedList<Ship>();
 		private Map<XY, Ship> shipsMapping = new HashMap<XY, Ship>();
 		
 		private SimpleBooleanProperty ready = new SimpleBooleanProperty(false);
@@ -192,7 +193,7 @@ public class Gameboard {
 			// TODO Check if it is possible to add a ship to this location.
 			// Return true if successful, false if not.
 			setShip(ship, ship.getLocation());
-			ships.add(ship);
+			ships.push(ship);
 			return true;
 		}
 		
@@ -246,6 +247,10 @@ public class Gameboard {
 				} break;
 			}
 			ships.remove(ship);
+		}
+		
+		public void removeLastShip() {
+			this.removeShip(ships.pop());
 		}
 }
 

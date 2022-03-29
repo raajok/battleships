@@ -46,7 +46,7 @@ abstract class Ship {
 	
 	@Override
 	public String toString() {
-		return getType().toString();
+		return getType().toString() + " at " + getLocation() + " pointing " + getOrientation();
 	}
 
 }

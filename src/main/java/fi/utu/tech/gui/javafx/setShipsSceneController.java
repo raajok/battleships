@@ -164,6 +164,7 @@ public class setShipsSceneController {
 			changeShipAmount(addedShips.get(lastShipIndex).getImage().getUrl().toLowerCase(), false);
 			outerPane.getChildren().remove(this.addedShips.get(lastShipIndex));
 			this.addedShips.remove(lastShipIndex);
+			game.getBoard().removeLastShip();
 		}
 	}
 
@@ -175,6 +176,7 @@ public class setShipsSceneController {
 		}
 		this.addedShips.clear();
 		this.game.removeAllShips();
+		System.out.println(game.getBoard());
 	}
 
 	@FXML

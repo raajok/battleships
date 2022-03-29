@@ -18,4 +18,14 @@ public enum Orientation {
 		return orientation;
 	}
 	
+	@Override
+	public String toString() {
+		switch (this) {
+		case DOWN: return "down";
+		case LEFT: return "left";
+		case UP: return "up";
+		case RIGHT: return "right";
+		default: return "";
+		}
+	}
 }
