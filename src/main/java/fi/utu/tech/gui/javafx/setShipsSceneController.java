@@ -5,11 +5,10 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -102,6 +101,7 @@ public class setShipsSceneController {
 	private SimpleIntegerProperty cruiserAmountProperty = new SimpleIntegerProperty(); 
 	private SimpleIntegerProperty destroyerAmountProperty = new SimpleIntegerProperty();
 	private SimpleIntegerProperty submarineAmountProperty = new SimpleIntegerProperty();
+	private Alert alert = new Alert(AlertType.INFORMATION);
 
 	@FXML
 	public void initialize() {
@@ -132,6 +132,8 @@ public class setShipsSceneController {
 		Bindings.bindBidirectional(submarineText.textProperty(), this.submarineAmountProperty, NumberConverter);
 		this.endPlacementButton.setDisable(true);
 		
+		this.alert.setTitle("Huomio!");
+		
 	}
 
 	@FXML
@@ -159,19 +161,26 @@ public class setShipsSceneController {
 	@FXML
 	void cancelLastShipPlacement() {
 		int lastShipIndex = this.addedShips.size() - 1;
-		System.out.println(lastShipIndex);
 		if (lastShipIndex >= 0) {
-			changeShipAmount(addedShips.get(lastShipIndex).getImage().getUrl().toLowerCase(), false);
+			this.changeShipAmount(addedShips.get(lastShipIndex).getImage().getUrl().toLowerCase(), false);
 			outerPane.getChildren().remove(this.addedShips.get(lastShipIndex));
 			this.addedShips.remove(lastShipIndex);
 			game.getBoard().removeLastShip();
+		} else {
+			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
+			this.alert.show();
 		}
 	}
 
 	@FXML
 	void removeAllShips() {
+		if (this.addedShips.size() == 0) {
+			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
+			this.alert.show();
+			return;
+		}
 		for (ImageView ship : this.addedShips) {
-			changeShipAmount(ship.getImage().getUrl().toLowerCase(), false);
+			this.changeShipAmount(ship.getImage().getUrl().toLowerCase(), false);
 			outerPane.getChildren().remove(ship);
 		}
 		this.addedShips.clear();
@@ -242,7 +251,7 @@ public class setShipsSceneController {
 				
 				// get the Orientation of the ship
 				Orientation orientation = null;
-				switch (getShipsRotationDirection()) {
+				switch (this.getShipsRotationDirection()) {
 				case 0:
 					orientation = Orientation.RIGHT;
 					break;
@@ -276,12 +285,19 @@ public class setShipsSceneController {
 				// create ship
 				Ship ship = this.game.createShip(shipType, coords, orientation);
 				// add the ship to gameboard
-				this.game.addShip(ship);
+				if (!this.game.addShip(ship)) {
+					outerPane.getChildren().remove(this.currentlyMoved);
+					this.alert.setHeaderText("Tähän ei voi asettaa laivaa");
+					this.alert.show();
+					this.currentlyMoved = null;
+					this.rotation = 0.0;
+					return;
+				}
 				
 				// Set everything back to default
 				this.rotation = 0.0;
 				this.addedShips.add(currentlyMoved);
-				changeShipAmount(shipImageUrl, true);
+				this.changeShipAmount(shipImageUrl, true);
 				this.areAllShipsPlaced();
 				this.currentlyMoved = null;
 			}
