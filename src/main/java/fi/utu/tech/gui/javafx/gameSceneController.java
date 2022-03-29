@@ -42,14 +42,6 @@ public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
 	private int gameboardSize;
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
-	private ImageView explosionImageView1;
-	private ImageView splashImageView1;
-	private ImageView explosionImageView2;
-	private ImageView splashImageView2;
-	private Sprite explosionAnimation1;
-	private Sprite splashAnimation1;
-	private Sprite explosionAnimation2;
-	private Sprite splashAnimation2;
 	private GameboardGUIComponent gameboardGUI1;
 	private GameboardGUIComponent gameboardGUI2;
 	
@@ -90,46 +82,6 @@ public class gameSceneController {
 	private void initialize() {}
 	
 	public gameSceneController() {
-		
-		// Panel1 animations
-		explosionImageView1 = new ImageView();
-		explosionAnimation1 = new Sprite(explosionImageView1,
-										new Image(ResourceLoader.image("explosion_cropped_2.png"), 480,360,false,false),
-										8, // Columns
-										6, // Rows
-										60, // Frame width
-										60, // Frame height
-										60, // FPS
-										1); // Repeats
-		splashImageView1 = new ImageView();
-		splashAnimation1 = new Sprite(splashImageView1,
-										new Image(ResourceLoader.image("water_splash.png"), 400,160,false,false),
-										5, // Columns
-										2, // Rows
-										80, // Frame width
-										80, // Frame height
-										40, // FPS
-										1); // Repeats
-
-		// Panel2 animations
-		explosionImageView2 = new ImageView();
-		explosionAnimation2 = new Sprite(explosionImageView2,
-										new Image(ResourceLoader.image("explosion_cropped_2.png"), 640,480,false,false),
-										8, // Columns
-										6, // Rows
-										80, // Frame width
-										80, // Frame height
-										60, // FPS
-										1); // Repeats
-		splashImageView2 = new ImageView();
-		splashAnimation2 = new Sprite(splashImageView2,
-										new Image(ResourceLoader.image("water_splash.png"), 400,160,false,false),
-										5, // Columns
-										2, // Rows
-										80, // Frame width
-										80, // Frame height
-										40, // FPS
-										1); // Repeats
 		// Bindings for Turn Switching buttons
 		game.turnIsOverProperty().addListener((obj, oldVal, newVal) -> {
 			if (newVal == true) {

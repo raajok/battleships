@@ -231,8 +231,8 @@ public class setShipsSceneController {
 				String shipImageUrl = this.currentlyMoved.getImage().getUrl().toLowerCase();
 				int xCoordinate = (int) Math.floor(e.getSceneX() / boardPane.getWidth() * this.gameboardSize);
 				int yCoordinate = (int) Math.floor((e.getSceneY() - 100) / boardPane.getHeight() * this.gameboardSize);
-				System.out.println(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
-				System.out.println(yCoordinate * (boardPane.getHeight() / this.gameboardSize) + 100);
+				//System.out.println(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
+				//System.out.println(yCoordinate * (boardPane.getHeight() / this.gameboardSize) + 100);
 				
 				// Lock ship in the placed coordinate
 				this.currentlyMoved.setLayoutX(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
@@ -268,7 +268,7 @@ public class setShipsSceneController {
 				} else if (shipImageUrl.contains("submarine")) {
 					shipType = ShipType.SUBMARINE;
 				}
-				System.out.println(orientation);
+				//System.out.println(orientation);
 				// create XY from coordinates
 				XY coords = new XY(xCoordinate, yCoordinate);
 				// create ship

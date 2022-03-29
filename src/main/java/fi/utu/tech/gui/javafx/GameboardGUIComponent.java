@@ -3,6 +3,7 @@ package fi.utu.tech.gui.javafx;
 import java.util.ArrayDeque;
 import java.util.Collection;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -208,6 +209,57 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	private void addMissedMarkTo(XY coord) {
+		Thread runAfterAnimationThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Platform.runLater(() -> {
+					double lineWidth = tileSize.get() / 30;
+					Color color = Color.RED.deriveColor(1, 1, .75, 1);
+					
+					// Line 1 from top left to bottom right
+					Line line1 = new Line(lineWidth,lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth);
+					line1.setStrokeWidth(lineWidth);
+					line1.setStroke(color);
+					line1.setTranslateX(tileSize.multiply(coord.getX()).get());
+					line1.setTranslateY(tileSize.multiply(coord.getY()).get());
+					
+					// Line 2 from bottom left to top right
+					Line line2 = new Line(lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth,lineWidth);
+					line2.setStrokeWidth(lineWidth);
+					line2.setStroke(color);
+					line2.setTranslateX(tileSize.multiply(coord.getX()).get());
+					line2.setTranslateY(tileSize.multiply(coord.getY()).get());
+					
+					// Add lines
+					shotsGroup.getChildren().addAll(line1, line2);					
+				});
+				
+			}
+		});
+		
+		ImageView explosionImageView = new ImageView();
+		Sprite explosionAnimation = new Sprite(explosionImageView,
+										new Image(ResourceLoader.image("splash_cropped.png"), 480,360,false,false),
+										8, // Columns
+										6, // Rows
+										60, // Frame width
+										60, // Frame height
+										60, // FPS
+										1); // Repeats
+
+		explosionImageView.setPreserveRatio(true);
+		explosionImageView.fitWidthProperty().bind(tileSize);
+		explosionImageView.translateXProperty().bind(tileSize
+				.multiply(coord.getX()));
+		explosionImageView.translateYProperty().bind(tileSize
+				.multiply(coord.getY()));
+		shotsGroup.getChildren().add(explosionImageView);
+		runAfterAnimationThread.setDaemon(true);
+		explosionAnimation.setRunAfter(runAfterAnimationThread);
+		explosionAnimation.start();
+				
+		/*
 		Circle circle = new Circle(0, 0, tileSize.get() / 3);
 		circle.setTranslateX(tileSize.multiply(coord.getX()).get());
 		circle.setTranslateY(tileSize.multiply(coord.getY()).get());
@@ -215,9 +267,43 @@ public class GameboardGUIComponent extends Pane {
 		circle.setCenterY(tileSize.divide(2).get());
 		
 		shotsGroup.getChildren().add(circle);
+		*/
 	}
 	
 	private void addHitMarkTo(XY coord) {
+		Image img = new Image(ResourceLoader.image("crater2.png"));
+		
+		ImageView crater = new ImageView(img);
+		crater.setPreserveRatio(true);
+		crater.fitWidthProperty().bind(tileSize.multiply(0.8));
+		crater.translateXProperty().bind(tileSize
+				.multiply(coord.getX()).add(tileSize.divide(10).get()));
+		crater.translateYProperty().bind(tileSize
+				.multiply(coord.getY()).add(tileSize.divide(10).get())
+				);
+		crater.setMouseTransparent(true);
+		shotsGroup.getChildren().add(crater);
+
+		ImageView explosionImageView = new ImageView();
+		Sprite explosionAnimation = new Sprite(explosionImageView,
+										new Image(ResourceLoader.image("explosion_cropped_2.png"), 480,360,false,false),
+										8, // Columns
+										6, // Rows
+										60, // Frame width
+										60, // Frame height
+										60, // FPS
+										1); // Repeats
+
+		explosionImageView.setPreserveRatio(true);
+		explosionImageView.fitWidthProperty().bind(tileSize);
+		explosionImageView.translateXProperty().bind(tileSize
+				.multiply(coord.getX()));
+		explosionImageView.translateYProperty().bind(tileSize
+				.multiply(coord.getY()));
+		shotsGroup.getChildren().add(explosionImageView);
+		explosionAnimation.start();
+		
+		/*
 		double lineWidth = tileSize.get() / 30;
 		Color color = Color.RED.deriveColor(1, 1, .75, 1);
 
@@ -237,6 +323,7 @@ public class GameboardGUIComponent extends Pane {
 		
 		// Add lines
 		shotsGroup.getChildren().addAll(line1, line2);
+		*/
 	}
 	
 	public StringProperty infoTextProperty() {
@@ -293,7 +380,7 @@ public class GameboardGUIComponent extends Pane {
 							if (ship.hasSunk()) {
 								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));								
 							} else {
-								infoText.set("Osuit! Pelaaja saa jatkaa.");
+								infoText.set("Osuit! Saat jatkaa.");
 							}
 						} else {
 							System.out.println("NullPointerException: Ship is null");

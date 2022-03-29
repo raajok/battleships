@@ -20,6 +20,7 @@ public class Sprite extends AnimationTimer {
     private int currentFrame = 0;
     private long lastFrame = 0;
     private SimpleBooleanProperty isPlaying = new SimpleBooleanProperty(false);
+    private Thread runAfterThread;
     
     public Sprite(ImageView imageView, Image image, int columns, int rows, int frameWidth,
     		int frameHeight, float framesPerSecond, int repeat) {
@@ -52,6 +53,7 @@ public class Sprite extends AnimationTimer {
             imageView.setVisible(false);
             this.isPlaying.set(false);
     		this.stop();
+    		if (this.runAfterThread instanceof Thread) { runAfterThread.start();}
     		return;
     	}
     	
@@ -89,4 +91,8 @@ public class Sprite extends AnimationTimer {
     public SimpleBooleanProperty isPlayingProperty() {
 		return isPlaying;
 	}
+    
+    public void setRunAfter(Thread thread) {
+    	this.runAfterThread = thread;
+    }
 }
