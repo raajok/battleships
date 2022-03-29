@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -65,43 +66,51 @@ public class Gameboard {
 		}
 		
 		public boolean isFree(int x, int y) {
-			if((fieldStatus[x][y] == 0) &&
-				(x == boardX-1 || fieldStatus[x+1][y] == 0) &&
-				(x == 0 || fieldStatus[x-1][y] == 0) &&
-				(y == boardY-1 || fieldStatus[x][y+1] == 0) &&
-				(y == 0 || fieldStatus[x][y-1] == 0)) {
-				return true;
-			}
-			else {
-				return false;
-			}
+			// Return false if x or y is out of bounds.
+			if (x < 0 || y < 0 || x >= fieldStatus[0].length || y >= fieldStatus[1].length) { return false; }
+			
+			// If location [x],[y] is free, return true, otherwise false.
+			if (fieldStatus[x][y] == 0) { return true; } else {	return false; }
 		}
 
 		
-		public void setShip(Ship ship, XY coord) {
+		public boolean setShip(Ship ship, XY coord) {
 			// setting field status to 1 (not empty, not hit) at the coordinates that the ship occupies
+			
+			int x; int y;
+			
+			Queue<XY> coords = new LinkedList<XY>();
 			switch(ship.getOrientation()) {
 			case RIGHT:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()+i][coord.getY()] = 1;
-					shipsMapping.put(new XY(coord.getX()+i,coord.getY()), ship);
-				} break;
+					x = coord.getX()+i;
+					y = coord.getY();
+					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
+				}
 			case LEFT:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()-i][coord.getY()] = 1;
-					shipsMapping.put(new XY(coord.getX()-i,coord.getY()), ship);
-				} break;
+					x = coord.getX()-i;
+					y = coord.getY();
+					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
+				}
 			case UP:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()][coord.getY()-i] = 1;
-					shipsMapping.put(new XY(coord.getX(),coord.getY()-i), ship);
-				} break;
+					x = coord.getX();
+					y = coord.getY()-i;
+					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
+				}
 			case DOWN:
 				for (int i = 0; i<ship.getSize(); i++) {
-					fieldStatus[coord.getX()][coord.getY()+i] = 1;
-					shipsMapping.put(new XY(coord.getX(),coord.getY()+i), ship);
-				} break;
+					x = coord.getX();
+					y = coord.getY()+i;
+					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
+				}
 			}
+			for (XY xy: coords) {
+				fieldStatus[xy.getX()][xy.getY()] = 1;
+				shipsMapping.put(xy, ship);				
+			}
+			return true;
 		}
 		
 		public Boolean isShootable(XY coord) {
@@ -190,11 +199,13 @@ public class Gameboard {
 		}
 
 		public boolean addShip(Ship ship) {
-			// TODO Check if it is possible to add a ship to this location.
 			// Return true if successful, false if not.
-			setShip(ship, ship.getLocation());
-			ships.push(ship);
-			return true;
+			if (setShip(ship, ship.getLocation())) {
+				ships.push(ship);
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		public int[][] getBoard() {
