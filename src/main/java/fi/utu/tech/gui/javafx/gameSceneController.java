@@ -102,7 +102,7 @@ public class gameSceneController {
 	public void init(Scene scene) {
 		
 		// Note: the game.newGame() method has to be called before this is executed. It should be called before leaving the setShipsScene.
-
+		
 		// Get the board size from the game object
 		gameboardSize = this.game.boardSizeProperty().get();
 		

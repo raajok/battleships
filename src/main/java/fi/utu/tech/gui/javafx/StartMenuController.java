@@ -48,6 +48,10 @@ public class StartMenuController {
 		this.game.getPlayerNamesProperty()[Player.PLAYER1.ordinal()].bind(player1.textProperty());
 		this.game.getPlayerNamesProperty()[Player.PLAYER2.ordinal()].bind(player2.textProperty());
 		
+		// If player names are empty, then use defaults
+    	if (player1.getText() == "") { player1.setText("Pelaaja 1"); }
+    	if (player2.getText() == "") { player2.setText("Pelaaja 2"); }
+    	
 		// Binding for start button availability to settings ready property
 		startButton.disableProperty().bind(this.game.settingsReadyProperty().not());
 	}
@@ -92,8 +96,6 @@ public class StartMenuController {
     }
     
     public void startGame() {
-    	// TODO: check if ratio of board and ships is ok before allowing start button to be pressed
-    	
     	game.newGame();
     }
     

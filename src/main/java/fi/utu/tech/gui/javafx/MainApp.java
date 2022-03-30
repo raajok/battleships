@@ -44,7 +44,7 @@ public class MainApp extends Application {
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
-        	MainApp.game.newGame();
+        	startMenuLoader.controller.startGame();
         	setShipsLoader1.controller.drawBoard();
         	stage.setScene(setShipsScene1);
         	

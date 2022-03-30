@@ -3,15 +3,17 @@ package fi.utu.tech.gui.javafx;
 import java.util.Collection;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
 	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty("Pelaaja 1"),
 														  new SimpleStringProperty("Pelaaja 2")};
-	private Player playerInTurn = Player.PLAYER1;
+	private ObjectProperty<Player> playerInTurn = new SimpleObjectProperty<Player>(Player.PLAYER1);
 	private SimpleStringProperty playerInTurnNameProperty = new SimpleStringProperty(
 															playerNamesProperty[Player.PLAYER1.ordinal()].getValue());
 	private SimpleIntegerProperty playerInTurnValueProperty = new SimpleIntegerProperty(Player.PLAYER1.ordinal());
@@ -42,6 +44,11 @@ public class BattleshipGame {
 					.and(shipSums.greaterThan(0)))
 			 		.then(true)
 			 		.otherwise(false));
+
+		playerInTurn.addListener((obj, oldVal, newVal) -> {
+			playerInTurnNameProperty.setValue(playerNamesProperty[newVal.ordinal()].getValue());
+			playerInTurnValueProperty.set(newVal.ordinal());			
+		});
 	}
 	
 	public void newGame() {
@@ -78,21 +85,19 @@ public class BattleshipGame {
 		this.boards[Player.PLAYER2.ordinal()] = new Gameboard(
                                                           boardSizeProperty.get(),
                                                           shipCounts);
-		 this.playerInTurn = Player.PLAYER1; // Player 1 will start the game
-		 //this.shipCounts = shipCounts;
+		
+		this.playerInTurn.set(Player.PLAYER1); // Player 1 will start the game
+		//this.shipCounts = shipCounts;
 		 
-		 // Create bindings for when boards are ready
-		 if (this.gameReady.isBound()) this.gameReady.unbind(); // Remove old bindings
-		 this.gameReady.bind(
-				 Bindings.when(
-						boards[Player.PLAYER1.ordinal()].readyProperty()
-						.and(
-				 		boards[Player.PLAYER2.ordinal()].readyProperty()))
-				 		.then(true)
-				 		.otherwise(false));
-		 
-		 // Player 1 will start the game
-		 this.playerInTurn = Player.PLAYER1;
+		// Create bindings for when boards are ready
+		if (this.gameReady.isBound()) this.gameReady.unbind(); // Remove old bindings
+		this.gameReady.bind(
+			 Bindings.when(
+					boards[Player.PLAYER1.ordinal()].readyProperty()
+					.and(
+			 		boards[Player.PLAYER2.ordinal()].readyProperty()))
+			 		.then(true)
+			 		.otherwise(false));
 	}
 	
 	public int shoot(XY coord) {
@@ -122,13 +127,11 @@ public class BattleshipGame {
 	}
 	
 	public void switchTurn() {
-		playerInTurn = getOpponent();
-		playerInTurnNameProperty.setValue(playerNamesProperty[playerInTurn.ordinal()].getValue());
-		playerInTurnValueProperty.set(playerInTurn.ordinal());
+		playerInTurn.set(getOpponent());
 	}
 	
 	public Player getOpponent() {
-		return getOpponent(this.playerInTurn); 
+		return getOpponent(this.playerInTurn.get()); 
 	}
 	
 	public Player getOpponent(Player player) {
@@ -136,7 +139,7 @@ public class BattleshipGame {
 	}
 	
 	public boolean addShip(Ship ship) {
-		return addShip(ship, this.playerInTurn);
+		return addShip(ship, this.playerInTurn.get());
 	}
 	
 	public boolean addShip(Ship ship, Player player) {
@@ -168,7 +171,7 @@ public class BattleshipGame {
 	}
 	
 	public Gameboard getBoard() {
-		return boards[playerInTurn.ordinal()];
+		return boards[playerInTurn.get().ordinal()];
 	}
 	
 	public Gameboard getOpponentBoard() {
@@ -176,7 +179,7 @@ public class BattleshipGame {
 	}
 	
 	public Player getPlayerInTurn() {
-		return playerInTurn;
+		return playerInTurn.get();
 	}
 	
 	public SimpleStringProperty playerInTurnNameProperty() {
@@ -212,7 +215,7 @@ public class BattleshipGame {
 	}
 	
 	public void removeShip(Ship ship) {
-		removeShip(ship, playerInTurn);
+		removeShip(ship, playerInTurn.get());
 	}
 	
 	public void removeShip(Ship ship, Player player) {
@@ -220,7 +223,7 @@ public class BattleshipGame {
 	}
 	
 	public void removeShips(Collection<Ship> ships) {
-		removeShips(ships, playerInTurn);
+		removeShips(ships, playerInTurn.get());
 	}
 	
 	public void removeShips(Collection<Ship> ships, Player player) {
@@ -234,6 +237,6 @@ public class BattleshipGame {
 	}
 	
 	public void removeAllShips() {
-		removeShips(boards[playerInTurn.ordinal()].getShips());
+		removeShips(boards[playerInTurn.get().ordinal()].getShips());
 	}
 }

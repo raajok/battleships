@@ -134,6 +134,9 @@ public class setShipsSceneController {
 		
 		this.alert.setTitle("Huomio!");
 		
+		playerText.textProperty().bind(Bindings.createStringBinding(() -> String.format("Pelaajan %s vuoro asettaa laivat",
+				game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
+		
 	}
 
 	@FXML
@@ -284,7 +287,6 @@ public class setShipsSceneController {
 				XY coords = new XY(xCoordinate, yCoordinate);
 				// create ship
 				Ship ship = this.game.createShip(shipType, coords, orientation);
-				System.out.println(ship);
 				// add the ship to gameboard
 				if (!this.game.addShip(ship)) {
 					outerPane.getChildren().remove(this.currentlyMoved);
@@ -292,10 +294,8 @@ public class setShipsSceneController {
 					this.alert.show();
 					this.currentlyMoved = null;
 					this.rotation = 0.0;
-					System.out.println(game.getBoard());
 					return;
 				}
-				System.out.println(game.getBoard());
 				
 				// Set everything back to default
 				this.rotation = 0.0;
@@ -357,9 +357,6 @@ public class setShipsSceneController {
 		this.cruiserAmountProperty.set(this.game.shipCountProperties()[2].get());
 		this.destroyerAmountProperty.set(this.game.shipCountProperties()[4].get());
 		this.submarineAmountProperty.set(this.game.shipCountProperties()[3].get());
-		
-		playerText.setText("Pelaajan " + this.game.getPlayerNamesProperty()[this.game.getPlayerInTurn().ordinal()].getValue() 
-				+ " vuoro asettaa laivat");
 	}
 
 	// Calculate direction of ships rotation
