@@ -25,25 +25,28 @@ public class MainApp extends Application {
     public void start(Stage stage) {
     	// Loaders for every scene
         ResourceLoader<Parent, StartMenuController> startMenuLoader = new ResourceLoader<>("startMenuScene.fxml");
-        ResourceLoader<Parent, setShipsSceneController> setShipsLoader = new ResourceLoader<>("setShipsScene.fxml");
+        ResourceLoader<Parent, setShipsSceneController> setShipsLoader1 = new ResourceLoader<>("setShipsScene.fxml");
+        ResourceLoader<Parent, setShipsSceneController> setShipsLoader2 = new ResourceLoader<>("setShipsScene.fxml");
         ResourceLoader<Parent, gameSceneController> gameLoader = new ResourceLoader<>("gameScene.fxml");
         ResourceLoader<Parent, gameOverSceneController> gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
         
         // Scenes
         Scene startMenuScene = new Scene(startMenuLoader.root);
-        Scene setShipsScene = new Scene(setShipsLoader.root);
+        Scene setShipsScene1 = new Scene(setShipsLoader1.root);
+        Scene setShipsScene2 = new Scene(setShipsLoader2.root);
         Scene gameScene = new Scene(gameLoader.root);
         Scene gameOverScene = new Scene(gameOverLoader.root);
         startMenuScene.getStylesheets().add(createStyle());
-        setShipsScene.getStylesheets().add(createStyle());
+        setShipsScene1.getStylesheets().add(createStyle());
+        setShipsScene2.getStylesheets().add(createStyle());
         gameScene.getStylesheets().add(createStyle());
         gameOverScene.getStylesheets().add(createStyle());
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
         	MainApp.game.newGame();
-        	setShipsLoader.controller.drawBoard();
-        	stage.setScene(setShipsScene);
+        	setShipsLoader1.controller.drawBoard();
+        	stage.setScene(setShipsScene1);
         	
         	// Set stage in the center of the screen
         	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -51,16 +54,28 @@ public class MainApp extends Application {
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
         });
         
-        // Eventhandler for changing scene from SetShips to Game
-        setShipsLoader.controller.getEndPlacementButton().setOnAction(e -> {
-        	// Initialize the game scene controller
-            gameLoader.controller.init(gameScene);
-        	stage.setScene(gameScene);
+        // Eventhandler for changing scene from SetShips1 to setShips2
+        setShipsLoader1.controller.getEndPlacementButton().setOnAction(e -> {
+
+    		game.switchTurn();
+    		setShipsLoader2.controller.drawBoard();
+    		stage.setScene(setShipsScene2);
+
+        });
+        
+        // Eventhandler for changing scene from SetShips2 to Game
+        setShipsLoader2.controller.getEndPlacementButton().setOnAction(e -> {
         	
-        	// Set stage in the center of the screen
-        	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
+        	game.switchTurn();
+
+        	// Initialize the game scene controller
+    		gameLoader.controller.init(gameScene);
+    		stage.setScene(gameScene);
+    		
+    		// Set stage in the center of the screen
+    		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+    		stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+    		stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);        		
         }); 
         
         // Eventhandler for changing scene from gameOver to StartMenu

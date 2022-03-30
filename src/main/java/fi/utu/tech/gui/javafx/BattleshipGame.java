@@ -121,8 +121,8 @@ public class BattleshipGame {
 		return boards[getOpponent().ordinal()].isShootable(coord);
 	}
 	
-	private void switchTurn() {
-		playerInTurn = getOpponent(playerInTurn);
+	public void switchTurn() {
+		playerInTurn = getOpponent();
 		playerInTurnNameProperty.setValue(playerNamesProperty[playerInTurn.ordinal()].getValue());
 		playerInTurnValueProperty.set(playerInTurn.ordinal());
 	}
