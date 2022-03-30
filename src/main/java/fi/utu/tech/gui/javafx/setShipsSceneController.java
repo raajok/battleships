@@ -136,7 +136,6 @@ public class setShipsSceneController {
 		
 		playerText.textProperty().bind(Bindings.createStringBinding(() -> String.format("Pelaajan %s vuoro asettaa laivat",
 				game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
-		
 	}
 
 	@FXML
@@ -301,7 +300,6 @@ public class setShipsSceneController {
 				this.rotation = 0.0;
 				this.addedShips.add(currentlyMoved);
 				this.changeShipAmount(shipImageUrl, true);
-				this.areAllShipsPlaced();
 				this.currentlyMoved = null;
 			}
 		}
@@ -357,6 +355,8 @@ public class setShipsSceneController {
 		this.cruiserAmountProperty.set(this.game.shipCountProperties()[2].get());
 		this.destroyerAmountProperty.set(this.game.shipCountProperties()[4].get());
 		this.submarineAmountProperty.set(this.game.shipCountProperties()[3].get());
+		
+		endPlacementButton.disableProperty().bind(game.getBoard().readyProperty().not());
 	}
 
 	// Calculate direction of ships rotation
@@ -391,20 +391,6 @@ public class setShipsSceneController {
 				this.submarineAmountProperty.set(this.submarineAmountProperty.get() + 1);
 			}
 			
-		}
-	}
-	
-	// Check if all ships are placed and disable or undisable endPlacementButton based on the result
-	private void areAllShipsPlaced() {
-		
-		if(this.battleshipAmountProperty.get() == 0 
-				&& this.carrierAmountProperty.get() == 0
-				&& this.cruiserAmountProperty.get() == 0
-				&& this.destroyerAmountProperty.get() == 0
-				&& this.submarineAmountProperty.get() == 0){
-			this.endPlacementButton.setDisable(false);
-		} else {
-			this.endPlacementButton.setDisable(true);
 		}
 	}
 

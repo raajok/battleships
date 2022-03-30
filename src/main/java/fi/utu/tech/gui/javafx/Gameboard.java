@@ -110,6 +110,7 @@ public class Gameboard {
 				fieldStatus[xy.getX()][xy.getY()] = 1;
 				shipsMapping.put(xy, ship);				
 			}
+			shipCheck();
 			return true;
 		}
 		
@@ -258,6 +259,7 @@ public class Gameboard {
 				} break;
 			}
 			ships.remove(ship);
+			shipCheck();
 		}
 		
 		public void removeLastShip() {
