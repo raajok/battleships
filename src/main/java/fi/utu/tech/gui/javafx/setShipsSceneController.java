@@ -2,7 +2,6 @@ package fi.utu.tech.gui.javafx;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -21,7 +20,6 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
@@ -41,20 +39,14 @@ public class setShipsSceneController {
 	private Button endPlacementButton;
 
 	@FXML
-	private Pane boardPane;
+	private Pane gameboardPane;
 
 	@FXML
-	private BorderPane outerPane;
+	private BorderPane gameScreenPane;
 
 	@FXML
 	private Text playerText;
-
-	@FXML
-	private HBox topBox;
-
-	@FXML
-	private HBox bottomBox;
-
+	
 	@FXML
 	private ImageView battleship;
 
@@ -122,7 +114,7 @@ public class setShipsSceneController {
 		submarine.setImage(submarineImage);
 		
 		this.backgroundImage = new Image(getClass().getResource("sea_texture.jpg").toExternalForm());
-		boardPane.setBackground(new Background(new BackgroundImage(this.backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+		gameboardPane.setBackground(new Background(new BackgroundImage(this.backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
 		
 		StringConverter<Number> NumberConverter = new NumberStringConverter();
 		Bindings.bindBidirectional(battleshipText.textProperty(), this.battleshipAmountProperty, NumberConverter);
@@ -137,59 +129,39 @@ public class setShipsSceneController {
 		playerText.textProperty().bind(Bindings.createStringBinding(() -> String.format("Pelaajan %s vuoro asettaa laivat",
 				game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
 	}
-
-	@FXML
-	void resetShips() {
-		// koko ruudun koko
-		// System.out.println("outerpane width: " + outerPane.getWidth());
-		// System.out.println("outerpane height: " + outerPane.getHeight());
-		// System.out.println("topbox height: " + topBox.getHeight());
-		// System.out.println("topbox height: " + topBox.getWidth());
-		// System.out.println("bottombox height: " + bottomBox.getHeight());
-		// System.out.println("bottombox height: " + bottomBox.getWidth());
-		// peliruudukon panen koko
-		// System.out.println("width:" + boardPane.getWidth());
-		// System.out.println("height:" + boardPane.getHeight());
-		// top h
-		System.out.println(gameboardSize);
-	};
 	
-	// Close game
-	@FXML
-	void endGame() {
-		Platform.exit();
-	}
+	// Method for initializing visual things
+		public void drawBoard() {
+			gameboardSize = this.game.boardSizeProperty().get();
+			for (int i = 0; i < gameboardSize + 1; i++) {
 
-	@FXML
-	void cancelLastShipPlacement() {
-		int lastShipIndex = this.addedShips.size() - 1;
-		if (lastShipIndex >= 0) {
-			this.changeShipAmount(addedShips.get(lastShipIndex).getImage().getUrl().toLowerCase(), false);
-			outerPane.getChildren().remove(this.addedShips.get(lastShipIndex));
-			this.addedShips.remove(lastShipIndex);
-			game.getBoard().removeLastShip();
-		} else {
-			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
-			this.alert.show();
-		}
-	}
+				// Vertical lines
+				Line verticaLine = new Line();
+				verticaLine.startXProperty().bind(gameboardPane.widthProperty().divide(this.gameboardSize).multiply(i));
+				verticaLine.endXProperty().bind(gameboardPane.widthProperty().divide(this.gameboardSize).multiply(i));
+				verticaLine.endYProperty().bind(gameboardPane.heightProperty());
 
-	@FXML
-	void removeAllShips() {
-		if (this.addedShips.size() == 0) {
-			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
-			this.alert.show();
-			return;
-		}
-		for (ImageView ship : this.addedShips) {
-			this.changeShipAmount(ship.getImage().getUrl().toLowerCase(), false);
-			outerPane.getChildren().remove(ship);
-		}
-		this.addedShips.clear();
-		this.game.removeAllShips();
-		System.out.println(game.getBoard());
-	}
+				// Horizontal lines
+				Line horizontalLine = new Line();
+				horizontalLine.startYProperty().bind(gameboardPane.heightProperty().divide(this.gameboardSize).multiply(i));
+				horizontalLine.endYProperty().bind(gameboardPane.heightProperty().divide(this.gameboardSize).multiply(i));
+				horizontalLine.endXProperty().bind(gameboardPane.widthProperty());
 
+				gameboardPane.getChildren().add(verticaLine);
+				gameboardPane.getChildren().add(horizontalLine);
+				
+			}
+			this.battleshipAmountProperty.set(this.game.shipCountProperties()[1].get());
+			this.carrierAmountProperty.set(this.game.shipCountProperties()[0].get());
+			this.cruiserAmountProperty.set(this.game.shipCountProperties()[2].get());
+			this.destroyerAmountProperty.set(this.game.shipCountProperties()[4].get());
+			this.submarineAmountProperty.set(this.game.shipCountProperties()[3].get());
+			
+			endPlacementButton.disableProperty().bind(game.getBoard().readyProperty().not());
+		}
+	
+
+	// Method for dragging a ship
 	@FXML
 	void dragMove(MouseEvent e) {
 		String sourceText = e.getSource().toString();
@@ -200,65 +172,97 @@ public class setShipsSceneController {
 					return;
 				}
 				this.currentlyMoved = new ImageView(this.battleshipImage);
-				this.currentlyMoved.setFitWidth(boardPane.getWidth() / this.gameboardSize * 4);
+				this.currentlyMoved.setFitWidth(gameboardPane.getWidth() / this.gameboardSize * 4);
 			} else if (sourceText.contains("carrier")) {
 				if (this.carrierAmountProperty.get() == 0) {
 					return;
 				}
 				this.currentlyMoved = new ImageView(this.carrierImage);
-				this.currentlyMoved.setFitWidth(boardPane.getWidth() / this.gameboardSize * 5);
+				this.currentlyMoved.setFitWidth(gameboardPane.getWidth() / this.gameboardSize * 5);
 			} else if (sourceText.contains("cruiser")) {
 				if (this.cruiserAmountProperty.get() == 0) {
 					return;
 				}
 				this.currentlyMoved = new ImageView(this.cruiserImage);
-				this.currentlyMoved.setFitWidth(boardPane.getWidth() / this.gameboardSize * 3);
+				this.currentlyMoved.setFitWidth(gameboardPane.getWidth() / this.gameboardSize * 3);
 			} else if (sourceText.contains("destroyer")) {
 				if (this.destroyerAmountProperty.get() == 0) {
 					return;
 				}
 				this.currentlyMoved = new ImageView(this.destroyerImage);
-				this.currentlyMoved.setFitWidth(boardPane.getWidth() / this.gameboardSize * 2);
+				this.currentlyMoved.setFitWidth(gameboardPane.getWidth() / this.gameboardSize * 2);
 			} else if (sourceText.contains("submarine")) {
 				if (this.submarineAmountProperty.get() == 0) {
 					return;
 				}
 				this.currentlyMoved = new ImageView(this.submarineImage);
-				this.currentlyMoved.setFitWidth(boardPane.getWidth() / this.gameboardSize * 3);
+				this.currentlyMoved.setFitWidth(gameboardPane.getWidth() / this.gameboardSize * 3);
 			}
 			this.currentlyMoved.setMouseTransparent(true);
-			this.currentlyMoved.setFitHeight(boardPane.getHeight() / this.gameboardSize);
-			outerPane.getChildren().add(currentlyMoved);
+			this.currentlyMoved.setFitHeight(gameboardPane.getHeight() / this.gameboardSize);
+			gameScreenPane.getChildren().add(currentlyMoved);
 		}
-		double offsetX = boardPane.getHeight() / this.gameboardSize / 2;
-		double offsetY = boardPane.getWidth() / this.gameboardSize / 2;
+		double offsetX = gameboardPane.getHeight() / this.gameboardSize / 2;
+		double offsetY = gameboardPane.getWidth() / this.gameboardSize / 2;
 		this.currentlyMoved.setLayoutX(e.getSceneX() - offsetX);
 		this.currentlyMoved.setLayoutY(e.getSceneY() - offsetY);
 	}
-	
-	
+
+
+	// Method for removing lastly added ship
+	@FXML
+	void removeLatestShip() {
+		int lastShipIndex = this.addedShips.size() - 1;
+		if (lastShipIndex >= 0) {
+			this.changeShipAmount(addedShips.get(lastShipIndex).getImage().getUrl().toLowerCase(), false);
+			gameScreenPane.getChildren().remove(this.addedShips.get(lastShipIndex));
+			this.addedShips.remove(lastShipIndex);
+			game.getBoard().removeLastShip();
+		} else {
+			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
+			this.alert.show();
+		}
+	}
+
+	// Method for removing all ships from gameboard
+	@FXML
+	void removeAllShips() {
+		if (this.addedShips.size() == 0) {
+			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
+			this.alert.show();
+			return;
+		}
+		for (ImageView ship : this.addedShips) {
+			this.changeShipAmount(ship.getImage().getUrl().toLowerCase(), false);
+			gameScreenPane.getChildren().remove(ship);
+		}
+		this.addedShips.clear();
+		this.game.removeAllShips();
+	}
+
+	// Method for "dropping" the ship on the gameboard
 	@FXML
 	void dragFinished(MouseEvent e) {
 		// Mouse need to be inside the boardPane, if not, then abort the setting.
-		if (!boardPane.getBoundsInParent().contains(e.getSceneX(), e.getSceneY())) {
-			outerPane.getChildren().remove(this.currentlyMoved);
+		if (!gameboardPane.getBoundsInParent().contains(e.getSceneX(), e.getSceneY())) {
+			gameScreenPane.getChildren().remove(this.currentlyMoved);
 			this.currentlyMoved = null;
 			this.rotation = 0.0;
+			this.alert.setHeaderText("Tähän ei voi asettaa laivaa.");
+			this.alert.show();
 			return;
 		}
 		if (e.getButton() == MouseButton.PRIMARY) {
 			if (this.currentlyMoved != null) {
 				String shipImageUrl = this.currentlyMoved.getImage().getUrl().toLowerCase();
-				int xCoordinate = (int) Math.floor(e.getSceneX() / boardPane.getWidth() * this.gameboardSize);
-				int yCoordinate = (int) Math.floor((e.getSceneY() - 100) / boardPane.getHeight() * this.gameboardSize);
-				//System.out.println(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
-				//System.out.println(yCoordinate * (boardPane.getHeight() / this.gameboardSize) + 100);
+				int xCoordinate = (int) Math.floor(e.getSceneX() / gameboardPane.getWidth() * this.gameboardSize);
+				int yCoordinate = (int) Math.floor((e.getSceneY() - 100) / gameboardPane.getHeight() * this.gameboardSize);
 				
 				// Lock ship in the placed coordinate
-				this.currentlyMoved.setLayoutX(xCoordinate * (boardPane.getWidth() / this.gameboardSize));
-				this.currentlyMoved.setLayoutY(yCoordinate * (boardPane.getHeight() / this.gameboardSize) + 100);
+				this.currentlyMoved.setLayoutX(xCoordinate * (gameboardPane.getWidth() / this.gameboardSize));
+				this.currentlyMoved.setLayoutY(yCoordinate * (gameboardPane.getHeight() / this.gameboardSize) + 100);
 				
-				// get the Orientation of the ship
+				// Get the Orientation of the ship
 				Orientation orientation = null;
 				switch (this.getShipsRotationDirection()) {
 				case 0:
@@ -275,7 +279,7 @@ public class setShipsSceneController {
 					break;
 				}
 				
-				// get the ShipType
+				// Get the ShipType
 				ShipType shipType = null;
 				if (shipImageUrl.contains("battleship")) {
 					shipType = ShipType.BATTLESHIP;
@@ -288,15 +292,15 @@ public class setShipsSceneController {
 				} else if (shipImageUrl.contains("submarine")) {
 					shipType = ShipType.SUBMARINE;
 				}
-				//System.out.println(orientation);
-				// create XY from coordinates
+
+				// Create XY from coordinates
 				XY coords = new XY(xCoordinate, yCoordinate);
-				// create ship
+				// Create ship
 				Ship ship = this.game.createShip(shipType, coords, orientation);
-				// add the ship to gameboard
+				// Add the ship to gameboard
 				if (!this.game.addShip(ship)) {
-					outerPane.getChildren().remove(this.currentlyMoved);
-					this.alert.setHeaderText("Tähän ei voi asettaa laivaa");
+					gameScreenPane.getChildren().remove(this.currentlyMoved);
+					this.alert.setHeaderText("Tähän ei voi asettaa laivaa.");
 					this.alert.show();
 					this.currentlyMoved = null;
 					this.rotation = 0.0;
@@ -313,7 +317,7 @@ public class setShipsSceneController {
 
 	}
 
-	// Rotate ship
+	// Rotate ship while dragging it
 	@FXML
 	void rotateShip(KeyEvent e) {
 		if (this.currentlyMoved != null) {
@@ -325,9 +329,8 @@ public class setShipsSceneController {
 					this.rotation = 0;
 				}
 
-				System.out.println(this.rotation);
-				double offsetX = boardPane.getHeight() / this.gameboardSize / 2;
-				double offsetY = boardPane.getWidth() / this.gameboardSize / 2;
+				double offsetX = gameboardPane.getHeight() / this.gameboardSize / 2;
+				double offsetY = gameboardPane.getWidth() / this.gameboardSize / 2;
 				rotate.setAngle(90.0);
 				rotate.setPivotX(this.currentlyMoved.getX() + offsetX);
 				rotate.setPivotY(this.currentlyMoved.getY() + offsetY);
@@ -336,69 +339,47 @@ public class setShipsSceneController {
 		}
 	}
 
-	// Draw gameboard
-	public void drawBoard() {
-		gameboardSize = this.game.boardSizeProperty().get();
-		for (int i = 0; i < gameboardSize + 1; i++) {
-
-			// Vertical lines
-			Line verticaLine = new Line();
-			verticaLine.startXProperty().bind(boardPane.widthProperty().divide(this.gameboardSize).multiply(i));
-			verticaLine.endXProperty().bind(boardPane.widthProperty().divide(this.gameboardSize).multiply(i));
-			verticaLine.endYProperty().bind(boardPane.heightProperty());
-
-			// Horizontal lines
-			Line horizontalLine = new Line();
-			horizontalLine.startYProperty().bind(boardPane.heightProperty().divide(this.gameboardSize).multiply(i));
-			horizontalLine.endYProperty().bind(boardPane.heightProperty().divide(this.gameboardSize).multiply(i));
-			horizontalLine.endXProperty().bind(boardPane.widthProperty());
-
-			boardPane.getChildren().add(verticaLine);
-			boardPane.getChildren().add(horizontalLine);
-			
+	
+	// Change the available amount of the ships
+		private void changeShipAmount(String shipType, boolean remove) {
+			if (remove) {
+				if (shipType.contains("battleship")) {
+					this.battleshipAmountProperty.set(this.battleshipAmountProperty.get() - 1);
+				} else if (shipType.contains("carrier")) {
+					this.carrierAmountProperty.set(this.carrierAmountProperty.get() - 1);
+				} else if (shipType.contains("cruiser")) {
+					this.cruiserAmountProperty.set(this.cruiserAmountProperty.get() - 1);
+				} else if (shipType.contains("destroyer")) {
+					this.destroyerAmountProperty.set(this.destroyerAmountProperty.get() - 1);
+				} else if (shipType.contains("submarine")) {
+					this.submarineAmountProperty.set(this.submarineAmountProperty.get() - 1);
+				}
+			} else {
+				if (shipType.contains("battleship")) {
+					this.battleshipAmountProperty.set(this.battleshipAmountProperty.get() + 1);
+				} else if (shipType.contains("carrier")) {
+					this.carrierAmountProperty.set(this.carrierAmountProperty.get() + 1);
+				} else if (shipType.contains("cruiser")) {
+					this.cruiserAmountProperty.set(this.cruiserAmountProperty.get() + 1);
+				} else if (shipType.contains("destroyer")) {
+					this.destroyerAmountProperty.set(this.destroyerAmountProperty.get() + 1);
+				} else if (shipType.contains("submarine")) {
+					this.submarineAmountProperty.set(this.submarineAmountProperty.get() + 1);
+				}
+				
+			}
 		}
-		this.battleshipAmountProperty.set(this.game.shipCountProperties()[1].get());
-		this.carrierAmountProperty.set(this.game.shipCountProperties()[0].get());
-		this.cruiserAmountProperty.set(this.game.shipCountProperties()[2].get());
-		this.destroyerAmountProperty.set(this.game.shipCountProperties()[4].get());
-		this.submarineAmountProperty.set(this.game.shipCountProperties()[3].get());
 		
-		endPlacementButton.disableProperty().bind(game.getBoard().readyProperty().not());
-	}
 
-	// Calculate direction of ships rotation
+	// Calculate the direction of ships rotation
 	private int getShipsRotationDirection() {
 		return (int) rotation / 90;
 	}
-	
-	// Change the amount of ships
-	private void changeShipAmount(String shipType, boolean remove) {
-		if (remove) {
-			if (shipType.contains("battleship")) {
-				this.battleshipAmountProperty.set(this.battleshipAmountProperty.get() - 1);
-			} else if (shipType.contains("carrier")) {
-				this.carrierAmountProperty.set(this.carrierAmountProperty.get() - 1);
-			} else if (shipType.contains("cruiser")) {
-				this.cruiserAmountProperty.set(this.cruiserAmountProperty.get() - 1);
-			} else if (shipType.contains("destroyer")) {
-				this.destroyerAmountProperty.set(this.destroyerAmountProperty.get() - 1);
-			} else if (shipType.contains("submarine")) {
-				this.submarineAmountProperty.set(this.submarineAmountProperty.get() - 1);
-			}
-		} else {
-			if (shipType.contains("battleship")) {
-				this.battleshipAmountProperty.set(this.battleshipAmountProperty.get() + 1);
-			} else if (shipType.contains("carrier")) {
-				this.carrierAmountProperty.set(this.carrierAmountProperty.get() + 1);
-			} else if (shipType.contains("cruiser")) {
-				this.cruiserAmountProperty.set(this.cruiserAmountProperty.get() + 1);
-			} else if (shipType.contains("destroyer")) {
-				this.destroyerAmountProperty.set(this.destroyerAmountProperty.get() + 1);
-			} else if (shipType.contains("submarine")) {
-				this.submarineAmountProperty.set(this.submarineAmountProperty.get() + 1);
-			}
-			
-		}
+		
+	// Close game
+	@FXML
+	void endGame() {
+		Platform.exit();
 	}
 
 	// Get endPlacementButton

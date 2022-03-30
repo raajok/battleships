@@ -7,24 +7,24 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="outerPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="910.0" minWidth="1000.0" onKeyTyped="#rotateShip" prefHeight="910.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.setShipsSceneController">
+<BorderPane fx:id="gameScreenPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="910.0" minWidth="1000.0" onKeyTyped="#rotateShip" prefHeight="910.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.setShipsSceneController">
    <top>
       <HBox fx:id="topBox" alignment="CENTER" fillHeight="false" prefHeight="100.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="resetShipsButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#removeAllShips" text="Nollaa alukset" />
+            <Button mnemonicParsing="false" onAction="#removeLatestShip" text="Kumoa" />
             <Text fx:id="playerText" strokeType="OUTSIDE" strokeWidth="0.0" text="Pelaaja (x) aseta laivat ruutuun">
                <font>
                   <Font size="24.0" />
                </font>
             </Text>
-            <Button fx:id="endGameButton" mnemonicParsing="false" onAction="#endGame" text="Lopeta peli" />
-            <Button mnemonicParsing="false" onAction="#cancelLastShipPlacement" text="Kumoa" />
             <Button fx:id="endPlacementButton" mnemonicParsing="false" text="Lopeta asettelu" />
+            <Button fx:id="endGameButton" mnemonicParsing="false" onAction="#endGame" text="Lopeta peli" />
          </children>
       </HBox>
    </top>
    <center>
-      <Pane fx:id="boardPane" prefHeight="800.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="gameboardPane" prefHeight="800.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
    </center>
    <right>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
