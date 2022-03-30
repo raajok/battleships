@@ -44,11 +44,11 @@
         </repository>
 
         <!-- UTU repository -->
-        <repository>
+        <!-- <repository>
             <id>ftdev</id>
             <name>ftdev</name>
             <url>https://ftdev.utu.fi/maven2</url>
-        </repository>
+        </repository> -->
     </repositories>
 
     <dependencies>
