@@ -1,6 +1,7 @@
 package fi.utu.tech.gui.javafx;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,7 +29,9 @@ public class gameOverSceneController {
     	return playAgainButton;
     }
     
-    public void setWinner() {
-    	playerWonText.setText(game.getPlayerInTurn().toString() + " voitti!");
+    @FXML
+    public void initialize() {
+    	playerWonText.textProperty().bind(Bindings.createStringBinding(() -> 
+    		String.format("%s voitti!", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
     }
 }

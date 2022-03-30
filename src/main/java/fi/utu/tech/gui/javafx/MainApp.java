@@ -15,6 +15,17 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 	private static BattleshipGame game = new BattleshipGame();
     public static BattleshipGame getGame() { return MainApp.game; };
+    private ResourceLoader<Parent, StartMenuController> startMenuLoader;
+    private ResourceLoader<Parent, setShipsSceneController> setShipsLoader1;
+    private ResourceLoader<Parent, setShipsSceneController> setShipsLoader2;
+    private ResourceLoader<Parent, gameSceneController> gameLoader;
+    private ResourceLoader<Parent, gameOverSceneController> gameOverLoader;
+    private Scene startMenuScene;
+    private Scene setShipsScene1;
+    private Scene setShipsScene2;
+    private Scene gameScene;
+    private Scene gameOverScene;
+    private Stage stage;
 	
     // Used to set the style for a scene
     protected String createStyle() {
@@ -23,19 +34,32 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
+    	
+    	this.stage = stage;
+    	initScenes();
+    	
+		// Minimum stage size
+        this.stage.setMinWidth(600);
+        this.stage.setMinHeight(300);
+        this.stage.setTitle("Laivanupotus");
+        this.stage.setScene(startMenuScene);
+        this.stage.show();
+    }
+    
+    private void initScenes() {
     	// Loaders for every scene
-        ResourceLoader<Parent, StartMenuController> startMenuLoader = new ResourceLoader<>("startMenuScene.fxml");
-        ResourceLoader<Parent, setShipsSceneController> setShipsLoader1 = new ResourceLoader<>("setShipsScene.fxml");
-        ResourceLoader<Parent, setShipsSceneController> setShipsLoader2 = new ResourceLoader<>("setShipsScene.fxml");
-        ResourceLoader<Parent, gameSceneController> gameLoader = new ResourceLoader<>("gameScene.fxml");
-        ResourceLoader<Parent, gameOverSceneController> gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
+        startMenuLoader = new ResourceLoader<>("startMenuScene.fxml");
+        setShipsLoader1 = new ResourceLoader<>("setShipsScene.fxml");
+        setShipsLoader2 = new ResourceLoader<>("setShipsScene.fxml");
+        gameLoader = new ResourceLoader<>("gameScene.fxml");
+        gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
         
         // Scenes
-        Scene startMenuScene = new Scene(startMenuLoader.root);
-        Scene setShipsScene1 = new Scene(setShipsLoader1.root);
-        Scene setShipsScene2 = new Scene(setShipsLoader2.root);
-        Scene gameScene = new Scene(gameLoader.root);
-        Scene gameOverScene = new Scene(gameOverLoader.root);
+        startMenuScene = new Scene(startMenuLoader.root);
+        setShipsScene1 = new Scene(setShipsLoader1.root);
+        setShipsScene2 = new Scene(setShipsLoader2.root);
+        gameScene = new Scene(gameLoader.root);
+        gameOverScene = new Scene(gameOverLoader.root);
         startMenuScene.getStylesheets().add(createStyle());
         setShipsScene1.getStylesheets().add(createStyle());
         setShipsScene2.getStylesheets().add(createStyle());
@@ -44,14 +68,14 @@ public class MainApp extends Application {
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
-        	startMenuLoader.controller.startGame();
-        	setShipsLoader1.controller.drawBoard();
-        	stage.setScene(setShipsScene1);
-        	
-        	// Set stage in the center of the screen
-        	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
+	    	startMenuLoader.controller.startGame();
+	    	setShipsLoader1.controller.drawBoard();
+	    	stage.setScene(setShipsScene1);
+	    	
+	    	// Set stage in the center of the screen
+	    	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+	        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+	        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
         });
         
         // Eventhandler for changing scene from SetShips1 to setShips2
@@ -87,12 +111,11 @@ public class MainApp extends Application {
         game.setOnGameEndAction(() -> {
     		stage.setScene(gameOverScene);
     	});
-
-		// Minimum stage size
-        stage.setMinWidth(600);
-        stage.setMinHeight(300);
-        stage.setTitle("Laivanupotus");
-        stage.setScene(startMenuScene);
-        stage.show();
+        
+        gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
+        	MainApp.game = new BattleshipGame();
+        	initScenes();
+            this.stage.setScene(startMenuScene);
+        });
     }
 }
