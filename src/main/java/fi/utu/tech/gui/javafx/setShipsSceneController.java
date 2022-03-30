@@ -284,6 +284,7 @@ public class setShipsSceneController {
 				XY coords = new XY(xCoordinate, yCoordinate);
 				// create ship
 				Ship ship = this.game.createShip(shipType, coords, orientation);
+				System.out.println(ship);
 				// add the ship to gameboard
 				if (!this.game.addShip(ship)) {
 					outerPane.getChildren().remove(this.currentlyMoved);
@@ -291,8 +292,10 @@ public class setShipsSceneController {
 					this.alert.show();
 					this.currentlyMoved = null;
 					this.rotation = 0.0;
+					System.out.println(game.getBoard());
 					return;
 				}
+				System.out.println(game.getBoard());
 				
 				// Set everything back to default
 				this.rotation = 0.0;

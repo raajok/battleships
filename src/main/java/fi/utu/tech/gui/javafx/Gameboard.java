@@ -86,25 +86,25 @@ public class Gameboard {
 					x = coord.getX()+i;
 					y = coord.getY();
 					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
-				}
+				} break;
 			case LEFT:
 				for (int i = 0; i<ship.getSize(); i++) {
 					x = coord.getX()-i;
 					y = coord.getY();
 					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
-				}
+				} break;
 			case UP:
 				for (int i = 0; i<ship.getSize(); i++) {
 					x = coord.getX();
 					y = coord.getY()-i;
 					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
-				}
+				} break;
 			case DOWN:
 				for (int i = 0; i<ship.getSize(); i++) {
 					x = coord.getX();
 					y = coord.getY()+i;
 					if (isFree(x,y)) { coords.add(new XY(x,y)); } else { return false; }
-				}
+				} break;
 			}
 			for (XY xy: coords) {
 				fieldStatus[xy.getX()][xy.getY()] = 1;
