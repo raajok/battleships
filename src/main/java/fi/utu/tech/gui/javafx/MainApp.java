@@ -84,6 +84,11 @@ public class MainApp extends Application {
     		game.switchTurn();
     		setShipsLoader2.controller.drawBoard();
     		stage.setScene(setShipsScene2);
+    		
+    		// Set stage in the center of the screen
+    		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+    		stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+    		stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
 
         });
         
@@ -105,17 +110,32 @@ public class MainApp extends Application {
         // Eventhandler for changing scene from gameOver to StartMenu
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
         	stage.setScene(startMenuScene);
+        	// Set stage in the center of the screen
+    		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+    		stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+    		stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);   
         });
         
         // Add a method to execute when game ends
         game.setOnGameEndAction(() -> {
-    		stage.setScene(gameOverScene);
+        	stage.setScene(gameOverScene);
+        	
+        	// Set stage in the center of the screen
+        	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+        	stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+        	stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);   
     	});
         
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
         	MainApp.game = new BattleshipGame();
         	initScenes();
             this.stage.setScene(startMenuScene);
+            
+            // Set stage in the center of the screen
+            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);   
+            
         });
     }
 }

@@ -22,7 +22,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
@@ -81,9 +80,9 @@ public class GameboardGUIComponent extends Pane {
         rect.setFill(Color.TRANSPARENT);
         
  		// Add all groups
- 		foreground.getChildren().addAll(hoveringSquare, rect);
- 		elements.getChildren().addAll(shipsGroup, shotsGroup, foreground);
- 		getChildren().add(elements);
+ 		foreground.getChildren().addAll(hoveringSquare);
+ 		//elements.getChildren().addAll(shipsGroup, shotsGroup, foreground);
+ 		getChildren().addAll(shipsGroup, shotsGroup, foreground, rect);
  		
  		// Set event handlers
  		this.setOnMouseMoved(onMouseMoveHandler);
@@ -141,9 +140,7 @@ public class GameboardGUIComponent extends Pane {
     }
     
     public void createShipImages(Collection<Ship> ships) {
-    	for (ImageView img: loadShipImages(ships)) {
-    		shipsGroup.getChildren().add(img);
-    	}
+    	shipsGroup.getChildren().addAll(loadShipImages(ships));
     }
     
     // Method for loading ship images
@@ -158,12 +155,10 @@ public class GameboardGUIComponent extends Pane {
 			rotate.pivotYProperty().bind(tileSize.divide(2));
 			shipImage.getTransforms().add(rotate);
 			shipImage.setPreserveRatio(true);
+			
+			shipImage.setTranslateX(tileSize.multiply(ship.getLocation().getX()).doubleValue());
+			shipImage.setTranslateY(tileSize.multiply(ship.getLocation().getY()).doubleValue() + 1);
 			shipImage.fitWidthProperty().bind(tileSize);
-			shipImage.translateXProperty().bind(tileSize
-					.multiply(ship.getLocation().getX()));
-			shipImage.translateYProperty().bind(tileSize
-					.multiply(ship.getLocation().getY())
-					);
  			shipImage.setMouseTransparent(true);
  			shipImages.add(shipImage);
  		}
