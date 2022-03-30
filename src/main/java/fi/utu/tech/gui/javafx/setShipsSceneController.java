@@ -239,6 +239,13 @@ public class setShipsSceneController {
 	
 	@FXML
 	void dragFinished(MouseEvent e) {
+		// Mouse need to be inside the boardPane, if not, then abort the setting.
+		if (!boardPane.getBoundsInParent().contains(e.getSceneX(), e.getSceneY())) {
+			outerPane.getChildren().remove(this.currentlyMoved);
+			this.currentlyMoved = null;
+			this.rotation = 0.0;
+			return;
+		}
 		if (e.getButton() == MouseButton.PRIMARY) {
 			if (this.currentlyMoved != null) {
 				String shipImageUrl = this.currentlyMoved.getImage().getUrl().toLowerCase();
