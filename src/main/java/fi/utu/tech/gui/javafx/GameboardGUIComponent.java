@@ -154,11 +154,12 @@ public class GameboardGUIComponent extends Pane {
  			rotate.pivotXProperty().bind(tileSize.divide(2));
 			rotate.pivotYProperty().bind(tileSize.divide(2));
 			shipImage.getTransforms().add(rotate);
+			
 			shipImage.setPreserveRatio(true);
 			
-			shipImage.setTranslateX(tileSize.multiply(ship.getLocation().getX()).doubleValue());
-			shipImage.setTranslateY(tileSize.multiply(ship.getLocation().getY()).doubleValue() + 1);
-			shipImage.fitWidthProperty().bind(tileSize);
+			shipImage.translateXProperty().bind(tileSize.multiply(ship.getLocation().getX()));
+			shipImage.translateYProperty().bind(tileSize.multiply(ship.getLocation().getY()));
+			shipImage.fitWidthProperty().bind(tileSize.subtract(1));
  			shipImage.setMouseTransparent(true);
  			shipImages.add(shipImage);
  		}
@@ -210,7 +211,7 @@ public class GameboardGUIComponent extends Pane {
 			public void run() {
 				Platform.runLater(() -> {
 					double lineWidth = tileSize.get() / 30;
-					Color color = Color.RED.deriveColor(1, 1, .75, 1);
+					Color color = Color.BLACK.deriveColor(1, 1, .75, 1);
 					
 					// Line 1 from top left to bottom right
 					Line line1 = new Line(lineWidth,lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth);
@@ -253,16 +254,6 @@ public class GameboardGUIComponent extends Pane {
 		runAfterAnimationThread.setDaemon(true);
 		explosionAnimation.setRunAfter(runAfterAnimationThread);
 		explosionAnimation.start();
-				
-		/*
-		Circle circle = new Circle(0, 0, tileSize.get() / 3);
-		circle.setTranslateX(tileSize.multiply(coord.getX()).get());
-		circle.setTranslateY(tileSize.multiply(coord.getY()).get());
-		circle.setCenterX(tileSize.divide(2).get());
-		circle.setCenterY(tileSize.divide(2).get());
-		
-		shotsGroup.getChildren().add(circle);
-		*/
 	}
 	
 	private void addHitMarkTo(XY coord) {
@@ -297,28 +288,6 @@ public class GameboardGUIComponent extends Pane {
 				.multiply(coord.getY()));
 		shotsGroup.getChildren().add(explosionImageView);
 		explosionAnimation.start();
-		
-		/*
-		double lineWidth = tileSize.get() / 30;
-		Color color = Color.RED.deriveColor(1, 1, .75, 1);
-
-		// Line 1 from top left to bottom right
-		Line line1 = new Line(lineWidth,lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth);
-		line1.setStrokeWidth(lineWidth);
-		line1.setStroke(color);
-		line1.setTranslateX(tileSize.multiply(coord.getX()).get());
-		line1.setTranslateY(tileSize.multiply(coord.getY()).get());
-		
-		// Line 2 from bottom left to top right
-		Line line2 = new Line(lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth,lineWidth);
-		line2.setStrokeWidth(lineWidth);
-		line2.setStroke(color);
-		line2.setTranslateX(tileSize.multiply(coord.getX()).get());
-		line2.setTranslateY(tileSize.multiply(coord.getY()).get());
-		
-		// Add lines
-		shotsGroup.getChildren().addAll(line1, line2);
-		*/
 	}
 	
 	public StringProperty infoTextProperty() {
@@ -333,10 +302,9 @@ public class GameboardGUIComponent extends Pane {
 		public void handle(MouseEvent event) {
 			onMouseOver.set(true);
 			// Calculate the coordinates
-			int x = (int) (event.getX() / tileSize.get());
-			int y = (int) (event.getY() / tileSize.get());
+			int x = (int) Math.floor(event.getX() / tileSize.get());
+			int y = (int) Math.floor(event.getY() / tileSize.get());
 			XY coord = new XY(x,y);
-			
 			if (game.isShootable(coord)) {
 				hoveringSquare.setFill(transparentGreen);
 			} else {
@@ -354,8 +322,8 @@ public class GameboardGUIComponent extends Pane {
 			// If this is enemy board, then shoot.
 			if (isMyTurn.not().and(game.requestTurnChangeProperty().not()).get()) {
 				// Calculate the coordinates
-				int x = (int) (event.getX() / tileSize.get());
-				int y = (int) (event.getY() / tileSize.get());
+				int x = (int) Math.floor(event.getX() / tileSize.get());
+				int y = (int) Math.floor(event.getY() / tileSize.get());
 				XY coord = new XY(x,y);
 				
 				if (game.isShootable(coord)) {
