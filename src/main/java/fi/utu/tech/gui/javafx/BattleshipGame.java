@@ -9,6 +9,13 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * The main class of the Battleship game model.
+ * 
+ * It controls the game play and creates the player's boards when newGame-method is called.
+ * 
+ */
+
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
 	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty("Pelaaja 1"),
@@ -31,6 +38,19 @@ public class BattleshipGame {
 	private SimpleBooleanProperty awaiting = new SimpleBooleanProperty(false);
 	private Runnable onGameEndAction;
 	
+	/**
+	 * This is a constructor for the BattleshipGame class.
+	 * It initializes the shipSums property to the sum of the shipCountProperties for each ship type,
+	 * multiplied by the appropriate number of squares for that ship type.
+	 * 
+	 * It also initializes the settingsReady property to true if the board size is large enough to
+	 * accommodate all the ships and if there is at least one ship.
+	 * 
+	 * Finally, it sets up a listener for the playerInTurn property so that when it changes,
+	 * the playerInTurnNameProperty and playerInTurnValueProperty are updated accordingly.
+	 * 
+	 */
+	
 	public BattleshipGame() {
 		shipSums.bind(shipCountProperties[ShipType.CARRIER.ordinal()].multiply(5)
 				.add(shipCountProperties[ShipType.BATTLESHIP.ordinal()].multiply(4)
@@ -51,24 +71,23 @@ public class BattleshipGame {
 		});
 	}
 	
+	/**
+	 * The newGame function is used to start a new game.
+	 * This function creates a new Gameboard object for each player with a given name and ship counts.
+	 * 
+	 * The boards[].readyProperty indicates a boolean state when a board is ready to start a new game.
+	 * Both boards ready properties are bound to gameReady property.
+	 * Likewise, the gameReady property indicates a boolean state when the game is ready to start,
+	 * but it is true only when both boards are ready to start.
+	 * Before binding happens, the gameReady property unbinds itself from the old bindings (if any).
+	 * This way we can have only one listener on the game readiness state instead of two listeners for each board separately.
+	 *
+	 * Finally it sets our current playerInTurn variable as Player 1, who is a starting player.
+	 * 
+	 **/
+	
 	public void newGame() {
-		/**
-		 * The newGame function is used to start a new game.
-		 * This function creates a new Gameboard object for each player with a given name and ship counts.
-		 * 
-		 * The boards[].readyProperty indicates a boolean state when a board is ready to start a new game.
-		 * Both boards ready properties are bound to gameReady property.
-		 * Likewise, the gameReady property indicates a boolean state when the game is ready to start,
-		 * but it is true only when both boards are ready to start.
-		 * Before binding happens, the gameReady property unbinds itself from the old bindings (if any).
-		 * This way we can have only one listener on the game readiness state instead of two listeners for each board separately.
-		 *
-		 * Finally it sets our current playerInTurn variable as Player 1, who is a starting player.
-		 * 
-		 * @return Nothing.
-		 * 
-		 * @doc-author j-code
-		 **/
+		
 		
 		// Create and initialize the boards
 		int[]shipCounts = {shipCountProperties[0].get(),
@@ -100,6 +119,20 @@ public class BattleshipGame {
 			 		.otherwise(false));
 	}
 	
+	/**
+	 * The shoot function takes a coordinate and checks if the location is shootable.
+	 * If it is, it calls the opponent board's setHit method. Then checks if all ships have been sunk.
+	 * It is indicated by opponent board's getHitsRemaining value.
+	 * If all ships have been sunk, the game is over and the onGameScene is shown to announce the winner.
+	 * 
+	 * If the hit was a miss (value at the location of coord = 0) then it switches turns.
+	 * Finally the value at the location of coord is returned.
+	 * 
+	 * @param coord Used to Determine the location of the opponent's board that is to be shot at.
+	 * @return A value indicating the result of the shot.
+	 * 
+	 */
+	
 	public int shoot(XY coord) {
 		Gameboard opponentBoard = boards[getOpponent().ordinal()];
 		int valueAtLocation = opponentBoard.getBoard()[coord.getX()][coord.getY()];
@@ -107,7 +140,6 @@ public class BattleshipGame {
 			opponentBoard.setHit(coord);
 			// Is game over?
 			if (opponentBoard.getnHitsRemaining() <= 0) {
-				// TODO
 				// player "playerInTurn" has won.
 				// Switch to "Start Menu"-scene and announce the winner.
 				onGameEndAction.run();

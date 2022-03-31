@@ -1,5 +1,10 @@
 package fi.utu.tech.gui.javafx;
 
+/**
+ * This class represents a coordinate on a Battleship gameboard.
+ * 
+ */
+
 public class XY {
 	private final int x;
 	private final int y;
@@ -49,7 +54,7 @@ public class XY {
 	
 	@Override
 	public int hashCode() {
-		// Note: variables x and y has to inside bounds from 0 to 14
+		// Note: variables x and y has to within bounds of 0 to 14
 		return x % 15 + y * 15;
 	}
 	

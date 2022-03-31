@@ -62,6 +62,12 @@ public class gameSceneController {
 	@FXML
 	private void initialize() {}
 	
+	/**
+	 * The gameSceneController constructor is binding the "turnIsOverProperty" to the "switchTurn1Btn" and "switchTurn2Btn".
+	 * If the turn is over, the code will disable the button that is not the player's turn.
+	 * If the turn is not over, both buttons will be disabled.
+	 * 
+	 */
 	public gameSceneController() {
 		// Bindings for Turn Switching buttons
 		game.turnIsOverProperty().addListener((obj, oldVal, newVal) -> {
@@ -79,6 +85,14 @@ public class gameSceneController {
 			}
 		});
 	}
+	
+	/**
+	 * This method initializes the game board for a two player game. It sets up the game board size,
+	 * creates bindings for the game board elements, and sets up event handlers for the game board buttons.
+	 * 
+	 * @param scene The scene where game play is rendered.
+	 * 
+	 */
 	
 	public void init(Scene scene) {
 		
@@ -157,6 +171,14 @@ public class gameSceneController {
 		
 		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.", game.playerInTurnNameProperty().get()));
 	}
+	
+	/**
+	 * This is an EventHandler to handle the Switch Turn Button click.
+	 * When the button is clicked, it requests the player to give the turn to another player.
+	 * This is indicated with a pop up dialog.
+	 * When the other player closes the dialog and the turn is given,
+	 * the turnInfoText is updated to show the player's name in turn.
+	 */
 
 	private EventHandler<ActionEvent> handleSwitchTurnBtnClick = new EventHandler<ActionEvent>() {
 		
@@ -173,6 +195,11 @@ public class gameSceneController {
 		}
 	};
 	
+	/**
+	 * This event handler is for when the turn switch dialog is activated.
+	 * The event handler releases the turn for the other player.
+	 */
+	
 	private EventHandler<DialogEvent> handleTurnSwitchDialogAction = new EventHandler<DialogEvent>() {
 		
 		@Override
@@ -185,6 +212,13 @@ public class gameSceneController {
 			game.turnIsOverProperty().set(false);
 		}
 	};
+	
+	/**
+	 * This defines an EventHandler that will be used to handle mouse move events on the scene.
+	 * The event handler will check if the mouse is over either gameboardGUI1 or gameboardGUI2,
+	 * and if so, it will set the OnMouseOverValue for the other gameboard to false.
+	 * Otherwise, if outside of both gameboards, it will set the OnMouseOverValue for both gameboards to false.
+	 */
 
 	private EventHandler<MouseEvent> handleMouseMoveOnScene = new EventHandler<MouseEvent>() {
 		

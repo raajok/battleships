@@ -44,6 +44,20 @@ public class GameboardGUIComponent extends Pane {
 	private BooleanProperty onMouseOver = new SimpleBooleanProperty(false);
 	private BooleanProperty isMyTurn = new SimpleBooleanProperty(false);
 	private StringProperty infoText = new SimpleStringProperty();
+	
+	/**
+	 * This is the constructor for the GameboardGUIComponent class.
+	 * 
+	 * The constructor takes in two parameters, an int for the grid size and a Player for the player.
+	 * Player 1 is given the first turn. The prefSize is set to 600 by 600, and the grid is created as a canvas.
+	 * The colors for the transparent squares are set. The scaleXProperty and scaleYProperty are bound to the scalingFactor for transformations.
+	 * The shipsGroup, shotsGroup, and foreground are all added to the gameboard, and event handlers are set for the mouse movements and clicks.
+	 * Finally, a grid is added to the gameboard.
+	 * 
+	 * @param gridSize The discreet size of the side of the gameboard. 
+	 * @param player The player who's gameboard this component represents.
+	 * 
+	 */
 
     public GameboardGUIComponent(int gridSize, Player player) {
     	
@@ -92,9 +106,12 @@ public class GameboardGUIComponent extends Pane {
  		addGrid();
     }
 
-    /**
-     * Add a grid to the canvas, send it to back
-     */
+	/**
+	 * The addGrid function adds a grid to the canvas, then sends it to back.
+	 * 
+	 * @return The grid variable.
+	 * 
+	 */
     private void addGrid() {
     	
     	final double w = windowBounds.get().getWidth();
@@ -143,7 +160,17 @@ public class GameboardGUIComponent extends Pane {
     	shipsGroup.getChildren().addAll(loadShipImages(ships));
     }
     
-    // Method for loading ship images
+    /**
+     * The loadShipImages is a method for loading ship images.
+     * It takes a collection of ships and returns a collection of ImageViews.
+     * 
+     *
+     * 
+     * @param ships Used to Get the ships from the model.
+     * @return A collection of imageview objects.
+     * 
+     */
+    
  	private Collection<ImageView> loadShipImages(Collection<Ship> ships) {
  		Collection<ImageView> shipImages = new ArrayDeque<ImageView>();
  		for (Ship ship: ships) {
@@ -178,6 +205,7 @@ public class GameboardGUIComponent extends Pane {
  		}
  	}
  	
+ 	// This method creates the transparent indicators for shootable and non-shootable squares.
 	private Rectangle createTransparentSquare(Color color) {
 		Rectangle square = new Rectangle(tileSize.get(), tileSize.get());
 		square.setFill(color);
@@ -204,6 +232,27 @@ public class GameboardGUIComponent extends Pane {
 		return isMyTurn;
 	}
 	
+	/**
+	 * This method is used to add a "missed mark" to a tile, to indicate that a shot was fired at that tile but missed.
+	 * The method takes in a coordinate ( XY coord ) and uses this to calculate where to draw the mark. 
+	 *
+	 * First, a new thread is created ( runAfterAnimationThread ). This thread will run a specified Runnable.
+	 * The Runnable will create a cross mark from two lines ( line1 and line2 ) and add them to the shotsGroup.
+	 *
+	 * Next, an ImageView is created ( explosionImageView ). This ImageView will display an animation of an explosion.
+	 * The animation is created using the Sprite class. 
+	 *
+	 * The ImageView is then configured to preserve its ratio, to fit within the tile size, and to be positioned at
+	 * the correct tile based on the coordinate passed in. 
+	 *
+	 * The new ImageView is then added to the shotsGroup .
+	 *
+	 * Finally, the thread created earlier is started. This thread will wait until the explosion animation is finished,
+	 * and then run the code to add the lines.
+	 * 
+	 * @param coord The coordinates where the missed mark is drawn.
+	 * 
+	 */
 	private void addMissedMarkTo(XY coord) {
 		Thread runAfterAnimationThread = new Thread(new Runnable() {
 			
@@ -256,6 +305,14 @@ public class GameboardGUIComponent extends Pane {
 		explosionAnimation.start();
 	}
 	
+	/**
+	 * The addHitMarkTo method creates a mark on enemy ship as an indicator for a successful hit.
+	 * An explosion animation is shown and a crater image is added to the shotsGroup.
+	 * 
+	 * @param coord Used to Determine where the explosion and the shot mark should be placed on the screen.
+	 * 
+	 */
+	
 	private void addHitMarkTo(XY coord) {
 		Image img = new Image(ResourceLoader.image("crater2.png"));
 		
@@ -295,6 +352,16 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	// Event handlers
+
+	/**
+	 * This onMouseMoveHandler is used to handle a mouse movement when mouse is over this gameboard.
+	 * The event handler will set the onMouseOver property to true as that provides information of 
+	 * mouse movement on this gameboard for the gameSceneController.
+	 * 
+	 * It calculates the coordinates of the mouse on the gameboard grid.
+	 * If the game is shootable, the event handler will set the hoveringSquare to transparent green.
+	 * Otherwise, the event handler will set the fill of the hoveringSquare to transparent red.
+	 */
 	
 	private EventHandler<MouseEvent> onMouseMoveHandler = new EventHandler<MouseEvent>() {
 		
@@ -314,6 +381,15 @@ public class GameboardGUIComponent extends Pane {
 			hoveringSquare.setTranslateY(coord.getY() * tileSize.get());
 		};
 	};
+	
+	/**
+	 *  This is an EventHandler that is used to handle a mouse click on gameboard event.
+	 *  This EventHandler is triggered when the user clicks on the opponent's board.
+	 *  If the coordinate is shootable (not shot earlier), then it will shoot at that location.
+	 *  If the shot is a miss, the addMissedMark-method is called. If it is a successful hit, addHitMark is called.
+	 *  Also, the event handler checks if the ship sunk. If it is, information which one is displayed for the player.
+	 *  
+	 */
 	
 	private EventHandler<MouseEvent> onMouseClickedHandler = new EventHandler<MouseEvent>() {
 		
