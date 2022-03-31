@@ -21,6 +21,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -315,6 +317,8 @@ public class GameboardGUIComponent extends Pane {
 	
 	private void addHitMarkTo(XY coord) {
 		Image img = new Image(ResourceLoader.image("crater2.png"));
+		Media explosionSound = new Media(ResourceLoader.image("explosionSound.mp3"));
+		MediaPlayer mediaPlayer = new MediaPlayer(explosionSound);
 		
 		ImageView crater = new ImageView(img);
 		crater.setPreserveRatio(true);
@@ -345,6 +349,7 @@ public class GameboardGUIComponent extends Pane {
 				.multiply(coord.getY()));
 		shotsGroup.getChildren().add(explosionImageView);
 		explosionAnimation.start();
+		mediaPlayer.setAutoPlay(true);
 	}
 	
 	public StringProperty infoTextProperty() {
