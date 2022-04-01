@@ -21,12 +21,18 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+
+/**
+ * This is a graphical gameboard component for the GUI to display on screen.
+ * 
+ * For this game two objects of this type will be instantiated, one for each player.
+ *
+ */
 
 public class GameboardGUIComponent extends Pane {
 
@@ -36,19 +42,18 @@ public class GameboardGUIComponent extends Pane {
     private int gridSize;
 	private Group shotsGroup = new Group();
 	private Group shipsGroup = new Group();
-	private Group elements = new Group();
 	private Group foreground = new Group();
 	private ObjectProperty<Bounds> windowBounds = new SimpleObjectProperty<Bounds>();
 	private Canvas grid;
-	private Color transparentRed;
-	private Color transparentGreen;
+	private Color transparentRed, transparentGreen;
 	private Rectangle hoveringSquare;
 	private BooleanProperty onMouseOver = new SimpleBooleanProperty(false);
 	private BooleanProperty isMyTurn = new SimpleBooleanProperty(false);
 	private StringProperty infoText = new SimpleStringProperty();
+	private MultimediaService explosionsService, waterSplashesService;
 	
 	/**
-	 * This is the constructor for the GameboardGUIComponent class.
+	 * The constructor for the GameboardGUIComponent class.
 	 * 
 	 * The constructor takes in two parameters, an int for the grid size and a Player for the player.
 	 * Player 1 is given the first turn. The prefSize is set to 600 by 600, and the grid is created as a canvas.
@@ -97,7 +102,6 @@ public class GameboardGUIComponent extends Pane {
         
  		// Add all groups
  		foreground.getChildren().addAll(hoveringSquare);
- 		//elements.getChildren().addAll(shipsGroup, shotsGroup, foreground);
  		getChildren().addAll(shipsGroup, shotsGroup, foreground, rect);
  		
  		// Set event handlers
@@ -106,6 +110,22 @@ public class GameboardGUIComponent extends Pane {
  		
  		// Draw a grid over gameboards
  		addGrid();
+ 		
+ 		try {
+			explosionsService = new MultimediaService(MultimediaSprite.class, createExplosionArgs());
+			explosionsService.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 		try {
+			waterSplashesService = new MultimediaService(MultimediaSprite.class, createWaterSplashArgs());
+			waterSplashesService.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 		
     }
 
 	/**
@@ -165,8 +185,6 @@ public class GameboardGUIComponent extends Pane {
     /**
      * The loadShipImages is a method for loading ship images.
      * It takes a collection of ships and returns a collection of ImageViews.
-     * 
-     *
      * 
      * @param ships Used to Get the ships from the model.
      * @return A collection of imageview objects.
@@ -235,76 +253,70 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	/**
-	 * This method is used to add a "missed mark" to a tile, to indicate that a shot was fired at that tile but missed.
-	 * The method takes in a coordinate ( XY coord ) and uses this to calculate where to draw the mark. 
-	 *
-	 * First, a new thread is created ( runAfterAnimationThread ). This thread will run a specified Runnable.
-	 * The Runnable will create a cross mark from two lines ( line1 and line2 ) and add them to the shotsGroup.
-	 *
-	 * Next, an ImageView is created ( explosionImageView ). This ImageView will display an animation of an explosion.
-	 * The animation is created using the Sprite class. 
-	 *
-	 * The ImageView is then configured to preserve its ratio, to fit within the tile size, and to be positioned at
-	 * the correct tile based on the coordinate passed in. 
-	 *
-	 * The new ImageView is then added to the shotsGroup .
-	 *
-	 * Finally, the thread created earlier is started. This thread will wait until the explosion animation is finished,
-	 * and then run the code to add the lines.
-	 * 
-	 * @param coord The coordinates where the missed mark is drawn.
-	 * 
+	 * A method to add a miss mark to the given XY coordinate.
+	 * @param coord The XY coordinate to add the miss mark to.
 	 */
 	private void addMissedMarkTo(XY coord) {
+		
+		// Create a new thread to run after the animation is complete.
 		Thread runAfterAnimationThread = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
+				// Run this code on the JavaFX Application Thread.
 				Platform.runLater(() -> {
+					// Calculate the line width.
 					double lineWidth = tileSize.get() / 30;
+					
+					// Derive a color from black with 75% opacity.
 					Color color = Color.BLACK.deriveColor(1, 1, .75, 1);
 					
-					// Line 1 from top left to bottom right
+					// Create line 1.
 					Line line1 = new Line(lineWidth,lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth);
 					line1.setStrokeWidth(lineWidth);
 					line1.setStroke(color);
 					line1.setTranslateX(tileSize.multiply(coord.getX()).get());
 					line1.setTranslateY(tileSize.multiply(coord.getY()).get());
 					
-					// Line 2 from bottom left to top right
+					// Create line 2.
 					Line line2 = new Line(lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth,lineWidth);
 					line2.setStrokeWidth(lineWidth);
 					line2.setStroke(color);
 					line2.setTranslateX(tileSize.multiply(coord.getX()).get());
 					line2.setTranslateY(tileSize.multiply(coord.getY()).get());
 					
-					// Add lines
-					shotsGroup.getChildren().addAll(line1, line2);					
+					// Add lines to group.
+					shotsGroup.getChildren().addAll(line1, line2);
 				});
 				
 			}
 		});
 		
-		ImageView explosionImageView = new ImageView();
-		Sprite explosionAnimation = new Sprite(explosionImageView,
-										new Image(ResourceLoader.image("splash_cropped.png"), 480,360,false,false),
-										8, // Columns
-										6, // Rows
-										60, // Frame width
-										60, // Frame height
-										60, // FPS
-										1); // Repeats
+		// Try to take a multimedia sprite from the service.
+		try {
+			MultimediaSprite mms = (MultimediaSprite) waterSplashesService.take();
+			
+			// Bind the image view's size to the tile size.
+			mms.getImageView().setPreserveRatio(true);
+			mms.getImageView().fitWidthProperty().bind(tileSize);
+			
+			// Bind the image view's position to the tile size and given coordinate.
+			mms.getImageView().translateXProperty().bind(tileSize
+					.multiply(coord.getX()));
+			mms.getImageView().translateYProperty().bind(tileSize
+					.multiply(coord.getY()));
+			
+			// Add the image view to the group.
+			shotsGroup.getChildren().add(mms.getImageView());
+			
+			// Set the thread to be a daemon thread and start it.
+			runAfterAnimationThread.setDaemon(true);
+			mms.setRunAfter(runAfterAnimationThread);
+			mms.start();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-		explosionImageView.setPreserveRatio(true);
-		explosionImageView.fitWidthProperty().bind(tileSize);
-		explosionImageView.translateXProperty().bind(tileSize
-				.multiply(coord.getX()));
-		explosionImageView.translateYProperty().bind(tileSize
-				.multiply(coord.getY()));
-		shotsGroup.getChildren().add(explosionImageView);
-		runAfterAnimationThread.setDaemon(true);
-		explosionAnimation.setRunAfter(runAfterAnimationThread);
-		explosionAnimation.start();
 	}
 	
 	/**
@@ -317,8 +329,6 @@ public class GameboardGUIComponent extends Pane {
 	
 	private void addHitMarkTo(XY coord) {
 		Image img = new Image(ResourceLoader.image("crater2.png"));
-		Media explosionSound = new Media(ResourceLoader.image("explosionSound.mp3"));
-		MediaPlayer mediaPlayer = new MediaPlayer(explosionSound);
 		
 		ImageView crater = new ImageView(img);
 		crater.setPreserveRatio(true);
@@ -331,25 +341,20 @@ public class GameboardGUIComponent extends Pane {
 		crater.setMouseTransparent(true);
 		shotsGroup.getChildren().add(crater);
 
-		ImageView explosionImageView = new ImageView();
-		Sprite explosionAnimation = new Sprite(explosionImageView,
-										new Image(ResourceLoader.image("explosion_cropped_2.png"), 480,360,false,false),
-										8, // Columns
-										6, // Rows
-										60, // Frame width
-										60, // Frame height
-										60, // FPS
-										1); // Repeats
-
-		explosionImageView.setPreserveRatio(true);
-		explosionImageView.fitWidthProperty().bind(tileSize);
-		explosionImageView.translateXProperty().bind(tileSize
-				.multiply(coord.getX()));
-		explosionImageView.translateYProperty().bind(tileSize
-				.multiply(coord.getY()));
-		shotsGroup.getChildren().add(explosionImageView);
-		explosionAnimation.start();
-		mediaPlayer.setAutoPlay(true);
+		try {
+			MultimediaSprite mms = (MultimediaSprite) explosionsService.take();
+			mms.getImageView().setPreserveRatio(true);
+			mms.getImageView().fitWidthProperty().bind(tileSize);
+			mms.getImageView().translateXProperty().bind(tileSize
+					.multiply(coord.getX()));
+			mms.getImageView().translateYProperty().bind(tileSize
+					.multiply(coord.getY()));
+			
+			shotsGroup.getChildren().add(mms.getImageView());
+			mms.start();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public StringProperty infoTextProperty() {
@@ -435,4 +440,28 @@ public class GameboardGUIComponent extends Pane {
 			}
 		};
 	};
+	
+	// Helper method for creating multimedia object for an explosion effect
+	private Object[] createExplosionArgs() {
+		return new Object[]{ new Image(ResourceLoader.image("explosion_cropped_2.png"), 480,360,false,false),
+				8, // Columns
+				6, // Rows
+				60, // Frame width
+				60, // Frame height
+				60, // FPS
+				1, // Repeats
+				new AudioClip(ResourceLoader.image("explosionSound.mp3")) }; // Sound effect
+	}
+	
+	// Helper method for creating multimedia object for a water splash effect
+	private Object[] createWaterSplashArgs() {
+		return new Object[]{ new Image(ResourceLoader.image("splash_cropped.png"), 480,360,false,false),
+				8, // Columns
+				6, // Rows
+				60, // Frame width
+				60, // Frame height
+				60, // FPS
+				1, // Repeats
+				new AudioClip(ResourceLoader.image("splash2.wav")) }; // Sound effect
+	}
 }

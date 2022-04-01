@@ -18,12 +18,11 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class BattleshipGame {	
 	private Gameboard[] boards = new Gameboard[2];
-	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty("Pelaaja 1"),
-														  new SimpleStringProperty("Pelaaja 2")};
-	private ObjectProperty<Player> playerInTurn = new SimpleObjectProperty<Player>(Player.PLAYER1);
-	private SimpleStringProperty playerInTurnNameProperty = new SimpleStringProperty(
-															playerNamesProperty[Player.PLAYER1.ordinal()].getValue());
-	private SimpleIntegerProperty playerInTurnValueProperty = new SimpleIntegerProperty(Player.PLAYER1.ordinal());
+	private SimpleStringProperty[] playerNamesProperty = {new SimpleStringProperty(),
+														  new SimpleStringProperty()};
+	private ObjectProperty<Player> playerInTurn = new SimpleObjectProperty<Player>();
+	private SimpleStringProperty playerInTurnNameProperty = new SimpleStringProperty();
+	private SimpleIntegerProperty playerInTurnValueProperty = new SimpleIntegerProperty();
 	private SimpleBooleanProperty gameReady = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty settingsReady = new SimpleBooleanProperty(false);
 	private SimpleIntegerProperty[] shipCountProperties = {new SimpleIntegerProperty(0),
@@ -212,6 +211,10 @@ public class BattleshipGame {
 	
 	public Player getPlayerInTurn() {
 		return playerInTurn.get();
+	}
+	
+	public ObjectProperty<Player> playerInTurnProperty() {
+		return playerInTurn;
 	}
 	
 	public SimpleStringProperty playerInTurnNameProperty() {

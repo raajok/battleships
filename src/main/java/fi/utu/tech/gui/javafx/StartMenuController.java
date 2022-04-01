@@ -45,12 +45,8 @@ public class StartMenuController {
 			Bindings.createIntegerBinding(() -> (int) Math.round(slider.getValue()), slider.valueProperty()));
 		
 		// Binding for the player names to the player TextFields
-		this.game.getPlayerNamesProperty()[Player.PLAYER1.ordinal()].bind(player1.textProperty());
-		this.game.getPlayerNamesProperty()[Player.PLAYER2.ordinal()].bind(player2.textProperty());
-		
-		// If player names are empty, then use defaults
-    	if (player1.getText() == "") { player1.setText("Pelaaja 1"); }
-    	if (player2.getText() == "") { player2.setText("Pelaaja 2"); }
+		this.game.getPlayerNamesProperty()[Player.PLAYER1.ordinal()].bindBidirectional(player1.textProperty());
+		this.game.getPlayerNamesProperty()[Player.PLAYER2.ordinal()].bindBidirectional(player2.textProperty());
     	
 		// Binding for start button availability to settings ready property
 		startButton.disableProperty().bind(this.game.settingsReadyProperty().not());
@@ -95,7 +91,7 @@ public class StartMenuController {
     	Platform.exit();
     }
     
-    public void startGame() {
+    public void startGame() {    	
     	game.newGame();
     }
     

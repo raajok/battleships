@@ -48,11 +48,11 @@ public class Sprite extends AnimationTimer {
      * 
      */
     
-    public Sprite(ImageView imageView, Image image, int columns, int rows, int frameWidth,
+    public Sprite(Image image, int columns, int rows, int frameWidth,
     		int frameHeight, float framesPerSecond, int repeat) {
     	
-        this.imageView = imageView;
-        imageView.setImage(image);
+        imageView = new ImageView();
+		imageView.setImage(image);
         imageView.setVisible(false);
         cols = columns;
         this.totalFrames = columns * rows;
@@ -130,4 +130,8 @@ public class Sprite extends AnimationTimer {
     public void setRunAfter(Thread thread) {
     	this.runAfterThread = thread;
     }
+    
+    public ImageView getImageView() {
+		return imageView;
+	}
 }

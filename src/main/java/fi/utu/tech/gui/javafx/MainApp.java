@@ -68,6 +68,16 @@ public class MainApp extends Application {
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
+
+    		// If player names are empty, then use these defaults
+        	if (game.getPlayerNamesProperty()[Player.PLAYER1.ordinal()].getValue() == "")
+        		game.getPlayerNamesProperty()[Player.PLAYER1.ordinal()].setValue("Pelaaja 1");
+        	if (game.getPlayerNamesProperty()[Player.PLAYER2.ordinal()].getValue() == "")
+        		game.getPlayerNamesProperty()[Player.PLAYER2.ordinal()].setValue("Pelaaja 2");
+        	
+        	// Player 1 sets the ships first
+        	game.playerInTurnProperty().set(Player.PLAYER1);
+        	
 	    	startMenuLoader.controller.startGame();
 	    	setShipsLoader1.controller.drawBoard();
 	    	stage.setScene(setShipsScene1);
