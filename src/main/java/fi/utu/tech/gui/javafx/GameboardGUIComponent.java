@@ -3,6 +3,8 @@ package fi.utu.tech.gui.javafx;
 import java.util.ArrayDeque;
 import java.util.Collection;
 
+import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -26,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 
 /**
  * This is a graphical gameboard component for the GUI to display on screen.
@@ -202,11 +205,10 @@ public class GameboardGUIComponent extends Pane {
 			rotate.pivotYProperty().bind(tileSize.divide(2));
 			shipImage.getTransforms().add(rotate);
 			
-			shipImage.setPreserveRatio(true);
-			
 			shipImage.translateXProperty().bind(tileSize.multiply(ship.getLocation().getX()));
 			shipImage.translateYProperty().bind(tileSize.multiply(ship.getLocation().getY()));
 			shipImage.fitWidthProperty().bind(tileSize.subtract(1));
+			shipImage.setPreserveRatio(true);
  			shipImage.setMouseTransparent(true);
  			shipImages.add(shipImage);
  		}
@@ -292,30 +294,34 @@ public class GameboardGUIComponent extends Pane {
 			}
 		});
 		
-		// Try to take a multimedia sprite from the service.
-		try {
-			MultimediaSprite mms = (MultimediaSprite) waterSplashesService.take();
+		Platform.runLater(() -> {
 			
-			// Bind the image view's size to the tile size.
-			mms.getImageView().setPreserveRatio(true);
-			mms.getImageView().fitWidthProperty().bind(tileSize);
+			// Try to take a multimedia sprite from the service.
+			try {
+				MultimediaSprite mms = (MultimediaSprite) waterSplashesService.take();
+				
+				// Bind the image view's size to the tile size.
+				mms.getImageView().setPreserveRatio(true);
+				mms.getImageView().fitWidthProperty().bind(tileSize);
+				
+				// Bind the image view's position to the tile size and given coordinate.
+				mms.getImageView().translateXProperty().bind(tileSize
+						.multiply(coord.getX()));
+				mms.getImageView().translateYProperty().bind(tileSize
+						.multiply(coord.getY()));
+				
+				// Add the image view to the group.
+				shotsGroup.getChildren().add(mms.getImageView());
+				
+				// Set the thread to be a daemon thread and start it.
+				runAfterAnimationThread.setDaemon(true);
+				mms.setRunAfter(runAfterAnimationThread);
+				mms.start();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
-			// Bind the image view's position to the tile size and given coordinate.
-			mms.getImageView().translateXProperty().bind(tileSize
-					.multiply(coord.getX()));
-			mms.getImageView().translateYProperty().bind(tileSize
-					.multiply(coord.getY()));
-			
-			// Add the image view to the group.
-			shotsGroup.getChildren().add(mms.getImageView());
-			
-			// Set the thread to be a daemon thread and start it.
-			runAfterAnimationThread.setDaemon(true);
-			mms.setRunAfter(runAfterAnimationThread);
-			mms.start();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		});
 
 	}
 	
@@ -340,21 +346,26 @@ public class GameboardGUIComponent extends Pane {
 				);
 		crater.setMouseTransparent(true);
 		shotsGroup.getChildren().add(crater);
-
-		try {
-			MultimediaSprite mms = (MultimediaSprite) explosionsService.take();
-			mms.getImageView().setPreserveRatio(true);
-			mms.getImageView().fitWidthProperty().bind(tileSize);
-			mms.getImageView().translateXProperty().bind(tileSize
-					.multiply(coord.getX()));
-			mms.getImageView().translateYProperty().bind(tileSize
-					.multiply(coord.getY()));
+		
+		Platform.runLater(() -> {
 			
-			shotsGroup.getChildren().add(mms.getImageView());
-			mms.start();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			try {
+				MultimediaSprite mms = (MultimediaSprite) explosionsService.take();
+				mms.getImageView().setPreserveRatio(true);
+				mms.getImageView().fitWidthProperty().bind(tileSize);
+				mms.getImageView().translateXProperty().bind(tileSize
+						.multiply(coord.getX()));
+				mms.getImageView().translateYProperty().bind(tileSize
+						.multiply(coord.getY()));
+				
+				shotsGroup.getChildren().add(mms.getImageView());
+				mms.start();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		});
+
 	}
 	
 	public StringProperty infoTextProperty() {

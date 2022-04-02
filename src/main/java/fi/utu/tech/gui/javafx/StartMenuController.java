@@ -3,12 +3,21 @@ package fi.utu.tech.gui.javafx;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 
 /*
  * Controller for the StartMenu scene.
@@ -22,6 +31,19 @@ public class StartMenuController {
 	 * instantiates some of the scene's components.
 	 */
 	public void initialize() {
+		
+		Image bgImg = new Image(ResourceLoader.image("startMenuBG.jpg"));
+		
+
+	    BackgroundSize bSize = new BackgroundSize(1.0, 1.0, true, true, false, true);
+
+	    Background background = new Background(new BackgroundImage(bgImg,
+	            BackgroundRepeat.NO_REPEAT,
+	            BackgroundRepeat.NO_REPEAT,
+	            BackgroundPosition.CENTER,
+	            bSize));
+
+	    upperBox.setBackground(background);
 		
 		carrierSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 1));
 		battleshipSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 1));
@@ -51,6 +73,9 @@ public class StartMenuController {
 		// Binding for start button availability to settings ready property
 		startButton.disableProperty().bind(this.game.settingsReadyProperty().not());
 	}
+	
+	@FXML
+	private VBox upperBox;
 	
 	@FXML
     private Button startButton;

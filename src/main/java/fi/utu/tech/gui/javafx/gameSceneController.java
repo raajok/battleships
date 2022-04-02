@@ -27,6 +27,9 @@ public class gameSceneController {
 	private GameboardGUIComponent gameboardGUI2;
 	
 	@FXML
+	private VBox rootBox;
+	
+	@FXML
 	private Text turnInfoText;
 
 	@FXML
@@ -84,6 +87,7 @@ public class gameSceneController {
 				switchTurn2Btn.setDisable(true);
 			}
 		});
+
 	}
 	
 	/**
@@ -98,6 +102,9 @@ public class gameSceneController {
 		
 		// Note: the game.newGame() method has to be called before this is executed. It should be called before leaving the setShipsScene.
 		
+		// Set background color
+		this.rootBox.setStyle("-fx-background-color: lightsteelblue;");
+
 		// Get the board size from the game object
 		gameboardSize = this.game.boardSizeProperty().get();
 		

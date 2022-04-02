@@ -4,6 +4,9 @@ import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -38,12 +41,16 @@ public class MainApp extends Application {
     	this.stage = stage;
     	initScenes();
     	
+    	AudioClip bgMusic = new AudioClip(ResourceLoader.image("Fanfare.mp3"));
+    	bgMusic.play();
+    	
 		// Minimum stage size
         this.stage.setMinWidth(600);
         this.stage.setMinHeight(300);
         this.stage.setTitle("Laivanupotus");
         this.stage.setScene(startMenuScene);
         this.stage.show();
+        
     }
     
     private void initScenes() {

@@ -98,6 +98,8 @@ public class setShipsSceneController {
 	@FXML
 	public void initialize() {
 		
+		gameScreenPane.setStyle("-fx-background-color: lightsteelblue;");
+		
 		this.battleshipImage = new Image(getClass().getResource("ShipBattleshipHull2.png").toExternalForm());
 		battleship.setImage(this.battleshipImage);
 

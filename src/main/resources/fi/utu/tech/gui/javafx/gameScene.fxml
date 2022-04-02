@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="TOP_CENTER" minHeight="400.0" minWidth="400.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.gameSceneController">
+<VBox fx:id="rootBox" alignment="TOP_CENTER" minHeight="400.0" minWidth="400.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.gameSceneController">
    <children>
       <VBox fx:id="headerBox" alignment="CENTER">
          <children>
@@ -18,22 +18,31 @@
                <font>
                   <Font size="24.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="20.0" top="20.0" />
+               </VBox.margin>
             </Text>
             <AnchorPane fx:id="playerInfoPane">
                <children>
-                  <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="20.0" AnchorPane.leftAnchor="0.0">
+                  <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="20.0" AnchorPane.leftAnchor="20.0">
                      <children>
                         <Button fx:id="switchTurn1Btn" alignment="BASELINE_LEFT" disable="true" mnemonicParsing="false" text="Vuoron vaihto" />
                         <Label fx:id="player1NameText" alignment="BOTTOM_CENTER" text="Pelaaja 1">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
                         </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="20.0" AnchorPane.rightAnchor="0.0">
+                  <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="20.0" AnchorPane.rightAnchor="20.0">
                      <children>
-                        <Label fx:id="player2NameText" alignment="BOTTOM_CENTER" text="Pelaaja 2" />
+                        <Label fx:id="player2NameText" alignment="BOTTOM_CENTER" text="Pelaaja 2">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font></Label>
                         <Button fx:id="switchTurn2Btn" alignment="BASELINE_LEFT" disable="true" mnemonicParsing="false" text="Vuoron vaihto" />
                      </children>
                   </HBox>

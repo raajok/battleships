@@ -13,6 +13,7 @@ public class MultimediaSprite extends Sprite {
 		double vol = this.audioClip.getVolume();
 		this.audioClip.setVolume(0);
 		this.audioClip.play();
+		this.stop();
 		this.audioClip.setVolume(vol);
 	}
 	

@@ -5,11 +5,15 @@ import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 public class gameOverSceneController {
 
 	private BattleshipGame game = MainApp.getGame();
+	
+	@FXML
+	private HBox rootBox;
 	
     @FXML
     private Button endGameButton;
@@ -31,6 +35,10 @@ public class gameOverSceneController {
     
     @FXML
     public void initialize() {
+
+		// Set background color
+		this.rootBox.setStyle("-fx-background-color: lightsteelblue;");
+		
     	playerWonText.textProperty().bind(Bindings.createStringBinding(() -> 
     		String.format("%s voitti!", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
     }
