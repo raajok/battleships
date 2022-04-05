@@ -86,6 +86,7 @@ public class MainApp extends Application {
 	    	Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
 	        stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
 	        stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
+	        stage.setResizable(false);
         });
         
         // Eventhandler for changing scene from SetShips1 to setShips2
@@ -114,7 +115,8 @@ public class MainApp extends Application {
     		// Set stage in the center of the screen
     		Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
     		stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
-    		stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);        		
+    		stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
+    		stage.setResizable(true);
         }); 
         
         // Eventhandler for changing scene from gameOver to StartMenu
