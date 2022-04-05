@@ -242,7 +242,10 @@ public class setShipsSceneController {
 
 	// Method for "dropping" the ship on the gameboard
 	@FXML
-	void dragFinished(MouseEvent e) {
+	void dragFinished(MouseEvent e) {		
+		if (!this.endPlacementButton.isDisabled()) {
+			return;
+		}
 		
 		// Mouse need to be inside the boardPane, if not, then abort the setting.
 		if (!gameboardPane.getBoundsInParent().contains(e.getSceneX(), e.getSceneY())) {
