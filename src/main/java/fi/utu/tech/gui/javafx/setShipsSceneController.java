@@ -227,22 +227,23 @@ public class setShipsSceneController {
 	// Method for removing all ships from gameboard
 	@FXML
 	void removeAllShips() {
-		if (this.addedShips.size() == 0) {
+		int shipAmount = this.addedShips.size();
+		if (shipAmount == 0) {
 			this.alert.setHeaderText("Pelilaudalle ei ole asetettu laivoja.");
 			this.alert.show();
 			return;
 		}
-		for (ImageView ship : this.addedShips) {
-			this.changeShipAmount(ship.getImage().getUrl().toLowerCase(), false);
-			gameScreenPane.getChildren().remove(ship);
+	
+		for (int i = 0; i < shipAmount; i++) {
+			this.removeLatestShip();
 		}
-		this.addedShips.clear();
-		this.game.removeAllShips();
+		
 	}
 
 	// Method for "dropping" the ship on the gameboard
 	@FXML
 	void dragFinished(MouseEvent e) {
+		
 		// Mouse need to be inside the boardPane, if not, then abort the setting.
 		if (!gameboardPane.getBoundsInParent().contains(e.getSceneX(), e.getSceneY())) {
 			gameScreenPane.getChildren().remove(this.currentlyMoved);
@@ -262,43 +263,16 @@ public class setShipsSceneController {
 				this.currentlyMoved.setLayoutX(xCoordinate * (gameboardPane.getWidth() / this.gameboardSize));
 				this.currentlyMoved.setLayoutY(yCoordinate * (gameboardPane.getHeight() / this.gameboardSize) + 100);
 				
-				// Get the Orientation of the ship
-				Orientation orientation = null;
-				switch (this.getShipsRotationDirection()) {
-				case 0:
-					orientation = Orientation.RIGHT;
-					break;
-				case 1:
-					orientation = Orientation.DOWN;
-					break;
-				case 2: 
-					orientation = Orientation.LEFT;
-					break;
-				case 3:
-					orientation = Orientation.UP;
-					break;
-				}
-				
-				// Get the ShipType
-				ShipType shipType = null;
-				if (shipImageUrl.contains("battleship")) {
-					shipType = ShipType.BATTLESHIP;
-				} else if (shipImageUrl.contains("carrier")) {
-					shipType = ShipType.CARRIER;
-				} else if (shipImageUrl.contains("cruiser")) {
-					shipType = ShipType.CRUISER;
-				} else if (shipImageUrl.contains("destroyer")) {
-					shipType = ShipType.DESTROYER;
-				} else if (shipImageUrl.contains("submarine")) {
-					shipType = ShipType.SUBMARINE;
-				}
 
+				ShipType shipType = this.getShipType(shipImageUrl);
+				Orientation orientation = this.getShipOrientation();
+				
 				// Create XY from coordinates
 				XY coords = new XY(xCoordinate, yCoordinate);
 				// Create ship
 				Ship ship = this.game.createShip(shipType, coords, orientation);
 				// Add the ship to gameboard
-				if (!this.game.addShip(ship)) {
+				if (!this.game.addShip(ship)) {					
 					gameScreenPane.getChildren().remove(this.currentlyMoved);
 					this.alert.setHeaderText("Tähän ei voi asettaa laivaa.");
 					this.alert.show();
@@ -341,29 +315,30 @@ public class setShipsSceneController {
 
 	
 	// Change the available amount of the ships
-		private void changeShipAmount(String shipType, boolean remove) {
+		private void changeShipAmount(String shipImageUrl, boolean remove) {
+			ShipType shipType = this.getShipType(shipImageUrl);
 			if (remove) {
-				if (shipType.contains("battleship")) {
+				if (shipType.equals(ShipType.BATTLESHIP)) {
 					this.battleshipAmountProperty.set(this.battleshipAmountProperty.get() - 1);
-				} else if (shipType.contains("carrier")) {
+				} else if (shipType.equals(ShipType.CARRIER)) {
 					this.carrierAmountProperty.set(this.carrierAmountProperty.get() - 1);
-				} else if (shipType.contains("cruiser")) {
+				} else if (shipType.equals(ShipType.CRUISER)) {
 					this.cruiserAmountProperty.set(this.cruiserAmountProperty.get() - 1);
-				} else if (shipType.contains("destroyer")) {
+				} else if (shipType.equals(ShipType.DESTROYER)) {
 					this.destroyerAmountProperty.set(this.destroyerAmountProperty.get() - 1);
-				} else if (shipType.contains("submarine")) {
+				} else if (shipType.equals(ShipType.SUBMARINE)) {
 					this.submarineAmountProperty.set(this.submarineAmountProperty.get() - 1);
 				}
 			} else {
-				if (shipType.contains("battleship")) {
+				if (shipType.equals(ShipType.BATTLESHIP)) {
 					this.battleshipAmountProperty.set(this.battleshipAmountProperty.get() + 1);
-				} else if (shipType.contains("carrier")) {
+				} else if (shipType.equals(ShipType.CARRIER)) {
 					this.carrierAmountProperty.set(this.carrierAmountProperty.get() + 1);
-				} else if (shipType.contains("cruiser")) {
+				} else if (shipType.equals(ShipType.CRUISER)) {
 					this.cruiserAmountProperty.set(this.cruiserAmountProperty.get() + 1);
-				} else if (shipType.contains("destroyer")) {
+				} else if (shipType.equals(ShipType.DESTROYER)) {
 					this.destroyerAmountProperty.set(this.destroyerAmountProperty.get() + 1);
-				} else if (shipType.contains("submarine")) {
+				} else if (shipType.equals(ShipType.SUBMARINE)) {
 					this.submarineAmountProperty.set(this.submarineAmountProperty.get() + 1);
 				}
 				
@@ -374,6 +349,39 @@ public class setShipsSceneController {
 	// Calculate the direction of ships rotation
 	private int getShipsRotationDirection() {
 		return (int) rotation / 90;
+	}
+	
+	// Get the ShipType
+	private ShipType getShipType(String shipImageUrl) {
+		if (shipImageUrl.contains("battleship")) {
+			return ShipType.BATTLESHIP;
+		} else if (shipImageUrl.contains("carrier")) {
+			return ShipType.CARRIER;
+		} else if (shipImageUrl.contains("cruiser")) {
+			return ShipType.CRUISER;
+		} else if (shipImageUrl.contains("destroyer")) {
+			return ShipType.DESTROYER;
+		} else if (shipImageUrl.contains("submarine")) {
+			return ShipType.SUBMARINE;
+		}
+		
+		return null;
+	}
+	
+	// Get the Orientation of the ship
+	private Orientation getShipOrientation() {
+		switch (this.getShipsRotationDirection()) {
+		case 0:
+			return Orientation.RIGHT;
+		case 1:
+			return Orientation.DOWN;
+		case 2: 
+			return Orientation.LEFT;
+		case 3:
+			return Orientation.UP;
+		}
+		
+		return null;
 	}
 		
 	// Close game
