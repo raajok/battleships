@@ -29,6 +29,7 @@ public class MainApp extends Application {
     private Scene gameScene;
     private Scene gameOverScene;
     private Stage stage;
+    private MediaPlayer player;
 	
     // Used to set the style for a scene
     protected String createStyle() {
@@ -40,9 +41,6 @@ public class MainApp extends Application {
     	
     	this.stage = stage;
     	initScenes();
-    	
-    	AudioClip bgMusic = new AudioClip(ResourceLoader.image("Fanfare.mp3"));
-    	bgMusic.play();
     	
 		// Minimum stage size
         this.stage.setMinWidth(600);
@@ -72,6 +70,11 @@ public class MainApp extends Application {
         setShipsScene2.getStylesheets().add(createStyle());
         gameScene.getStylesheets().add(createStyle());
         gameOverScene.getStylesheets().add(createStyle());
+        
+        Media bgMusic = new Media(ResourceLoader.image("Fanfare.mp3"));
+		player = new MediaPlayer(bgMusic);
+		player.volumeProperty().bind(MainApp.game.musicVolProperty());
+		player.play();
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
@@ -144,8 +147,10 @@ public class MainApp extends Application {
     	});
         
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
+        	this.player.stop();
         	MainApp.game = new BattleshipGame();
         	initScenes();
+        	this.player.play();
             this.stage.setScene(startMenuScene);
             
             // Set stage in the center of the screen

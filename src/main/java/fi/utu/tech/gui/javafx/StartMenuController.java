@@ -18,6 +18,9 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /*
  * Controller for the StartMenu scene.
@@ -72,6 +75,10 @@ public class StartMenuController {
     	
 		// Binding for start button availability to settings ready property
 		startButton.disableProperty().bind(this.game.settingsReadyProperty().not());
+		
+		// Bindings for sound volumes
+		this.game.musicVolProperty().bind(musicSlider.valueProperty());
+		this.game.effectVolProperty().bind(effectSlider.valueProperty());
 	}
 	
 	@FXML
@@ -106,6 +113,12 @@ public class StartMenuController {
 
     @FXML
     private Slider slider;
+    
+    @FXML
+    private Slider musicSlider;
+    
+    @FXML
+    private Slider effectSlider;
 
     @FXML
     private Label sliderLabel;

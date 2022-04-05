@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -118,14 +119,12 @@ public class GameboardGUIComponent extends Pane {
 			explosionsService = new MultimediaService(MultimediaSprite.class, createExplosionArgs());
 			explosionsService.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
  		try {
 			waterSplashesService = new MultimediaService(MultimediaSprite.class, createWaterSplashArgs());
 			waterSplashesService.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
  		
@@ -461,7 +460,7 @@ public class GameboardGUIComponent extends Pane {
 				60, // Frame height
 				60, // FPS
 				1, // Repeats
-				new AudioClip(ResourceLoader.image("explosionSound.mp3")) }; // Sound effect
+				new Media(ResourceLoader.image("explosionSound.mp3")) }; // Sound effect
 	}
 	
 	// Helper method for creating multimedia object for a water splash effect
@@ -473,6 +472,6 @@ public class GameboardGUIComponent extends Pane {
 				60, // Frame height
 				60, // FPS
 				1, // Repeats
-				new AudioClip(ResourceLoader.image("splash2.wav")) }; // Sound effect
+				new Media(ResourceLoader.image("splash2.wav")) }; // Sound effect
 	}
 }

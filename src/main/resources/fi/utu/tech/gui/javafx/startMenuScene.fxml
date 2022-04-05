@@ -23,9 +23,9 @@
       </Label>
       <VBox>
          <children>
-            <FlowPane alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="500.0" prefWrapLength="500.0">
+            <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
                <children>
-                  <Label prefWidth="150.0" text="Nimet:">
+                  <Label prefWidth="160.0" text="Nimet:">
                      <FlowPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </FlowPane.margin>
@@ -48,9 +48,9 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" prefHeight="45.0" prefWidth="500.0" prefWrapLength="500.0">
+            <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
                <children>
-                  <Label prefWidth="150.0" text="Peliruudukon koko:">
+                  <Label prefWidth="160.0" text="Peliruudukon koko:">
                      <FlowPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </FlowPane.margin>
@@ -88,7 +88,7 @@
                   </Label>
                   <HBox spacing="30.0">
                      <children>
-                        <Label prefWidth="120.0" text="Lentotukialuksia:">
+                        <Label prefWidth="130.0" text="Lentotukialuksia:">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
@@ -108,7 +108,7 @@
                   </HBox>
                   <HBox spacing="30.0">
                      <children>
-                        <Label prefWidth="120.0" text="Taistelulaivoja:">
+                        <Label prefWidth="130.0" text="Taistelulaivoja:">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
@@ -125,7 +125,7 @@
                   </HBox>
                   <HBox spacing="30.0">
                      <children>
-                        <Label prefWidth="120.0" text="Risteilijöitä:">
+                        <Label prefWidth="130.0" text="Risteilijöitä:">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
@@ -142,7 +142,7 @@
                   </HBox>
                   <HBox prefWidth="150.0" spacing="30.0">
                      <children>
-                        <Label prefWidth="120.0" text="Sukellusveneitä:">
+                        <Label prefWidth="130.0" text="Sukellusveneitä:">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
@@ -159,7 +159,7 @@
                   </HBox>
                   <HBox spacing="30.0">
                      <children>
-                        <Label prefWidth="120.0" text="Hävittäjiä:">
+                        <Label prefWidth="130.0" text="Hävittäjiä:">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
@@ -178,6 +178,58 @@
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
+            </VBox>
+            <VBox>
+               <children>
+                  <Label text="Äänet">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
+                     <children>
+                        <Label prefWidth="160.0" text="Musiikin voimakkuus:">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Slider fx:id="musicSlider" accessibleText="Mus" blockIncrement="0.005" majorTickUnit="1.0" max="1.0" minorTickCount="0" value="0.5">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                        </Slider>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" right="5.0" />
+                     </padding>
+                  </FlowPane>
+                  <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
+                     <children>
+                        <Label prefWidth="160.0" text="Efektien voimakkuus:">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Slider fx:id="effectSlider" accessibleText="Mus" blockIncrement="0.005" majorTickUnit="1.0" max="1.0" minorTickCount="0" value="0.5">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                        </Slider>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" right="5.0" />
+                     </padding>
+                  </FlowPane>
+               </children>
             </VBox>
          </children>
          <VBox.margin>
