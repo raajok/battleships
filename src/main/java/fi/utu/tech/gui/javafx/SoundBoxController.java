@@ -45,6 +45,7 @@ public class SoundBoxController {
     private void loadNextSong() {
     	if (!playlistIterator.hasNext()) playlistIterator = playlist.iterator();
     	player = new MediaPlayer(playlistIterator.next());
+    	player.setOnEndOfMedia(playNext);
     }
     
     public SoundBoxController() {
@@ -71,6 +72,9 @@ public class SoundBoxController {
 		// Bindings for sound volumes
 		player.volumeProperty().bind(musicSlider.valueProperty());
 		MainApp.getGame().effectVolProperty().bind(effectSlider.valueProperty());
+		
+		// Play next song after previous finishes
+		player.setOnEndOfMedia(playNext);
     }
 
 
@@ -164,5 +168,15 @@ public class SoundBoxController {
 	private void onSoundBoxMouseExited(MouseEvent event) {
 		mouseOn = false;		
 	}
+	
+	private Runnable playNext = new Runnable() {
+
+		@Override
+		public void run() {
+			loadNextSong();
+			player.play();
+		}
+		
+	};
 	
 }
