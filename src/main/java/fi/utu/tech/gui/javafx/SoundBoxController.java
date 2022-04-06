@@ -43,8 +43,10 @@ public class SoundBoxController {
     };
     
     private void loadNextSong() {
+    	// If at the end of playlist, start over.
     	if (!playlistIterator.hasNext()) playlistIterator = playlist.iterator();
     	player = new MediaPlayer(playlistIterator.next());
+		player.volumeProperty().bind(musicSlider.valueProperty());
     	player.setOnEndOfMedia(playNext);
     }
     
