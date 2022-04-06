@@ -175,6 +175,7 @@ public class SoundBoxController {
 
 		@Override
 		public void run() {
+			Thread.currentThread().setDaemon(true);
 			loadNextSong();
 			player.play();
 		}

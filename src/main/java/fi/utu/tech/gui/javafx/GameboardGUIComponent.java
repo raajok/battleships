@@ -15,6 +15,7 @@ import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -41,7 +42,8 @@ public class GameboardGUIComponent extends Pane {
     private DoubleProperty tileSize = new SimpleDoubleProperty();
     private int gridSize;
 	private Group shotsGroup = new Group();
-	private Group shipsGroup = new Group();
+	private Group shipsAliveGroup = new Group();
+	private Group shipsDeadGroup = new Group();
 	private Group foreground = new Group();
 	private ObjectProperty<Bounds> windowBounds = new SimpleObjectProperty<Bounds>();
 	private Canvas grid;
@@ -92,7 +94,8 @@ public class GameboardGUIComponent extends Pane {
         windowBounds.addListener((obg, oldVal, newVal) -> {
         	tileSize.setValue(windowBounds.get().getWidth() * scalingFactor.doubleValue() / gridSize);
         });
-        shipsGroup.visibleProperty().bind(isMyTurn.and(game.awaitingProperty().not()));
+        shipsAliveGroup.visibleProperty().bind(isMyTurn.and(game.awaitingProperty().not()));
+        shipsDeadGroup.visibleProperty().bind(game.awaitingProperty().not());
         shotsGroup.visibleProperty().bind(game.awaitingProperty().not());
         hoveringSquare.visibleProperty().bind(onMouseOver.and(isMyTurn.not()).and(game.requestTurnChangeProperty().not()));
         
@@ -102,7 +105,7 @@ public class GameboardGUIComponent extends Pane {
         
  		// Add all groups
  		foreground.getChildren().addAll(hoveringSquare);
- 		getChildren().addAll(shipsGroup, shotsGroup, foreground, rect);
+ 		getChildren().addAll(shipsAliveGroup, shipsDeadGroup, shotsGroup, foreground, rect);
  		
  		// Set event handlers
  		this.setOnMouseMoved(onMouseMoveHandler);
@@ -177,7 +180,7 @@ public class GameboardGUIComponent extends Pane {
     }
     
     public void createShipImages(Collection<Ship> ships) {
-    	shipsGroup.getChildren().addAll(loadShipImages(ships));
+    	shipsAliveGroup.getChildren().addAll(loadShipImages(ships));
     }
     
     /**
@@ -417,7 +420,6 @@ public class GameboardGUIComponent extends Pane {
 				int x = (int) Math.floor(event.getX() / tileSize.get());
 				int y = (int) Math.floor(event.getY() / tileSize.get());
 				XY coord = new XY(x,y);
-				
 				if (game.isShootable(coord)) {
 					// This coordinate is shootable.
 					// Shoot
@@ -433,7 +435,13 @@ public class GameboardGUIComponent extends Pane {
 						if (ship != null) {
 							// Query for if ship has sunk
 							if (ship.hasSunk()) {
-								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));								
+								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));
+								ImageView shipSunkImageView = getImageViewAt(event.getX(), event.getY());
+								if (shipSunkImageView != null) {
+									shipsDeadGroup.getChildren().add(shipSunkImageView);
+								} else {
+									System.out.println("No ship image found");									
+								}
 							} else {
 								infoText.set("Osuit! Saat jatkaa.");
 							}
@@ -444,7 +452,16 @@ public class GameboardGUIComponent extends Pane {
 					}
 				}
 			}
-		};
+		}
+	};
+	
+	private ImageView getImageViewAt(Double x, Double y) {
+		for (Node shipImage: shipsAliveGroup.getChildren()) {
+			if (shipImage.getBoundsInParent().contains(x, y)) {
+				return (ImageView) shipImage;
+			}
+		}
+		return null;
 	};
 	
 	// Helper method for creating multimedia object for an explosion effect

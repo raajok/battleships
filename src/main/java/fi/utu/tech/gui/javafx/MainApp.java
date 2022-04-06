@@ -1,5 +1,7 @@
 package fi.utu.tech.gui.javafx;
 
+import java.util.Set;
+
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -49,6 +51,8 @@ public class MainApp extends Application {
         this.stage.setScene(startMenuScene);
         this.stage.show();
         
+//        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+//        threadSet.stream().forEach(thread -> System.out.println(thread.toString()));
     }
     
     private void initScenes() {
