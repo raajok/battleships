@@ -181,4 +181,8 @@ public class SoundBoxController {
 		
 	};
 	
+	public void stop() {
+		player.stop();
+	}
+	
 }

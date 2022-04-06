@@ -143,6 +143,8 @@ public class MainApp extends Application {
         
         // Add a method to execute when game ends
         game.setOnGameEndAction(() -> {
+        	// stop any ongoing music
+        	soundBoxLoader.controller.stop();
         	stage.setScene(gameOverScene);
         	
         	// Set stage in the center of the screen
