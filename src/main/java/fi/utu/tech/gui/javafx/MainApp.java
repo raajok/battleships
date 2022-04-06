@@ -2,11 +2,10 @@ package fi.utu.tech.gui.javafx;
 
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -23,13 +22,14 @@ public class MainApp extends Application {
     private ResourceLoader<Parent, setShipsSceneController> setShipsLoader2;
     private ResourceLoader<Parent, gameSceneController> gameLoader;
     private ResourceLoader<Parent, gameOverSceneController> gameOverLoader;
+    private ResourceLoader<Parent, SoundBoxController> soundBoxLoader;
     private Scene startMenuScene;
     private Scene setShipsScene1;
     private Scene setShipsScene2;
     private Scene gameScene;
     private Scene gameOverScene;
     private Stage stage;
-    private MediaPlayer player;
+    private Group soundBoxContainer;
 	
     // Used to set the style for a scene
     protected String createStyle() {
@@ -58,6 +58,7 @@ public class MainApp extends Application {
         setShipsLoader2 = new ResourceLoader<>("setShipsScene.fxml");
         gameLoader = new ResourceLoader<>("gameScene.fxml");
         gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
+        soundBoxLoader = new ResourceLoader<>("SoundBoxScene.fxml");
         
         // Scenes
         startMenuScene = new Scene(startMenuLoader.root);
@@ -65,16 +66,19 @@ public class MainApp extends Application {
         setShipsScene2 = new Scene(setShipsLoader2.root);
         gameScene = new Scene(gameLoader.root);
         gameOverScene = new Scene(gameOverLoader.root);
+        soundBoxContainer = new Group(soundBoxLoader.root);
         startMenuScene.getStylesheets().add(createStyle());
         setShipsScene1.getStylesheets().add(createStyle());
         setShipsScene2.getStylesheets().add(createStyle());
         gameScene.getStylesheets().add(createStyle());
         gameOverScene.getStylesheets().add(createStyle());
+        soundBoxContainer.getStylesheets().add(createStyle());
         
-        Media bgMusic = new Media(ResourceLoader.image("Fanfare.mp3"));
-		player = new MediaPlayer(bgMusic);
-		player.volumeProperty().bind(MainApp.game.musicVolProperty());
-		player.play();
+        // Set Sound Box on each scene
+        startMenuLoader.controller.setSoundBox(soundBoxContainer);
+        
+        // Initialize sound box
+        soundBoxLoader.controller.init();
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
@@ -119,6 +123,7 @@ public class MainApp extends Application {
 
         	// Initialize the game scene controller
     		gameLoader.controller.init(gameScene);
+            gameLoader.controller.setSoundBox(soundBoxContainer);
     		stage.setScene(gameScene);
     		
     		// Set stage in the center of the screen
@@ -147,10 +152,8 @@ public class MainApp extends Application {
     	});
         
         gameOverLoader.controller.getPlayAgainButton().setOnAction(e -> {
-        	this.player.stop();
         	MainApp.game = new BattleshipGame();
         	initScenes();
-        	this.player.play();
             this.stage.setScene(startMenuScene);
             
             // Set stage in the center of the screen

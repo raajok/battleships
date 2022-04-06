@@ -6,192 +6,38 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="upperBox" alignment="CENTER" fillWidth="false" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.StartMenuController">
+
+<StackPane fx:id="mainStackPane" alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.StartMenuController">
    <children>
-      <Label alignment="CENTER" text="Uusi peli">
-         <font>
-            <Font name="System Bold" size="42.0" />
-         </font>
-         <VBox.margin>
-            <Insets bottom="30.0" top="30.0" />
-         </VBox.margin>
-      </Label>
-      <VBox>
+      <VBox fx:id="upperBox" alignment="TOP_CENTER">
          <children>
-            <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
+            <BorderPane>
+               <VBox.margin>
+                  <Insets bottom="30.0" top="10.0" />
+               </VBox.margin>
+               <center>
+                  <Label alignment="CENTER" text="Uusi peli">
+                     <font>
+                        <Font name="System Bold" size="42.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets left="20.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </center>
+            </BorderPane>
+            <VBox alignment="CENTER_LEFT" fillWidth="false" maxWidth="-Infinity" prefWidth="600.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label prefWidth="160.0" text="Nimet:">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin>
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="player1" promptText="Pelaaja 1">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin>
-                  </TextField>
-                  <TextField fx:id="player2" layoutX="359.0" layoutY="15.0" promptText="Pelaaja 2">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin>
-                  </TextField>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </FlowPane>
-            <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
-               <children>
-                  <Label prefWidth="160.0" text="Peliruudukon koko:">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin>
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Slider fx:id="slider" blockIncrement="1.0" majorTickUnit="1.0" max="15.0" min="5.0" minorTickCount="0" snapToTicks="true" value="10.0">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin>
-                  </Slider>
-                  <Label fx:id="sliderLabel" text="10x10">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin>
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </FlowPane>
-            <VBox>
-               <children>
-                  <Label text="Alukset">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <HBox spacing="30.0">
-                     <children>
-                        <Label prefWidth="130.0" text="Lentotukialuksia:">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Spinner fx:id="carrierSpinner" prefWidth="55.0">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Spinner>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </HBox>
-                  <HBox spacing="30.0">
-                     <children>
-                        <Label prefWidth="130.0" text="Taistelulaivoja:">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Spinner fx:id="battleshipSpinner" prefWidth="55.0">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Spinner>
-                     </children>
-                  </HBox>
-                  <HBox spacing="30.0">
-                     <children>
-                        <Label prefWidth="130.0" text="Risteilijöitä:">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Spinner fx:id="cruiserSpinner" prefWidth="55.0">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Spinner>
-                     </children>
-                  </HBox>
-                  <HBox prefWidth="150.0" spacing="30.0">
-                     <children>
-                        <Label prefWidth="130.0" text="Sukellusveneitä:">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Spinner fx:id="submarineSpinner" prefWidth="55.0">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Spinner>
-                     </children>
-                  </HBox>
-                  <HBox spacing="30.0">
-                     <children>
-                        <Label prefWidth="130.0" text="Hävittäjiä:">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Spinner fx:id="destroyerSpinner" prefWidth="55.0">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Spinner>
-                     </children>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </VBox>
-            <VBox>
-               <children>
-                  <Label text="Äänet">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
-                     </VBox.margin>
-                  </Label>
                   <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
                      <children>
-                        <Label prefWidth="160.0" text="Musiikin voimakkuus:">
+                        <Label prefWidth="160.0" text="Nimet:">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
@@ -199,19 +45,24 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Slider fx:id="musicSlider" accessibleText="Mus" blockIncrement="0.005" majorTickUnit="1.0" max="1.0" minorTickCount="0" value="0.5">
+                        <TextField fx:id="player1" promptText="Pelaaja 1">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
-                        </Slider>
+                        </TextField>
+                        <TextField fx:id="player2" layoutX="359.0" layoutY="15.0" promptText="Pelaaja 2">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                        </TextField>
                      </children>
                      <padding>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </FlowPane>
                   <FlowPane alignment="CENTER_LEFT" prefWidth="500.0" prefWrapLength="500.0">
                      <children>
-                        <Label prefWidth="160.0" text="Efektien voimakkuus:">
+                        <Label prefWidth="160.0" text="Peliruudukon koko:">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
@@ -219,39 +70,153 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Slider fx:id="effectSlider" accessibleText="Mus" blockIncrement="0.005" majorTickUnit="1.0" max="1.0" minorTickCount="0" value="0.5">
+                        <Slider fx:id="slider" blockIncrement="1.0" majorTickUnit="1.0" max="15.0" min="5.0" minorTickCount="0" snapToTicks="true" value="10.0">
                            <FlowPane.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </FlowPane.margin>
                         </Slider>
+                        <Label fx:id="sliderLabel" text="10x10">
+                           <FlowPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </FlowPane.margin>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                      <padding>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </FlowPane>
+                  <VBox>
+                     <children>
+                        <Label text="Alukset">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <HBox spacing="30.0">
+                           <children>
+                              <Label prefWidth="130.0" text="Lentotukialuksia:">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="carrierSpinner" prefWidth="55.0">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Spinner>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox spacing="30.0">
+                           <children>
+                              <Label prefWidth="130.0" text="Taistelulaivoja:">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="battleshipSpinner" prefWidth="55.0">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Spinner>
+                           </children>
+                        </HBox>
+                        <HBox spacing="30.0">
+                           <children>
+                              <Label prefWidth="130.0" text="Risteilijöitä:">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="cruiserSpinner" prefWidth="55.0">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Spinner>
+                           </children>
+                        </HBox>
+                        <HBox prefWidth="150.0" spacing="30.0">
+                           <children>
+                              <Label prefWidth="130.0" text="Sukellusveneitä:">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="submarineSpinner" prefWidth="55.0">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Spinner>
+                           </children>
+                        </HBox>
+                        <HBox spacing="30.0">
+                           <children>
+                              <Label prefWidth="130.0" text="Hävittäjiä:">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Spinner fx:id="destroyerSpinner" prefWidth="55.0">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Spinner>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
                </children>
-            </VBox>
-         </children>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </VBox>
-      <FlowPane alignment="CENTER" minHeight="-Infinity" prefHeight="102.0" prefWidth="800.0" prefWrapLength="600.0">
-         <children>
-            <Button fx:id="startButton" mnemonicParsing="false" text="Aloita peli">
-               <FlowPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </FlowPane.margin>
-               <opaqueInsets>
+               <VBox.margin>
                   <Insets />
-               </opaqueInsets>
-            </Button>
-            <Button fx:id="endButton" mnemonicParsing="false" onAction="#EndGame" text="Lopeta">
-               <FlowPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </FlowPane.margin>
-            </Button>
+               </VBox.margin>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </VBox>
+            <FlowPane alignment="CENTER" minHeight="-Infinity" prefHeight="102.0" prefWidth="800.0" prefWrapLength="600.0">
+               <children>
+                  <Button fx:id="startButton" mnemonicParsing="false" text="Aloita peli">
+                     <FlowPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </FlowPane.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </Button>
+                  <Button fx:id="endButton" mnemonicParsing="false" onAction="#EndGame" text="Lopeta">
+                     <FlowPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </FlowPane.margin>
+                  </Button>
+               </children>
+            </FlowPane>
          </children>
-      </FlowPane>
+      </VBox>
    </children>
-</VBox>
+</StackPane>

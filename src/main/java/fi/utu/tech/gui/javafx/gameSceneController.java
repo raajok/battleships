@@ -25,6 +25,7 @@ public class gameSceneController {
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
 	private GameboardGUIComponent gameboardGUI1;
 	private GameboardGUIComponent gameboardGUI2;
+	private Group soundBoxContainer = new Group();
 	
 	@FXML
 	private VBox rootBox;
@@ -61,6 +62,11 @@ public class gameSceneController {
 	
 	@FXML
 	private StackPane gridStack2;
+	
+	
+	@FXML
+	private StackPane mainStackPane;
+	
 	
 	@FXML
 	private void initialize() {}
@@ -244,4 +250,14 @@ public class gameSceneController {
 			}
 		}
 	};
+	
+
+    public void setSoundBox(Group soundBoxContainer) {
+    	this.soundBoxContainer = soundBoxContainer;
+    	mainStackPane.widthProperty().addListener((obj, oldVal,newVal) -> {
+    		this.soundBoxContainer.setTranslateX(newVal.doubleValue() / 2 - this.soundBoxContainer.getBoundsInLocal().getMaxX() / 2 - 20);
+    	});
+    	this.soundBoxContainer.setTranslateY(20);
+    	mainStackPane.getChildren().add(this.soundBoxContainer);
+	}
 }

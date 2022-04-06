@@ -37,7 +37,6 @@ public class BattleshipGame {
 	private SimpleBooleanProperty turnIsOver = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty requestTurnChange = new SimpleBooleanProperty(false);
 	private SimpleBooleanProperty awaiting = new SimpleBooleanProperty(false);
-	private DoubleProperty musicVol = new SimpleDoubleProperty(.5);
 	private DoubleProperty effectVol = new SimpleDoubleProperty(.5);
 	private Runnable onGameEndAction;
 	
@@ -277,10 +276,6 @@ public class BattleshipGame {
 	
 	public void removeAllShips() {
 		removeShips(boards[playerInTurn.get().ordinal()].getShips());
-	}
-	
-	public DoubleProperty musicVolProperty() {
-		return musicVol;
 	}
 	
 	public DoubleProperty effectVolProperty() {
