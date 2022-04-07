@@ -24,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 
@@ -127,6 +128,9 @@ public class setShipsSceneController {
 		this.endPlacementButton.setDisable(true);
 		
 		this.alert.setTitle("Huomio!");
+		this.alert.initStyle(StageStyle.UNDECORATED);
+		this.alert.getDialogPane().getStyleClass().add("dialog");
+		this.alert.getDialogPane().getStylesheets().add(ResourceLoader.stylesheet("styles.css"));
 		
 		playerText.textProperty().bind(Bindings.createStringBinding(() -> String.format("Pelaajan %s vuoro asettaa laivat",
 				game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));

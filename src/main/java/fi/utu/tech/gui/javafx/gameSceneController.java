@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.StageStyle;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
@@ -176,10 +177,13 @@ public class gameSceneController {
 
 		// Pop Up Dialog Window for player change
 		changePlayerAlert.setTitle("Vuoron vaihto.");
-		changePlayerAlert.headerTextProperty().bind(Bindings.createStringBinding(() ->
+		changePlayerAlert.contentTextProperty().bind(Bindings.createStringBinding(() ->
 				String.format("Kutsu pelaaja %s paikalle.", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
-		changePlayerAlert.setContentText("Anna vuoro toiselle pelaajalle.");
+		changePlayerAlert.setHeaderText("Anna vuoro toiselle pelaajalle.");
 		changePlayerAlert.setOnCloseRequest(handleTurnSwitchDialogAction);
+		changePlayerAlert.initStyle(StageStyle.UNDECORATED);
+		changePlayerAlert.getDialogPane().getStyleClass().add("dialog");
+		changePlayerAlert.getDialogPane().getStylesheets().add(ResourceLoader.stylesheet("styles.css"));
 		//changePlayerAlert.showAndWait();
 		
 		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.", game.playerInTurnNameProperty().get()));

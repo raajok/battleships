@@ -76,6 +76,12 @@ public class StartMenuController {
 		// Binding for start button availability to settings ready property
 		startButton.disableProperty().bind(this.game.settingsReadyProperty().not());
 		
+		Platform.runLater(new Runnable() {
+		    @Override
+		    public void run() {
+		        startButton.requestFocus();
+		    }
+		});
 	}
 	
 	@FXML

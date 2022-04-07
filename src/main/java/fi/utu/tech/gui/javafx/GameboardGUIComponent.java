@@ -27,6 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.scene.media.MediaPlayer;
 
 /**
  * This is a graphical gameboard component for the GUI to display on screen.
@@ -436,6 +437,9 @@ public class GameboardGUIComponent extends Pane {
 							// Query for if ship has sunk
 							if (ship.hasSunk()) {
 								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));
+								MediaPlayer fanfare = new MediaPlayer(new Media(ResourceLoader.image("short fanfare.wav")));
+								fanfare.setVolume(game.effectVolProperty().get());
+								fanfare.play();
 								ImageView shipSunkImageView = getImageViewAt(event.getX(), event.getY());
 								if (shipSunkImageView != null) {
 									shipsDeadGroup.getChildren().add(shipSunkImageView);
