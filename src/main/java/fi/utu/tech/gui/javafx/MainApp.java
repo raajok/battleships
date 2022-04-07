@@ -1,11 +1,16 @@
 package fi.utu.tech.gui.javafx;
 
+
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /*
  * Creates a ResourceLoader for every scene in the App.
@@ -20,12 +25,14 @@ public class MainApp extends Application {
     private ResourceLoader<Parent, setShipsSceneController> setShipsLoader2;
     private ResourceLoader<Parent, gameSceneController> gameLoader;
     private ResourceLoader<Parent, gameOverSceneController> gameOverLoader;
+    private ResourceLoader<Parent, SoundBoxController> soundBoxLoader;
     private Scene startMenuScene;
     private Scene setShipsScene1;
     private Scene setShipsScene2;
     private Scene gameScene;
     private Scene gameOverScene;
     private Stage stage;
+    private Group soundBoxContainer;
 	
     // Used to set the style for a scene
     protected String createStyle() {
@@ -44,6 +51,17 @@ public class MainApp extends Application {
         this.stage.setTitle("Laivanupotus");
         this.stage.setScene(startMenuScene);
         this.stage.show();
+        
+        // Terminate all running threads
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+            	soundBoxLoader.controller.stop();
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        
     }
     
     private void initScenes() {
@@ -53,6 +71,7 @@ public class MainApp extends Application {
         setShipsLoader2 = new ResourceLoader<>("setShipsScene.fxml");
         gameLoader = new ResourceLoader<>("gameScene.fxml");
         gameOverLoader = new ResourceLoader<>("gameOverScene.fxml");
+        soundBoxLoader = new ResourceLoader<>("SoundBoxScene.fxml");
         
         // Scenes
         startMenuScene = new Scene(startMenuLoader.root);
@@ -60,11 +79,19 @@ public class MainApp extends Application {
         setShipsScene2 = new Scene(setShipsLoader2.root);
         gameScene = new Scene(gameLoader.root);
         gameOverScene = new Scene(gameOverLoader.root);
+        soundBoxContainer = new Group(soundBoxLoader.root);
         startMenuScene.getStylesheets().add(createStyle());
         setShipsScene1.getStylesheets().add(createStyle());
         setShipsScene2.getStylesheets().add(createStyle());
         gameScene.getStylesheets().add(createStyle());
         gameOverScene.getStylesheets().add(createStyle());
+        soundBoxContainer.getStylesheets().add(createStyle());
+        
+        // Set Sound Box on each scene
+        startMenuLoader.controller.setSoundBox(soundBoxContainer);
+        
+        // Initialize sound box
+        soundBoxLoader.controller.init();
         
         // Eventhandler for changing scene from StartMenu to SetShips
         startMenuLoader.controller.getStartButton().setOnAction(e -> {
@@ -110,6 +137,7 @@ public class MainApp extends Application {
 
         	// Initialize the game scene controller
     		gameLoader.controller.init(gameScene);
+            gameLoader.controller.setSoundBox(soundBoxContainer);
     		stage.setScene(gameScene);
     		
     		// Set stage in the center of the screen
@@ -130,6 +158,8 @@ public class MainApp extends Application {
         
         // Add a method to execute when game ends
         game.setOnGameEndAction(() -> {
+        	// stop any ongoing music
+        	soundBoxLoader.controller.stop();
         	stage.setScene(gameOverScene);
         	
         	// Set stage in the center of the screen

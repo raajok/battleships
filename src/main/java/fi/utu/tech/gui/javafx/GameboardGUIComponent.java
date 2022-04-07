@@ -15,17 +15,19 @@ import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.scene.media.MediaPlayer;
 
 /**
  * This is a graphical gameboard component for the GUI to display on screen.
@@ -41,7 +43,8 @@ public class GameboardGUIComponent extends Pane {
     private DoubleProperty tileSize = new SimpleDoubleProperty();
     private int gridSize;
 	private Group shotsGroup = new Group();
-	private Group shipsGroup = new Group();
+	private Group shipsAliveGroup = new Group();
+	private Group shipsDeadGroup = new Group();
 	private Group foreground = new Group();
 	private ObjectProperty<Bounds> windowBounds = new SimpleObjectProperty<Bounds>();
 	private Canvas grid;
@@ -92,7 +95,8 @@ public class GameboardGUIComponent extends Pane {
         windowBounds.addListener((obg, oldVal, newVal) -> {
         	tileSize.setValue(windowBounds.get().getWidth() * scalingFactor.doubleValue() / gridSize);
         });
-        shipsGroup.visibleProperty().bind(isMyTurn.and(game.awaitingProperty().not()));
+        shipsAliveGroup.visibleProperty().bind(isMyTurn.and(game.awaitingProperty().not()));
+        shipsDeadGroup.visibleProperty().bind(game.awaitingProperty().not());
         shotsGroup.visibleProperty().bind(game.awaitingProperty().not());
         hoveringSquare.visibleProperty().bind(onMouseOver.and(isMyTurn.not()).and(game.requestTurnChangeProperty().not()));
         
@@ -102,7 +106,7 @@ public class GameboardGUIComponent extends Pane {
         
  		// Add all groups
  		foreground.getChildren().addAll(hoveringSquare);
- 		getChildren().addAll(shipsGroup, shotsGroup, foreground, rect);
+ 		getChildren().addAll(shipsAliveGroup, shipsDeadGroup, shotsGroup, foreground, rect);
  		
  		// Set event handlers
  		this.setOnMouseMoved(onMouseMoveHandler);
@@ -115,14 +119,12 @@ public class GameboardGUIComponent extends Pane {
 			explosionsService = new MultimediaService(MultimediaSprite.class, createExplosionArgs());
 			explosionsService.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
  		try {
 			waterSplashesService = new MultimediaService(MultimediaSprite.class, createWaterSplashArgs());
 			waterSplashesService.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
  		
@@ -179,7 +181,7 @@ public class GameboardGUIComponent extends Pane {
     }
     
     public void createShipImages(Collection<Ship> ships) {
-    	shipsGroup.getChildren().addAll(loadShipImages(ships));
+    	shipsAliveGroup.getChildren().addAll(loadShipImages(ships));
     }
     
     /**
@@ -202,11 +204,10 @@ public class GameboardGUIComponent extends Pane {
 			rotate.pivotYProperty().bind(tileSize.divide(2));
 			shipImage.getTransforms().add(rotate);
 			
-			shipImage.setPreserveRatio(true);
-			
 			shipImage.translateXProperty().bind(tileSize.multiply(ship.getLocation().getX()));
 			shipImage.translateYProperty().bind(tileSize.multiply(ship.getLocation().getY()));
 			shipImage.fitWidthProperty().bind(tileSize.subtract(1));
+			shipImage.setPreserveRatio(true);
  			shipImage.setMouseTransparent(true);
  			shipImages.add(shipImage);
  		}
@@ -292,30 +293,34 @@ public class GameboardGUIComponent extends Pane {
 			}
 		});
 		
-		// Try to take a multimedia sprite from the service.
-		try {
-			MultimediaSprite mms = (MultimediaSprite) waterSplashesService.take();
+		Platform.runLater(() -> {
 			
-			// Bind the image view's size to the tile size.
-			mms.getImageView().setPreserveRatio(true);
-			mms.getImageView().fitWidthProperty().bind(tileSize);
+			// Try to take a multimedia sprite from the service.
+			try {
+				MultimediaSprite mms = (MultimediaSprite) waterSplashesService.take();
+				
+				// Bind the image view's size to the tile size.
+				mms.getImageView().setPreserveRatio(true);
+				mms.getImageView().fitWidthProperty().bind(tileSize);
+				
+				// Bind the image view's position to the tile size and given coordinate.
+				mms.getImageView().translateXProperty().bind(tileSize
+						.multiply(coord.getX()));
+				mms.getImageView().translateYProperty().bind(tileSize
+						.multiply(coord.getY()));
+				
+				// Add the image view to the group.
+				shotsGroup.getChildren().add(mms.getImageView());
+				
+				// Set the thread to be a daemon thread and start it.
+				runAfterAnimationThread.setDaemon(true);
+				mms.setRunAfter(runAfterAnimationThread);
+				mms.start();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
-			// Bind the image view's position to the tile size and given coordinate.
-			mms.getImageView().translateXProperty().bind(tileSize
-					.multiply(coord.getX()));
-			mms.getImageView().translateYProperty().bind(tileSize
-					.multiply(coord.getY()));
-			
-			// Add the image view to the group.
-			shotsGroup.getChildren().add(mms.getImageView());
-			
-			// Set the thread to be a daemon thread and start it.
-			runAfterAnimationThread.setDaemon(true);
-			mms.setRunAfter(runAfterAnimationThread);
-			mms.start();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		});
 
 	}
 	
@@ -340,21 +345,26 @@ public class GameboardGUIComponent extends Pane {
 				);
 		crater.setMouseTransparent(true);
 		shotsGroup.getChildren().add(crater);
-
-		try {
-			MultimediaSprite mms = (MultimediaSprite) explosionsService.take();
-			mms.getImageView().setPreserveRatio(true);
-			mms.getImageView().fitWidthProperty().bind(tileSize);
-			mms.getImageView().translateXProperty().bind(tileSize
-					.multiply(coord.getX()));
-			mms.getImageView().translateYProperty().bind(tileSize
-					.multiply(coord.getY()));
+		
+		Platform.runLater(() -> {
 			
-			shotsGroup.getChildren().add(mms.getImageView());
-			mms.start();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+			try {
+				MultimediaSprite mms = (MultimediaSprite) explosionsService.take();
+				mms.getImageView().setPreserveRatio(true);
+				mms.getImageView().fitWidthProperty().bind(tileSize);
+				mms.getImageView().translateXProperty().bind(tileSize
+						.multiply(coord.getX()));
+				mms.getImageView().translateYProperty().bind(tileSize
+						.multiply(coord.getY()));
+				
+				shotsGroup.getChildren().add(mms.getImageView());
+				mms.start();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		});
+
 	}
 	
 	public StringProperty infoTextProperty() {
@@ -411,7 +421,6 @@ public class GameboardGUIComponent extends Pane {
 				int x = (int) Math.floor(event.getX() / tileSize.get());
 				int y = (int) Math.floor(event.getY() / tileSize.get());
 				XY coord = new XY(x,y);
-				
 				if (game.isShootable(coord)) {
 					// This coordinate is shootable.
 					// Shoot
@@ -427,7 +436,16 @@ public class GameboardGUIComponent extends Pane {
 						if (ship != null) {
 							// Query for if ship has sunk
 							if (ship.hasSunk()) {
-								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));								
+								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));
+								MediaPlayer fanfare = new MediaPlayer(new Media(ResourceLoader.image("short fanfare.wav")));
+								fanfare.setVolume(game.effectVolProperty().get());
+								fanfare.play();
+								ImageView shipSunkImageView = getImageViewAt(event.getX(), event.getY());
+								if (shipSunkImageView != null) {
+									shipsDeadGroup.getChildren().add(shipSunkImageView);
+								} else {
+									System.out.println("No ship image found");									
+								}
 							} else {
 								infoText.set("Osuit! Saat jatkaa.");
 							}
@@ -438,7 +456,16 @@ public class GameboardGUIComponent extends Pane {
 					}
 				}
 			}
-		};
+		}
+	};
+	
+	private ImageView getImageViewAt(Double x, Double y) {
+		for (Node shipImage: shipsAliveGroup.getChildren()) {
+			if (shipImage.getBoundsInParent().contains(x, y)) {
+				return (ImageView) shipImage;
+			}
+		}
+		return null;
 	};
 	
 	// Helper method for creating multimedia object for an explosion effect
@@ -450,7 +477,7 @@ public class GameboardGUIComponent extends Pane {
 				60, // Frame height
 				60, // FPS
 				1, // Repeats
-				new AudioClip(ResourceLoader.image("explosionSound.mp3")) }; // Sound effect
+				new Media(ResourceLoader.image("explosionSound.mp3")) }; // Sound effect
 	}
 	
 	// Helper method for creating multimedia object for a water splash effect
@@ -462,6 +489,6 @@ public class GameboardGUIComponent extends Pane {
 				60, // Frame height
 				60, // FPS
 				1, // Repeats
-				new AudioClip(ResourceLoader.image("splash2.wav")) }; // Sound effect
+				new Media(ResourceLoader.image("splash2.wav")) }; // Sound effect
 	}
 }

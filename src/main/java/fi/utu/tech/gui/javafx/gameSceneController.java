@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.StageStyle;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
@@ -25,6 +26,10 @@ public class gameSceneController {
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
 	private GameboardGUIComponent gameboardGUI1;
 	private GameboardGUIComponent gameboardGUI2;
+	private Group soundBoxContainer = new Group();
+	
+	@FXML
+	private VBox rootBox;
 	
 	@FXML
 	private Text turnInfoText;
@@ -59,6 +64,11 @@ public class gameSceneController {
 	@FXML
 	private StackPane gridStack2;
 	
+	
+	@FXML
+	private StackPane mainStackPane;
+	
+	
 	@FXML
 	private void initialize() {}
 	
@@ -84,6 +94,7 @@ public class gameSceneController {
 				switchTurn2Btn.setDisable(true);
 			}
 		});
+
 	}
 	
 	/**
@@ -98,6 +109,9 @@ public class gameSceneController {
 		
 		// Note: the game.newGame() method has to be called before this is executed. It should be called before leaving the setShipsScene.
 		
+		// Set background color
+		this.rootBox.setStyle("-fx-background-color: lightsteelblue;");
+
 		// Get the board size from the game object
 		gameboardSize = this.game.boardSizeProperty().get();
 		
@@ -163,10 +177,13 @@ public class gameSceneController {
 
 		// Pop Up Dialog Window for player change
 		changePlayerAlert.setTitle("Vuoron vaihto.");
-		changePlayerAlert.headerTextProperty().bind(Bindings.createStringBinding(() ->
+		changePlayerAlert.contentTextProperty().bind(Bindings.createStringBinding(() ->
 				String.format("Kutsu pelaaja %s paikalle.", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
-		changePlayerAlert.setContentText("Anna vuoro toiselle pelaajalle.");
+		changePlayerAlert.setHeaderText("Anna vuoro toiselle pelaajalle.");
 		changePlayerAlert.setOnCloseRequest(handleTurnSwitchDialogAction);
+		changePlayerAlert.initStyle(StageStyle.UNDECORATED);
+		changePlayerAlert.getDialogPane().getStyleClass().add("dialog");
+		changePlayerAlert.getDialogPane().getStylesheets().add(ResourceLoader.stylesheet("styles.css"));
 		//changePlayerAlert.showAndWait();
 		
 		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.", game.playerInTurnNameProperty().get()));
@@ -237,4 +254,14 @@ public class gameSceneController {
 			}
 		}
 	};
+	
+
+    public void setSoundBox(Group soundBoxContainer) {
+    	this.soundBoxContainer = soundBoxContainer;
+    	mainStackPane.widthProperty().addListener((obj, oldVal,newVal) -> {
+    		this.soundBoxContainer.setTranslateX(newVal.doubleValue() / 2 - this.soundBoxContainer.getBoundsInLocal().getMaxX() / 2 - 20);
+    	});
+    	this.soundBoxContainer.setTranslateY(20);
+    	mainStackPane.getChildren().add(this.soundBoxContainer);
+	}
 }
