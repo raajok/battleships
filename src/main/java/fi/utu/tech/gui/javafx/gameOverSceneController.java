@@ -27,6 +27,7 @@ public class gameOverSceneController {
     @FXML
     void endGame(ActionEvent event) {
     	Platform.exit();
+        System.exit(0);
     }
     
     public Button getPlayAgainButton() {

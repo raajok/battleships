@@ -124,6 +124,7 @@ public class StartMenuController {
     @FXML
     public void EndGame() {
     	Platform.exit();
+        System.exit(0);
     }
     
     @FXML

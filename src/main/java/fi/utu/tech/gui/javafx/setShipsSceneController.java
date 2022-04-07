@@ -382,6 +382,7 @@ public class setShipsSceneController {
 	@FXML
 	void endGame() {
 		Platform.exit();
+        System.exit(0);		
 	}
 
 	// Get endPlacementButton

@@ -29,6 +29,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public class MultimediaService extends Thread {
+	private static Thread thread = Thread.currentThread();
+    public static Thread getThread() { return MultimediaService.thread; };
 	private final int QUEUE_SIZE;
     private final Lock lock = new ReentrantLock();
     private final Condition notFull = lock.newCondition();

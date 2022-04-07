@@ -3,6 +3,8 @@ package fi.utu.tech.gui.javafx;
 import java.util.Set;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -10,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /*
  * Creates a ResourceLoader for every scene in the App.
@@ -51,8 +54,16 @@ public class MainApp extends Application {
         this.stage.setScene(startMenuScene);
         this.stage.show();
         
-//        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-//        threadSet.stream().forEach(thread -> System.out.println(thread.toString()));
+        // Terminate all running threads
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+            	soundBoxLoader.controller.stop();
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+        
     }
     
     private void initScenes() {

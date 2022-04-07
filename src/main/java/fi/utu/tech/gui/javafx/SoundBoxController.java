@@ -175,7 +175,6 @@ public class SoundBoxController {
 
 		@Override
 		public void run() {
-			Thread.currentThread().setDaemon(true);
 			loadNextSong();
 			player.play();
 		}
@@ -183,7 +182,8 @@ public class SoundBoxController {
 	};
 	
 	public void stop() {
-		player.stop();
+		if (player != null) player.stop();
+		player = null;
 	}
 	
 }
