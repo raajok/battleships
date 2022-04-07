@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<Group fx:id="soundBoxContainer" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fi.utu.tech.gui.javafx.SoundBoxController">
+   <children>
+      <VBox alignment="TOP_RIGHT" pickOnBounds="false">
+         <children>
+            <ImageView fitHeight="30.0" fitWidth="30.0" onMouseEntered="#onSoundBoxIconMouseEntered" onMouseExited="#onSoundBoxIconMouseExited" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sound%20box%20icon.png" />
+               </image>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </ImageView>
+            <VBox fx:id="soundBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseEntered="#onSoundBoxMouseEntered" onMouseExited="#onSoundBoxMouseExited" pickOnBounds="false" prefWidth="250.0">
+               <children>
+                  <HBox alignment="CENTER" pickOnBounds="false" prefHeight="20.0" prefWidth="200.0" spacing="5.0">
+                     <children>
+                        <ImageView fx:id="playBtn" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onPlayBtnMouseClicked" onMouseEntered="#onPlayBtnMouseEntered" onMouseExited="#onPlayBtnMouseExited" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@play%20icon%20gray.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="pauseBtn" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onPauseBtnMouseClicked" onMouseEntered="#onPauseBtnMouseEntered" onMouseExited="#onPauseBtnMouseExited" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@pause%20icon%20gray.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="nextBtn" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onNextBtnMouseClicked" onMouseEntered="#onNextBtnMouseEntered" onMouseExited="#onNextBtnMouseExited" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@next%20icon%20gray.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" pickOnBounds="false" prefHeight="40.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                           <image>
+                              <Image url="@music%20icon.png" />
+                           </image>
+                        </ImageView>
+                        <Slider fx:id="musicSlider" blockIncrement="0.005" majorTickUnit="1.0" max="1.0" minorTickCount="0" pickOnBounds="false" prefWidth="160.0" value="0.5" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="20.0" top="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" pickOnBounds="false" prefHeight="40.0" prefWidth="200.0" spacing="15.0">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" preserveRatio="true">
+                           <image>
+                              <Image url="@effects%20icon.png" />
+                           </image>
+                        </ImageView>
+                        <Slider fx:id="effectSlider" blockIncrement="0.005" majorTickUnit="1.0" max="1.0" minorTickCount="0" pickOnBounds="false" prefWidth="160.0" value="0.5" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="15.0" top="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</Group>

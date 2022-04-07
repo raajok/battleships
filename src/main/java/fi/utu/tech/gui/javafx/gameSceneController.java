@@ -1,22 +1,11 @@
 package fi.utu.tech.gui.javafx;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -24,33 +13,23 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogEvent;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Rotate;
+import javafx.stage.StageStyle;
 
 public class gameSceneController {
 	private BattleshipGame game = MainApp.getGame();
-	private int gameboardSize = 10;
+	private int gameboardSize;
 	private Alert changePlayerAlert = new Alert(AlertType.INFORMATION);
-	private ImageView explosionImageView1;
-	private ImageView splashImageView1;
-	private ImageView explosionImageView2;
-	private ImageView splashImageView2;
-	private Sprite explosionAnimation1;
-	private Sprite splashAnimation1;
-	private Sprite explosionAnimation2;
-	private Sprite splashAnimation2;
 	private GameboardGUIComponent gameboardGUI1;
 	private GameboardGUIComponent gameboardGUI2;
+	private Group soundBoxContainer = new Group();
+	
+	@FXML
+	private VBox rootBox;
 	
 	@FXML
 	private Text turnInfoText;
@@ -85,50 +64,21 @@ public class gameSceneController {
 	@FXML
 	private StackPane gridStack2;
 	
+	
+	@FXML
+	private StackPane mainStackPane;
+	
+	
 	@FXML
 	private void initialize() {}
 	
+	/**
+	 * The gameSceneController constructor is binding the "turnIsOverProperty" to the "switchTurn1Btn" and "switchTurn2Btn".
+	 * If the turn is over, the code will disable the button that is not the player's turn.
+	 * If the turn is not over, both buttons will be disabled.
+	 * 
+	 */
 	public gameSceneController() {
-		
-		// Panel1 animations
-		explosionImageView1 = new ImageView();
-		explosionAnimation1 = new Sprite(explosionImageView1,
-										new Image(ResourceLoader.image("explosion_cropped_2.png"), 480,360,false,false),
-										8, // Columns
-										6, // Rows
-										60, // Frame width
-										60, // Frame height
-										60, // FPS
-										1); // Repeats
-		splashImageView1 = new ImageView();
-		splashAnimation1 = new Sprite(splashImageView1,
-										new Image(ResourceLoader.image("water_splash.png"), 400,160,false,false),
-										5, // Columns
-										2, // Rows
-										80, // Frame width
-										80, // Frame height
-										40, // FPS
-										1); // Repeats
-
-		// Panel2 animations
-		explosionImageView2 = new ImageView();
-		explosionAnimation2 = new Sprite(explosionImageView2,
-										new Image(ResourceLoader.image("explosion_cropped_2.png"), 640,480,false,false),
-										8, // Columns
-										6, // Rows
-										80, // Frame width
-										80, // Frame height
-										60, // FPS
-										1); // Repeats
-		splashImageView2 = new ImageView();
-		splashAnimation2 = new Sprite(splashImageView2,
-										new Image(ResourceLoader.image("water_splash.png"), 400,160,false,false),
-										5, // Columns
-										2, // Rows
-										80, // Frame width
-										80, // Frame height
-										40, // FPS
-										1); // Repeats
 		// Bindings for Turn Switching buttons
 		game.turnIsOverProperty().addListener((obj, oldVal, newVal) -> {
 			if (newVal == true) {
@@ -144,12 +94,28 @@ public class gameSceneController {
 				switchTurn2Btn.setDisable(true);
 			}
 		});
+
 	}
+	
+	/**
+	 * This method initializes the game board for a two player game. It sets up the game board size,
+	 * creates bindings for the game board elements, and sets up event handlers for the game board buttons.
+	 * 
+	 * @param scene The scene where game play is rendered.
+	 * 
+	 */
 	
 	public void init(Scene scene) {
 		
 		// Note: the game.newGame() method has to be called before this is executed. It should be called before leaving the setShipsScene.
+		
+		// Set background color
+		this.rootBox.setStyle("-fx-background-color: lightsteelblue;");
 
+		// Get the board size from the game object
+		gameboardSize = this.game.boardSizeProperty().get();
+		
+		// Create window binding
 		final int windowPadding = 50;
 		final int prefWindowSize = 600 + windowPadding;
 		NumberBinding scaleBinding = Bindings.min(scene.widthProperty().divide(2).divide(prefWindowSize),
@@ -206,27 +172,30 @@ public class gameSceneController {
 		switchTurn1Btn.setOnAction(handleSwitchTurnBtnClick);
 		switchTurn2Btn.setOnAction(handleSwitchTurnBtnClick);
 		
+		// Handler for when mouse moves over scene
+		scene.setOnMouseMoved(handleMouseMoveOnScene);
+
 		// Pop Up Dialog Window for player change
 		changePlayerAlert.setTitle("Vuoron vaihto.");
-		changePlayerAlert.headerTextProperty().bind(Bindings.createStringBinding(() ->
+		changePlayerAlert.contentTextProperty().bind(Bindings.createStringBinding(() ->
 				String.format("Kutsu pelaaja %s paikalle.", game.playerInTurnNameProperty().get()), game.playerInTurnNameProperty()));
-		changePlayerAlert.setContentText("Anna vuoro toiselle pelaajalle.");
+		changePlayerAlert.setHeaderText("Anna vuoro toiselle pelaajalle.");
 		changePlayerAlert.setOnCloseRequest(handleTurnSwitchDialogAction);
+		changePlayerAlert.initStyle(StageStyle.UNDECORATED);
+		changePlayerAlert.getDialogPane().getStyleClass().add("dialog");
+		changePlayerAlert.getDialogPane().getStylesheets().add(ResourceLoader.stylesheet("styles.css"));
+		//changePlayerAlert.showAndWait();
 		
-		scene.setOnMouseMoved((event) -> {
-			Bounds grid1Bounds = gameboardGUI1.localToScene(gameboardGUI1.getBoundsInLocal());
-			Bounds grid2Bounds = gameboardGUI2.localToScene(gameboardGUI2.getBoundsInLocal());
-
-			if (grid1Bounds.contains(event.getX(), event.getY())) {
-				gameboardGUI2.setOnMouseOverValue(false);
-			} else if (grid2Bounds.contains(event.getX(), event.getY())) {
-				gameboardGUI1.setOnMouseOverValue(false);
-			} else {
-				gameboardGUI1.setOnMouseOverValue(false);
-				gameboardGUI2.setOnMouseOverValue(false);
-			}
-		});
+		turnInfoText.setText(String.format("Peli alkaa. Pelaajan %s vuoro ampua.", game.playerInTurnNameProperty().get()));
 	}
+	
+	/**
+	 * This is an EventHandler to handle the Switch Turn Button click.
+	 * When the button is clicked, it requests the player to give the turn to another player.
+	 * This is indicated with a pop up dialog.
+	 * When the other player closes the dialog and the turn is given,
+	 * the turnInfoText is updated to show the player's name in turn.
+	 */
 
 	private EventHandler<ActionEvent> handleSwitchTurnBtnClick = new EventHandler<ActionEvent>() {
 		
@@ -243,6 +212,11 @@ public class gameSceneController {
 		}
 	};
 	
+	/**
+	 * This event handler is for when the turn switch dialog is activated.
+	 * The event handler releases the turn for the other player.
+	 */
+	
 	private EventHandler<DialogEvent> handleTurnSwitchDialogAction = new EventHandler<DialogEvent>() {
 		
 		@Override
@@ -255,5 +229,39 @@ public class gameSceneController {
 			game.turnIsOverProperty().set(false);
 		}
 	};
+	
+	/**
+	 * This defines an EventHandler that will be used to handle mouse move events on the scene.
+	 * The event handler will check if the mouse is over either gameboardGUI1 or gameboardGUI2,
+	 * and if so, it will set the OnMouseOverValue for the other gameboard to false.
+	 * Otherwise, if outside of both gameboards, it will set the OnMouseOverValue for both gameboards to false.
+	 */
 
+	private EventHandler<MouseEvent> handleMouseMoveOnScene = new EventHandler<MouseEvent>() {
+		
+		@Override
+		public void handle(MouseEvent event) {
+			Bounds grid1Bounds = gameboardGUI1.localToScene(gameboardGUI1.getBoundsInLocal());
+			Bounds grid2Bounds = gameboardGUI2.localToScene(gameboardGUI2.getBoundsInLocal());
+	
+			if (grid1Bounds.contains(event.getX(), event.getY())) {
+				gameboardGUI2.setOnMouseOverValue(false);
+			} else if (grid2Bounds.contains(event.getX(), event.getY())) {
+				gameboardGUI1.setOnMouseOverValue(false);
+			} else {
+				gameboardGUI1.setOnMouseOverValue(false);
+				gameboardGUI2.setOnMouseOverValue(false);
+			}
+		}
+	};
+	
+
+    public void setSoundBox(Group soundBoxContainer) {
+    	this.soundBoxContainer = soundBoxContainer;
+    	mainStackPane.widthProperty().addListener((obj, oldVal,newVal) -> {
+    		this.soundBoxContainer.setTranslateX(newVal.doubleValue() / 2 - this.soundBoxContainer.getBoundsInLocal().getMaxX() / 2 - 20);
+    	});
+    	this.soundBoxContainer.setTranslateY(20);
+    	mainStackPane.getChildren().add(this.soundBoxContainer);
+	}
 }

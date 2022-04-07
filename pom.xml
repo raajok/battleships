@@ -44,11 +44,11 @@
         </repository>
 
         <!-- UTU repository -->
-        <repository>
+        <!-- <repository>
             <id>ftdev</id>
             <name>ftdev</name>
             <url>https://ftdev.utu.fi/maven2</url>
-        </repository>
+        </repository> -->
     </repositories>
 
     <dependencies>
@@ -134,11 +134,11 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <dependency>
+        <!-- <dependency>
             <groupId>fi.utu.tech</groupId>
             <artifactId>hotreload</artifactId>
             <version>${hotreload.version}</version>
-        </dependency>
+        </dependency> -->
     </dependencies>
 
     <build>
@@ -469,11 +469,11 @@
             </extension>
         </extensions>
     </build>
-    <distributionManagement>
+    <!-- <distributionManagement>
         <repository>
             <id>ftdev</id>
             <name>UTU tech ftdev repository</name>
             <url>scp://localhost:2222/var/www/maven2</url>
         </repository>
-    </distributionManagement>
+    </distributionManagement> -->
 </project>

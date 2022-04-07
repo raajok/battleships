@@ -1,5 +1,12 @@
 package fi.utu.tech.gui.javafx;
 
+/**
+ * This is a java enum representing the different types of ships in the game.
+ * 
+ * @author j-code
+ *
+ */
+
 public enum ShipType {
 	CARRIER("lentotukialus") {
 		@Override

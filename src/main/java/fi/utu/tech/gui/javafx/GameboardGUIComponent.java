@@ -3,6 +3,7 @@ package fi.utu.tech.gui.javafx;
 import java.util.ArrayDeque;
 import java.util.Collection;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -14,16 +15,26 @@ import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import javafx.scene.media.MediaPlayer;
+
+/**
+ * This is a graphical gameboard component for the GUI to display on screen.
+ * 
+ * For this game two objects of this type will be instantiated, one for each player.
+ *
+ */
 
 public class GameboardGUIComponent extends Pane {
 
@@ -32,17 +43,31 @@ public class GameboardGUIComponent extends Pane {
     private DoubleProperty tileSize = new SimpleDoubleProperty();
     private int gridSize;
 	private Group shotsGroup = new Group();
-	private Group shipsGroup = new Group();
-	private Group elements = new Group();
+	private Group shipsAliveGroup = new Group();
+	private Group shipsDeadGroup = new Group();
 	private Group foreground = new Group();
 	private ObjectProperty<Bounds> windowBounds = new SimpleObjectProperty<Bounds>();
 	private Canvas grid;
-	private Color transparentRed;
-	private Color transparentGreen;
+	private Color transparentRed, transparentGreen;
 	private Rectangle hoveringSquare;
 	private BooleanProperty onMouseOver = new SimpleBooleanProperty(false);
 	private BooleanProperty isMyTurn = new SimpleBooleanProperty(false);
 	private StringProperty infoText = new SimpleStringProperty();
+	private MultimediaService explosionsService, waterSplashesService;
+	
+	/**
+	 * The constructor for the GameboardGUIComponent class.
+	 * 
+	 * The constructor takes in two parameters, an int for the grid size and a Player for the player.
+	 * Player 1 is given the first turn. The prefSize is set to 600 by 600, and the grid is created as a canvas.
+	 * The colors for the transparent squares are set. The scaleXProperty and scaleYProperty are bound to the scalingFactor for transformations.
+	 * The shipsGroup, shotsGroup, and foreground are all added to the gameboard, and event handlers are set for the mouse movements and clicks.
+	 * Finally, a grid is added to the gameboard.
+	 * 
+	 * @param gridSize The discreet size of the side of the gameboard. 
+	 * @param player The player who's gameboard this component represents.
+	 * 
+	 */
 
     public GameboardGUIComponent(int gridSize, Player player) {
     	
@@ -70,7 +95,8 @@ public class GameboardGUIComponent extends Pane {
         windowBounds.addListener((obg, oldVal, newVal) -> {
         	tileSize.setValue(windowBounds.get().getWidth() * scalingFactor.doubleValue() / gridSize);
         });
-        shipsGroup.visibleProperty().bind(isMyTurn.and(game.awaitingProperty().not()));
+        shipsAliveGroup.visibleProperty().bind(isMyTurn.and(game.awaitingProperty().not()));
+        shipsDeadGroup.visibleProperty().bind(game.awaitingProperty().not());
         shotsGroup.visibleProperty().bind(game.awaitingProperty().not());
         hoveringSquare.visibleProperty().bind(onMouseOver.and(isMyTurn.not()).and(game.requestTurnChangeProperty().not()));
         
@@ -79,9 +105,8 @@ public class GameboardGUIComponent extends Pane {
         rect.setFill(Color.TRANSPARENT);
         
  		// Add all groups
- 		foreground.getChildren().addAll(hoveringSquare, rect);
- 		elements.getChildren().addAll(shipsGroup, shotsGroup, foreground);
- 		getChildren().add(elements);
+ 		foreground.getChildren().addAll(hoveringSquare);
+ 		getChildren().addAll(shipsAliveGroup, shipsDeadGroup, shotsGroup, foreground, rect);
  		
  		// Set event handlers
  		this.setOnMouseMoved(onMouseMoveHandler);
@@ -89,11 +114,28 @@ public class GameboardGUIComponent extends Pane {
  		
  		// Draw a grid over gameboards
  		addGrid();
+ 		
+ 		try {
+			explosionsService = new MultimediaService(MultimediaSprite.class, createExplosionArgs());
+			explosionsService.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+ 		try {
+			waterSplashesService = new MultimediaService(MultimediaSprite.class, createWaterSplashArgs());
+			waterSplashesService.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+ 		
     }
 
-    /**
-     * Add a grid to the canvas, send it to back
-     */
+	/**
+	 * The addGrid function adds a grid to the canvas, then sends it to back.
+	 * 
+	 * @return The grid variable.
+	 * 
+	 */
     private void addGrid() {
     	
     	final double w = windowBounds.get().getWidth();
@@ -139,12 +181,18 @@ public class GameboardGUIComponent extends Pane {
     }
     
     public void createShipImages(Collection<Ship> ships) {
-    	for (ImageView img: loadShipImages(ships)) {
-    		shipsGroup.getChildren().add(img);
-    	}
+    	shipsAliveGroup.getChildren().addAll(loadShipImages(ships));
     }
     
-    // Method for loading ship images
+    /**
+     * The loadShipImages is a method for loading ship images.
+     * It takes a collection of ships and returns a collection of ImageViews.
+     * 
+     * @param ships Used to Get the ships from the model.
+     * @return A collection of imageview objects.
+     * 
+     */
+    
  	private Collection<ImageView> loadShipImages(Collection<Ship> ships) {
  		Collection<ImageView> shipImages = new ArrayDeque<ImageView>();
  		for (Ship ship: ships) {
@@ -155,13 +203,11 @@ public class GameboardGUIComponent extends Pane {
  			rotate.pivotXProperty().bind(tileSize.divide(2));
 			rotate.pivotYProperty().bind(tileSize.divide(2));
 			shipImage.getTransforms().add(rotate);
+			
+			shipImage.translateXProperty().bind(tileSize.multiply(ship.getLocation().getX()));
+			shipImage.translateYProperty().bind(tileSize.multiply(ship.getLocation().getY()));
+			shipImage.fitWidthProperty().bind(tileSize.subtract(1));
 			shipImage.setPreserveRatio(true);
-			shipImage.fitWidthProperty().bind(tileSize);
-			shipImage.translateXProperty().bind(tileSize
-					.multiply(ship.getLocation().getX()));
-			shipImage.translateYProperty().bind(tileSize
-					.multiply(ship.getLocation().getY())
-					);
  			shipImage.setMouseTransparent(true);
  			shipImages.add(shipImage);
  		}
@@ -180,6 +226,7 @@ public class GameboardGUIComponent extends Pane {
  		}
  	}
  	
+ 	// This method creates the transparent indicators for shootable and non-shootable squares.
 	private Rectangle createTransparentSquare(Color color) {
 		Rectangle square = new Rectangle(tileSize.get(), tileSize.get());
 		square.setFill(color);
@@ -206,22 +253,118 @@ public class GameboardGUIComponent extends Pane {
 		return isMyTurn;
 	}
 	
+	/**
+	 * A method to add a miss mark to the given XY coordinate.
+	 * @param coord The XY coordinate to add the miss mark to.
+	 */
 	private void addMissedMarkTo(XY coord) {
-		Circle circle = new Circle(0,0,20);
-		circle.setTranslateX(tileSize.multiply(coord.getX()).get());
-		circle.setTranslateY(tileSize.multiply(coord.getY()).get());
-		circle.setCenterX(tileSize.divide(2).get());
-		circle.setCenterY(tileSize.divide(2).get());
 		
-		shotsGroup.getChildren().add(circle);
+		// Create a new thread to run after the animation is complete.
+		Thread runAfterAnimationThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// Run this code on the JavaFX Application Thread.
+				Platform.runLater(() -> {
+					// Calculate the line width.
+					double lineWidth = tileSize.get() / 30;
+					
+					// Derive a color from black with 75% opacity.
+					Color color = Color.BLACK.deriveColor(1, 1, .75, 1);
+					
+					// Create line 1.
+					Line line1 = new Line(lineWidth,lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth);
+					line1.setStrokeWidth(lineWidth);
+					line1.setStroke(color);
+					line1.setTranslateX(tileSize.multiply(coord.getX()).get());
+					line1.setTranslateY(tileSize.multiply(coord.getY()).get());
+					
+					// Create line 2.
+					Line line2 = new Line(lineWidth,tileSize.get()-lineWidth,tileSize.get()-lineWidth,lineWidth);
+					line2.setStrokeWidth(lineWidth);
+					line2.setStroke(color);
+					line2.setTranslateX(tileSize.multiply(coord.getX()).get());
+					line2.setTranslateY(tileSize.multiply(coord.getY()).get());
+					
+					// Add lines to group.
+					shotsGroup.getChildren().addAll(line1, line2);
+				});
+				
+			}
+		});
+		
+		Platform.runLater(() -> {
+			
+			// Try to take a multimedia sprite from the service.
+			try {
+				MultimediaSprite mms = (MultimediaSprite) waterSplashesService.take();
+				
+				// Bind the image view's size to the tile size.
+				mms.getImageView().setPreserveRatio(true);
+				mms.getImageView().fitWidthProperty().bind(tileSize);
+				
+				// Bind the image view's position to the tile size and given coordinate.
+				mms.getImageView().translateXProperty().bind(tileSize
+						.multiply(coord.getX()));
+				mms.getImageView().translateYProperty().bind(tileSize
+						.multiply(coord.getY()));
+				
+				// Add the image view to the group.
+				shotsGroup.getChildren().add(mms.getImageView());
+				
+				// Set the thread to be a daemon thread and start it.
+				runAfterAnimationThread.setDaemon(true);
+				mms.setRunAfter(runAfterAnimationThread);
+				mms.start();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		});
+
 	}
 	
+	/**
+	 * The addHitMarkTo method creates a mark on enemy ship as an indicator for a successful hit.
+	 * An explosion animation is shown and a crater image is added to the shotsGroup.
+	 * 
+	 * @param coord Used to Determine where the explosion and the shot mark should be placed on the screen.
+	 * 
+	 */
+	
 	private void addHitMarkTo(XY coord) {
-		Cross cross = new Cross(tileSize.get(), tileSize.get(), Color.RED);
-		cross.setTranslateX(tileSize.multiply(coord.getX()).get());
-		cross.setTranslateY(tileSize.multiply(coord.getY()).get());
+		Image img = new Image(ResourceLoader.image("crater2.png"));
 		
-		shotsGroup.getChildren().add(cross);
+		ImageView crater = new ImageView(img);
+		crater.setPreserveRatio(true);
+		crater.fitWidthProperty().bind(tileSize.multiply(0.8));
+		crater.translateXProperty().bind(tileSize
+				.multiply(coord.getX()).add(tileSize.divide(10).get()));
+		crater.translateYProperty().bind(tileSize
+				.multiply(coord.getY()).add(tileSize.divide(10).get())
+				);
+		crater.setMouseTransparent(true);
+		shotsGroup.getChildren().add(crater);
+		
+		Platform.runLater(() -> {
+			
+			try {
+				MultimediaSprite mms = (MultimediaSprite) explosionsService.take();
+				mms.getImageView().setPreserveRatio(true);
+				mms.getImageView().fitWidthProperty().bind(tileSize);
+				mms.getImageView().translateXProperty().bind(tileSize
+						.multiply(coord.getX()));
+				mms.getImageView().translateYProperty().bind(tileSize
+						.multiply(coord.getY()));
+				
+				shotsGroup.getChildren().add(mms.getImageView());
+				mms.start();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		});
+
 	}
 	
 	public StringProperty infoTextProperty() {
@@ -229,26 +372,44 @@ public class GameboardGUIComponent extends Pane {
 	}
 	
 	// Event handlers
+
+	/**
+	 * This onMouseMoveHandler is used to handle a mouse movement when mouse is over this gameboard.
+	 * The event handler will set the onMouseOver property to true as that provides information of 
+	 * mouse movement on this gameboard for the gameSceneController.
+	 * 
+	 * It calculates the coordinates of the mouse on the gameboard grid.
+	 * If the game is shootable, the event handler will set the hoveringSquare to transparent green.
+	 * Otherwise, the event handler will set the fill of the hoveringSquare to transparent red.
+	 */
 	
 	private EventHandler<MouseEvent> onMouseMoveHandler = new EventHandler<MouseEvent>() {
 		
 		@Override
 		public void handle(MouseEvent event) {
 			onMouseOver.set(true);
-			int x = (int) Math.round(event.getX() / tileSize.get() - .5);
-			int y = (int) Math.round(event.getY() / tileSize.get() - .5);
+			// Calculate the coordinates
+			int x = (int) Math.floor(event.getX() / tileSize.get());
+			int y = (int) Math.floor(event.getY() / tileSize.get());
 			XY coord = new XY(x,y);
-			
 			if (game.isShootable(coord)) {
 				hoveringSquare.setFill(transparentGreen);
 			} else {
-				hoveringSquare.setFill(transparentRed);						
+				hoveringSquare.setFill(transparentRed);
 			}
-			
-			hoveringSquare.setTranslateX(x * tileSize.get());
-			hoveringSquare.setTranslateY(y * tileSize.get());
+			hoveringSquare.setTranslateX(coord.getX() * tileSize.get());
+			hoveringSquare.setTranslateY(coord.getY() * tileSize.get());
 		};
 	};
+	
+	/**
+	 *  This is an EventHandler that is used to handle a mouse click on gameboard event.
+	 *  This EventHandler is triggered when the user clicks on the opponent's board.
+	 *  If the coordinate is shootable (not shot earlier), then it will shoot at that location.
+	 *  If the shot is a miss, the addMissedMark-method is called. If it is a successful hit, addHitMark is called.
+	 *  Also, the event handler checks if the ship sunk. If it is, information which one is displayed for the player.
+	 *  
+	 */
 	
 	private EventHandler<MouseEvent> onMouseClickedHandler = new EventHandler<MouseEvent>() {
 		
@@ -257,10 +418,9 @@ public class GameboardGUIComponent extends Pane {
 			// If this is enemy board, then shoot.
 			if (isMyTurn.not().and(game.requestTurnChangeProperty().not()).get()) {
 				// Calculate the coordinates
-				int x = (int) Math.round(event.getX() / tileSize.get() - .5);
-				int y = (int) Math.round(event.getY() / tileSize.get() - .5);
+				int x = (int) Math.floor(event.getX() / tileSize.get());
+				int y = (int) Math.floor(event.getY() / tileSize.get());
 				XY coord = new XY(x,y);
-				
 				if (game.isShootable(coord)) {
 					// This coordinate is shootable.
 					// Shoot
@@ -276,9 +436,18 @@ public class GameboardGUIComponent extends Pane {
 						if (ship != null) {
 							// Query for if ship has sunk
 							if (ship.hasSunk()) {
-								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));								
+								infoText.set(String.format("Vastustajan %s upposi", ship.getType()));
+								MediaPlayer fanfare = new MediaPlayer(new Media(ResourceLoader.image("short fanfare.wav")));
+								fanfare.setVolume(game.effectVolProperty().get());
+								fanfare.play();
+								ImageView shipSunkImageView = getImageViewAt(event.getX(), event.getY());
+								if (shipSunkImageView != null) {
+									shipsDeadGroup.getChildren().add(shipSunkImageView);
+								} else {
+									System.out.println("No ship image found");									
+								}
 							} else {
-								infoText.set("Osuit! Pelaaja saa jatkaa.");
+								infoText.set("Osuit! Saat jatkaa.");
 							}
 						} else {
 							System.out.println("NullPointerException: Ship is null");
@@ -287,6 +456,39 @@ public class GameboardGUIComponent extends Pane {
 					}
 				}
 			}
-		};
+		}
 	};
+	
+	private ImageView getImageViewAt(Double x, Double y) {
+		for (Node shipImage: shipsAliveGroup.getChildren()) {
+			if (shipImage.getBoundsInParent().contains(x, y)) {
+				return (ImageView) shipImage;
+			}
+		}
+		return null;
+	};
+	
+	// Helper method for creating multimedia object for an explosion effect
+	private Object[] createExplosionArgs() {
+		return new Object[]{ new Image(ResourceLoader.image("explosion_cropped_2.png"), 480,360,false,false),
+				8, // Columns
+				6, // Rows
+				60, // Frame width
+				60, // Frame height
+				60, // FPS
+				1, // Repeats
+				new Media(ResourceLoader.image("explosionSound.mp3")) }; // Sound effect
+	}
+	
+	// Helper method for creating multimedia object for a water splash effect
+	private Object[] createWaterSplashArgs() {
+		return new Object[]{ new Image(ResourceLoader.image("splash_cropped.png"), 480,360,false,false),
+				8, // Columns
+				6, // Rows
+				60, // Frame width
+				60, // Frame height
+				60, // FPS
+				1, // Repeats
+				new Media(ResourceLoader.image("splash2.wav")) }; // Sound effect
+	}
 }
